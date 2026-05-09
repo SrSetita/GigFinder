@@ -1,0 +1,22 @@
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import './globals.css'
+import Navbar from '@/components/layout/Navbar'
+
+const inter = Inter({ subsets: ['latin'] })
+
+export const metadata: Metadata = {
+  title: 'GigFinder — Encuentra tu sala, tu banda, tu escenario',
+  description: 'Plataforma para músicos, bandas, salas de ensayo y promotores. Reserva salas, encuentra músicos, promociona tu banda.',
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="es" className="h-full">
+      <body className={`${inter.className} min-h-full flex flex-col`}>
+        <Navbar />
+        <main className="flex-1">{children}</main>
+      </body>
+    </html>
+  )
+}
