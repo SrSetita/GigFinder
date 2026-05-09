@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
-import { Role } from '@prisma/client'
+import { Role } from '../generated/prisma/client'
 
 const registerSchema = z.object({
   email: z.string().email(),

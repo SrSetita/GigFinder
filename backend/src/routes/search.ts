@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { Role } from '@prisma/client'
+import { Role } from '../generated/prisma/client'
 
 export default async function searchRoutes(server: FastifyInstance) {
   server.get('/', async (request) => {

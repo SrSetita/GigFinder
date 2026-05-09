@@ -25,21 +25,34 @@ function SearchResults() {
   const [results, setResults] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
-  const q = searchParams.get('q') || ''
-  const type = searchParams.get('type') || ''
-  const city = searchParams.get('city') || ''
-  const genre = searchParams.get('genre') || ''
+  // Valores activos en la URL (source of truth para el fetch y el título)
+  const activeQ    = searchParams.get('q') || ''
+  const activeType = searchParams.get('type') || ''
+  const activeCity = searchParams.get('city') || ''
+  const activeGenre = searchParams.get('genre') || ''
 
-  const [filters, setFilters] = useState({ q, type, city, genre })
+  // Estado local del formulario (lo que el usuario está editando)
+  const [form, setForm] = useState({ q: activeQ, type: activeType, city: activeCity, genre: activeGenre })
 
+  // Sincronizar formulario cuando cambia la URL (clicks en navbar, géneros, etc.)
   useEffect(() => {
-    const fetch = async () => {
+    setForm({
+      q: searchParams.get('q') || '',
+      type: searchParams.get('type') || '',
+      city: searchParams.get('city') || '',
+      genre: searchParams.get('genre') || '',
+    })
+  }, [searchParams])
+
+  // Fetch cada vez que cambian los parámetros de la URL
+  useEffect(() => {
+    const doFetch = async () => {
       setLoading(true)
       const params = new URLSearchParams()
-      if (filters.q) params.set('q', filters.q)
-      if (filters.type) params.set('type', filters.type)
-      if (filters.city) params.set('city', filters.city)
-      if (filters.genre) params.set('genre', filters.genre)
+      if (activeQ)    params.set('q', activeQ)
+      if (activeType) params.set('type', activeType)
+      if (activeCity) params.set('city', activeCity)
+      if (activeGenre) params.set('genre', activeGenre)
       try {
         const data = await api.get<any[]>(`/api/search?${params}`)
         setResults(data)
@@ -49,23 +62,26 @@ function SearchResults() {
         setLoading(false)
       }
     }
-    fetch()
-  }, [filters])
+    doFetch()
+  }, [activeQ, activeType, activeCity, activeGenre])
 
   const applyFilters = () => {
     const params = new URLSearchParams()
-    if (filters.q) params.set('q', filters.q)
-    if (filters.type) params.set('type', filters.type)
-    if (filters.city) params.set('city', filters.city)
-    if (filters.genre) params.set('genre', filters.genre)
+    if (form.q)     params.set('q', form.q)
+    if (form.type)  params.set('type', form.type)
+    if (form.city)  params.set('city', form.city)
+    if (form.genre) params.set('genre', form.genre)
     router.push(`/search?${params}`)
-    setFilters(filters)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') applyFilters()
   }
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
       <div className="flex flex-col md:flex-row gap-8">
-        {/* Sidebar filters */}
+        {/* Sidebar filtros */}
         <aside className="w-full md:w-64 shrink-0">
           <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 flex flex-col gap-4 sticky top-4">
             <h2 className="font-bold">Filtros</h2>
@@ -74,8 +90,9 @@ function SearchResults() {
               <label className="text-xs text-gray-400 mb-1 block">Buscar</label>
               <input
                 type="text"
-                value={filters.q}
-                onChange={(e) => setFilters({ ...filters, q: e.target.value })}
+                value={form.q}
+                onChange={(e) => setForm({ ...form, q: e.target.value })}
+                onKeyDown={handleKeyDown}
                 placeholder="Nombre, ciudad..."
                 className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--accent)] transition-colors"
               />
@@ -84,8 +101,8 @@ function SearchResults() {
             <div>
               <label className="text-xs text-gray-400 mb-1 block">Tipo</label>
               <select
-                value={filters.type}
-                onChange={(e) => setFilters({ ...filters, type: e.target.value })}
+                value={form.type}
+                onChange={(e) => setForm({ ...form, type: e.target.value })}
                 className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--accent)] transition-colors"
               >
                 <option value="">Todos</option>
@@ -100,8 +117,9 @@ function SearchResults() {
               <label className="text-xs text-gray-400 mb-1 block">Ciudad</label>
               <input
                 type="text"
-                value={filters.city}
-                onChange={(e) => setFilters({ ...filters, city: e.target.value })}
+                value={form.city}
+                onChange={(e) => setForm({ ...form, city: e.target.value })}
+                onKeyDown={handleKeyDown}
                 placeholder="Madrid..."
                 className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--accent)] transition-colors"
               />
@@ -111,8 +129,9 @@ function SearchResults() {
               <label className="text-xs text-gray-400 mb-1 block">Género</label>
               <input
                 type="text"
-                value={filters.genre}
-                onChange={(e) => setFilters({ ...filters, genre: e.target.value })}
+                value={form.genre}
+                onChange={(e) => setForm({ ...form, genre: e.target.value })}
+                onKeyDown={handleKeyDown}
                 placeholder="Rock, Jazz..."
                 className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--accent)] transition-colors"
               />
@@ -124,16 +143,25 @@ function SearchResults() {
             >
               Buscar
             </button>
+
+            {(activeQ || activeType || activeCity || activeGenre) && (
+              <button
+                onClick={() => router.push('/search')}
+                className="text-gray-500 hover:text-gray-300 text-xs text-center transition-colors"
+              >
+                Limpiar filtros
+              </button>
+            )}
           </div>
         </aside>
 
-        {/* Results */}
+        {/* Resultados */}
         <div className="flex-1">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-xl font-bold">
-              {type ? TYPE_LABELS[type] : 'Todos'}
-              {city && ` en ${city}`}
-              {genre && ` · ${genre}`}
+              {activeType ? TYPE_LABELS[activeType] : 'Todos'}
+              {activeCity && ` en ${activeCity}`}
+              {activeGenre && ` · ${activeGenre}`}
             </h1>
             {!loading && <span className="text-sm text-gray-400">{results.length} resultados</span>}
           </div>

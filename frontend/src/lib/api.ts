@@ -34,6 +34,16 @@ class ApiClient {
     if (!res.ok) throw await res.json()
     return res.json()
   }
+
+  async put<T>(path: string, body: unknown): Promise<T> {
+    const res = await fetch(`${API_URL}${path}`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify(body),
+    })
+    if (!res.ok) throw await res.json()
+    return res.json()
+  }
 }
 
 export const api = new ApiClient()

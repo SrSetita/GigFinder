@@ -34,7 +34,15 @@ export default async function messagingRoutes(server: FastifyInstance) {
       include: {
         messages: {
           orderBy: { createdAt: 'asc' },
-          include: { sender: { include: { profile: { select: { displayName: true, avatarUrl: true } } } } },
+          include: {
+            sender: {
+              select: {
+                id: true,
+                role: true,
+                profile: { select: { displayName: true, avatarUrl: true } },
+              },
+            },
+          },
         },
       },
     })
@@ -76,7 +84,16 @@ export default async function messagingRoutes(server: FastifyInstance) {
 
     const message = await server.prisma.message.create({
       data: { conversationId: conversation.id, senderId: userId, content },
-      include: { sender: { include: { profile: { select: { displayName: true, avatarUrl: true } } } } },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            email: true,
+            role: true,
+            profile: { select: { displayName: true, avatarUrl: true } },
+          },
+        },
+      },
     })
 
     await server.prisma.conversation.update({

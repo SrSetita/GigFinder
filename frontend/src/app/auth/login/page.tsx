@@ -5,9 +5,11 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { api } from '@/lib/api'
 import { setSession } from '@/lib/auth'
+import { useAuth } from '@/lib/AuthContext'
 
 export default function LoginPage() {
   const router = useRouter()
+  const { setUser } = useAuth()
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -19,10 +21,10 @@ export default function LoginPage() {
     try {
       const res = await api.post<{ token: string; user: any }>('/api/auth/login', form)
       setSession(res.token, res.user)
+      setUser(res.user)
       router.push('/')
-      router.refresh()
     } catch (err: any) {
-      setError(err?.error || 'Error al iniciar sesión')
+      setError(err?.error || 'Email o contraseña incorrectos')
     } finally {
       setLoading(false)
     }

@@ -1,8 +1,10 @@
+import 'dotenv/config'
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import jwt from '@fastify/jwt'
 import multipart from '@fastify/multipart'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from './generated/prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
 
 import authRoutes from './routes/auth'
 import profileRoutes from './routes/profiles'
@@ -17,8 +19,10 @@ declare module 'fastify' {
   }
 }
 
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
+const prisma = new PrismaClient({ adapter })
+
 const server = Fastify({ logger: true })
-const prisma = new PrismaClient()
 
 server.decorate('prisma', prisma)
 
@@ -47,7 +51,6 @@ server.get('/api/health', async () => ({ status: 'ok' }))
 const start = async () => {
   try {
     await server.listen({ port: Number(process.env.PORT) || 4000, host: '0.0.0.0' })
-    console.log('GigFinder API running on port 4000')
   } catch (err) {
     server.log.error(err)
     process.exit(1)

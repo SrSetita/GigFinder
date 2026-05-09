@@ -1,10 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuth } from '@/lib/AuthContext'
 
 export default function Navbar() {
-  const { user, logout } = useAuth()
+  const { user, loading, logout } = useAuth()
 
   return (
     <nav className="border-b border-[var(--border)] bg-[var(--card)] px-6 py-4">
@@ -29,7 +29,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          {user ? (
+          {loading ? null : user ? (
             <>
               <Link
                 href="/messages"

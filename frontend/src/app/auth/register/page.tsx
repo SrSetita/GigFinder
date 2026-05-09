@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { api } from '@/lib/api'
 import { setSession } from '@/lib/auth'
+import { useAuth } from '@/lib/AuthContext'
 import { Suspense } from 'react'
 
 const ROLES = [
@@ -16,6 +17,7 @@ const ROLES = [
 
 function RegisterForm() {
   const router = useRouter()
+  const { setUser } = useAuth()
   const params = useSearchParams()
   const [form, setForm] = useState({
     email: '',
@@ -34,8 +36,8 @@ function RegisterForm() {
     try {
       const res = await api.post<{ token: string; user: any }>('/api/auth/register', form)
       setSession(res.token, res.user)
+      setUser(res.user)
       router.push('/')
-      router.refresh()
     } catch (err: any) {
       setError(err?.error || 'Error al registrarse')
     } finally {
