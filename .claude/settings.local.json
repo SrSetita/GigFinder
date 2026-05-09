@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --no-turbopack)",
+      "Bash(npm init *)",
+      "Bash(npm install *)",
+      "Bash(npx prisma *)",
+      "Bash(ln -sf /home/seta/VsCodeProjects/GigFinder/.env /home/seta/VsCodeProjects/GigFinder/backend/.env)"
+    ]
+  }
+}
