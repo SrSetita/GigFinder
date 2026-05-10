@@ -59,6 +59,10 @@ export default async function messagingRoutes(server: FastifyInstance) {
 
   server.post('/send', { preHandler: authenticate }, async (request, reply) => {
     const { userId } = request.user
+
+    const caller = await server.prisma.user.findUnique({ where: { id: userId }, select: { emailVerifiedAt: true } })
+    if (!caller?.emailVerifiedAt) return reply.code(403).send({ error: 'EMAIL_NOT_VERIFIED' })
+
     const body = sendMessageSchema.safeParse(request.body)
     if (!body.success) return reply.code(400).send({ error: body.error.flatten() })
 

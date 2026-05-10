@@ -4,6 +4,7 @@ export interface AuthUser {
   id: string
   email: string
   role: 'MUSICIAN' | 'BAND' | 'VENUE' | 'PROMOTER'
+  emailVerified: boolean
   profile: {
     id: string
     displayName: string

@@ -7,7 +7,7 @@ const updateProfileSchema = z.object({
   bio:         z.string().max(1000).optional(),
   city:        z.string().min(2).optional(),
   genres:      z.array(z.string()).optional(),
-  socialLinks: z.record(z.string()).optional(),
+  socialLinks: z.record(z.string(), z.string()).optional(),
 })
 
 const updateMusicianSchema = z.object({
@@ -72,7 +72,7 @@ export default async function profileRoutes(server: FastifyInstance) {
 
     const profile = await server.prisma.profile.update({
       where: { userId },
-      data: body.data,
+      data: body.data as any,
     })
     return profile
   })

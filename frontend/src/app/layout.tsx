@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/layout/Navbar'
+import VerificationBanner from '@/components/layout/VerificationBanner'
 import { AuthProvider } from '@/lib/AuthContext'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${inter.className} min-h-full flex flex-col`}>
         <AuthProvider>
           <Navbar />
+          <VerificationBanner />
           <main className="flex-1">{children}</main>
         </AuthProvider>
       </body>
