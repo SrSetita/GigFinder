@@ -5,6 +5,9 @@ import { z } from 'zod'
 import { Role } from '../generated/prisma/client'
 import { sendVerificationEmail } from '../lib/email'
 
+const RESEND_COOLDOWN_MS = 2 * 60 * 1000 // 2 minutes
+const resendRateLimit = new Map<string, number>() // email → last sent timestamp
+
 const registerSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
@@ -113,14 +116,18 @@ export default async function authRoutes(server: FastifyInstance) {
     const { email } = request.body as { email?: string }
     if (!email) return reply.code(400).send({ error: 'Email required' })
 
-    const user = await server.prisma.user.findUnique({ where: { email } })
-    if (!user) return reply.code(200).send({ ok: true }) // don't reveal existence
+    const lastSent = resendRateLimit.get(email)
+    if (lastSent && Date.now() - lastSent < RESEND_COOLDOWN_MS) {
+      return reply.code(429).send({ error: 'Too many requests. Wait before requesting another email.' })
+    }
 
-    if (user.emailVerifiedAt) return reply.code(200).send({ ok: true }) // already verified
+    const user = await server.prisma.user.findUnique({ where: { email } })
+    if (!user || user.emailVerifiedAt) return reply.code(200).send({ ok: true })
 
     const verificationToken = generateToken()
     await server.prisma.user.update({ where: { id: user.id }, data: { verificationToken } })
 
+    resendRateLimit.set(email, Date.now())
     sendVerificationEmail(email, verificationToken).catch(() => {})
     return { ok: true }
   })

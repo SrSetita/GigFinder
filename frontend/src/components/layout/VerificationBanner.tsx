@@ -1,37 +1,81 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/AuthContext'
 
+const COOLDOWN_SECONDS = 120
+const LS_KEY = 'gf_verify_sent_at'
+
+function getSecondsLeft(): number {
+  const raw = localStorage.getItem(LS_KEY)
+  if (!raw) return 0
+  const elapsed = Math.floor((Date.now() - parseInt(raw)) / 1000)
+  return Math.max(0, COOLDOWN_SECONDS - elapsed)
+}
+
+function fmt(s: number) {
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+}
+
 export default function VerificationBanner() {
-  const { user, setUser } = useAuth()
+  const { user } = useAuth()
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
+  const [cooldown, setCooldown] = useState(0)
+
+  // Restore cooldown on mount
+  useEffect(() => {
+    const s = getSecondsLeft()
+    if (s > 0) setCooldown(s)
+  }, [])
+
+  // Tick the countdown
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const id = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) { clearInterval(id); return 0 }
+        return prev - 1
+      })
+    }, 1000)
+    return () => clearInterval(id)
+  }, [cooldown])
 
   if (!user || user.emailVerified) return null
 
   const resend = async () => {
     setSending(true)
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/auth/resend-verification`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user.email }),
-      })
-      setSent(true)
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/auth/resend-verification`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: user.email }),
+        }
+      )
+      if (res.ok) {
+        localStorage.setItem(LS_KEY, String(Date.now()))
+        setSent(true)
+        setCooldown(COOLDOWN_SECONDS)
+        // Hide the "sent" message after 4 s, keep cooldown running
+        setTimeout(() => setSent(false), 4000)
+      }
     } finally {
       setSending(false)
     }
   }
 
   return (
-    <div className="bg-yellow-500/10 border-b border-yellow-500/20 px-4 py-2.5 flex items-center justify-center gap-3 text-sm">
+    <div className="bg-yellow-500/10 border-b border-yellow-500/20 px-4 py-2.5 flex items-center justify-center gap-3 text-sm flex-wrap">
       <span className="text-yellow-400">⚠️</span>
       <span className="text-yellow-300">
         Verifica tu email <span className="font-medium text-yellow-200">{user.email}</span> para poder reservar salas y enviar mensajes.
       </span>
       {sent ? (
-        <span className="text-green-400 text-xs font-medium">✓ Email reenviado</span>
+        <span className="text-green-400 text-xs font-medium">✓ Email enviado, revisa tu bandeja</span>
+      ) : cooldown > 0 ? (
+        <span className="text-yellow-600 text-xs">Podrás reenviar en {fmt(cooldown)}</span>
       ) : (
         <button
           onClick={resend}
