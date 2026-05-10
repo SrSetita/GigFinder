@@ -106,7 +106,7 @@ export default function Navbar() {
 
       {/* Mobile dropdown */}
       {open && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-[var(--card)] border-b border-[var(--border)] px-4 py-4 flex flex-col gap-1 shadow-lg">
+        <div className="md:hidden fixed top-[65px] left-0 right-0 bg-[var(--card)] border-b border-[var(--border)] px-4 py-4 flex flex-col gap-1 shadow-xl z-50">
           {NAV_LINKS.map((l) => (
             <Link
               key={l.href}
