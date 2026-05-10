@@ -1,8 +1,10 @@
 import 'dotenv/config'
+import path from 'path'
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import jwt from '@fastify/jwt'
 import multipart from '@fastify/multipart'
+import staticFiles from '@fastify/static'
 import { PrismaClient } from './generated/prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 
@@ -12,6 +14,7 @@ import venueRoutes from './routes/venues'
 import bookingRoutes from './routes/bookings'
 import messagingRoutes from './routes/messaging'
 import searchRoutes from './routes/search'
+import uploadRoutes from './routes/upload'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -29,6 +32,8 @@ server.decorate('prisma', prisma)
 server.register(cors, {
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 })
 
 server.register(jwt, {
@@ -39,12 +44,18 @@ server.register(multipart, {
   limits: { fileSize: 50 * 1024 * 1024 },
 })
 
-server.register(authRoutes, { prefix: '/api/auth' })
-server.register(profileRoutes, { prefix: '/api/profiles' })
-server.register(venueRoutes, { prefix: '/api/venues' })
-server.register(bookingRoutes, { prefix: '/api/bookings' })
-server.register(messagingRoutes, { prefix: '/api/messages' })
-server.register(searchRoutes, { prefix: '/api/search' })
+server.register(staticFiles, {
+  root: path.join(__dirname, '../../public'),
+  prefix: '/',
+})
+
+server.register(authRoutes,     { prefix: '/api/auth' })
+server.register(profileRoutes,  { prefix: '/api/profiles' })
+server.register(venueRoutes,    { prefix: '/api/venues' })
+server.register(bookingRoutes,  { prefix: '/api/bookings' })
+server.register(messagingRoutes,{ prefix: '/api/messages' })
+server.register(searchRoutes,   { prefix: '/api/search' })
+server.register(uploadRoutes,   { prefix: '/api/upload' })
 
 server.get('/api/health', async () => ({ status: 'ok' }))
 

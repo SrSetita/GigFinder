@@ -51,6 +51,7 @@ model Profile {
   city        String
   country     String   @default("ES")
   avatarUrl   String?  @map("avatar_url")
+  bannerUrl   String?  @map("banner_url")
   genres      String[]
   socialLinks Json?    @map("social_links")
   isPremium   Boolean  @default(false) @map("is_premium")

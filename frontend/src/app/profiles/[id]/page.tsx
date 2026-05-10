@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/AuthContext'
 
@@ -25,10 +25,22 @@ const SOCIAL_ICONS: Record<string, string> = {
 export default function ProfilePage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { user } = useAuth()
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [messaging, setMessaging] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [showSavedToast, setShowSavedToast] = useState(false)
+  const mediaInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (searchParams.get('saved') === '1') {
+      setShowSavedToast(true)
+      const t = setTimeout(() => setShowSavedToast(false), 3500)
+      return () => clearTimeout(t)
+    }
+  }, [searchParams])
 
   useEffect(() => {
     api.get<any>(`/api/profiles/${id}`)
@@ -36,6 +48,36 @@ export default function ProfilePage() {
       .catch(() => setProfile(null))
       .finally(() => setLoading(false))
   }, [id])
+
+  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    try {
+      const form = new FormData()
+      form.append('file', file)
+      const token = localStorage.getItem('gf_token')
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/upload/media`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: form,
+      })
+      if (res.ok) {
+        const media = await res.json()
+        setProfile((prev: any) => ({ ...prev, media: [...(prev.media || []), media] }))
+      }
+    } finally {
+      setUploading(false)
+      if (mediaInputRef.current) mediaInputRef.current.value = ''
+    }
+  }
+
+  const handleDeleteMedia = async (mediaId: string) => {
+    try {
+      await api.delete(`/api/upload/media/${mediaId}`)
+      setProfile((prev: any) => ({ ...prev, media: prev.media.filter((m: any) => m.id !== mediaId) }))
+    } catch {}
+  }
 
   const handleContact = async () => {
     if (!user) { router.push('/auth/login'); return }
@@ -76,15 +118,23 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
+      {/* Saved toast */}
+      {showSavedToast && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white text-sm px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 animate-fade-in">
+          <span>✓</span>
+          <span>Cambios guardados correctamente</span>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden mb-6">
         {/* Banner */}
         <div className="h-40 bg-gradient-to-br from-[var(--accent)]/30 to-[var(--muted)] relative">
-          {profile.media?.find((m: any) => m.type === 'IMAGE') && (
+          {profile.bannerUrl && (
             <img
-              src={profile.media[0].url}
+              src={profile.bannerUrl}
               alt=""
-              className="w-full h-full object-cover opacity-40"
+              className="w-full h-full object-cover"
             />
           )}
           {profile.isPremium && (
@@ -96,7 +146,7 @@ export default function ProfilePage() {
 
         <div className="px-6 pb-6">
           {/* Avatar */}
-          <div className="flex items-end justify-between -mt-12 mb-4">
+          <div className="flex items-end justify-between -mt-12 mb-4 relative z-10">
             <div className="w-24 h-24 rounded-full border-4 border-[var(--card)] bg-[var(--accent)] flex items-center justify-center text-3xl font-bold text-white overflow-hidden">
               {profile.avatarUrl ? (
                 <img src={profile.avatarUrl} alt="" className="w-full h-full object-cover" />
@@ -108,7 +158,7 @@ export default function ProfilePage() {
               {isOwnProfile ? (
                 <button
                   onClick={() => router.push('/settings/profile')}
-                  className="border border-[var(--border)] hover:border-[var(--accent)] text-sm px-4 py-2 rounded-lg transition-colors"
+                  className="border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)] hover:bg-[var(--accent)]/5 active:scale-95 text-sm px-4 py-2 rounded-lg transition-all"
                 >
                   Editar perfil
                 </button>
@@ -292,17 +342,43 @@ export default function ProfilePage() {
 
         {/* Right: media */}
         <div className="md:col-span-2">
+          <input
+            ref={mediaInputRef}
+            type="file"
+            accept="image/*,video/*"
+            className="hidden"
+            onChange={handleMediaUpload}
+          />
           {profile.media?.length > 0 ? (
             <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5">
-              <h2 className="font-semibold mb-4">Fotos y vídeos</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-semibold">Fotos y vídeos</h2>
+                {isOwnProfile && (
+                  <button
+                    onClick={() => mediaInputRef.current?.click()}
+                    disabled={uploading}
+                    className="text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-white px-3 py-1.5 rounded-lg transition-colors"
+                  >
+                    {uploading ? 'Subiendo...' : '+ Subir media'}
+                  </button>
+                )}
+              </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {profile.media.map((m: any) => (
-                  <div key={m.id} className="aspect-square rounded-xl overflow-hidden bg-[var(--muted)]">
+                  <div key={m.id} className="aspect-square rounded-xl overflow-hidden bg-[var(--muted)] relative group">
                     {m.type === 'IMAGE' ? (
                       <img src={m.url} alt={m.title || ''} className="w-full h-full object-cover" />
                     ) : m.type === 'VIDEO' ? (
                       <video src={m.url} className="w-full h-full object-cover" controls />
                     ) : null}
+                    {isOwnProfile && (
+                      <button
+                        onClick={() => handleDeleteMedia(m.id)}
+                        className="absolute top-2 right-2 w-7 h-7 bg-black/70 hover:bg-red-600 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                      >
+                        ✕
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
@@ -312,8 +388,12 @@ export default function ProfilePage() {
               <div className="text-4xl mb-3">🎬</div>
               <p className="text-sm">Sin fotos ni vídeos todavía</p>
               {isOwnProfile && (
-                <button className="mt-3 text-[var(--accent)] text-sm hover:underline">
-                  Subir media
+                <button
+                  onClick={() => mediaInputRef.current?.click()}
+                  disabled={uploading}
+                  className="mt-3 text-[var(--accent)] text-sm hover:underline disabled:opacity-50"
+                >
+                  {uploading ? 'Subiendo...' : 'Subir media'}
                 </button>
               )}
             </div>
