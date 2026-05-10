@@ -97,6 +97,25 @@ export default function VenueManagePage() {
     }))
   }
 
+  const rejectBooking = async (bookingId: string) => {
+    if (!confirm('¿Seguro que quieres rechazar esta solicitud?')) return
+    await api.patch(`/api/bookings/${bookingId}/reject`, {})
+    setVenue((prev: any) => ({
+      ...prev,
+      bookings: prev.bookings.map((b: any) =>
+        b.id === bookingId ? { ...b, status: 'CANCELLED' } : b
+      ),
+    }))
+  }
+
+  const messageRenter = async (renterId: string) => {
+    await api.post('/api/messages/send', {
+      recipientId: renterId,
+      content: 'Hola, tengo una pregunta sobre tu solicitud.',
+    })
+    router.push('/messages')
+  }
+
   if (authLoading || loading) {
     return <div className="max-w-3xl mx-auto px-6 py-10 text-gray-400">Cargando...</div>
   }
@@ -141,7 +160,7 @@ export default function VenueManagePage() {
                 : 'border-transparent text-gray-400 hover:text-white'
             }`}
           >
-            {t === 'schedule' ? '🗓 Horario de disponibilidad' : `📋 Reservas (${upcomingBookings.length})`}
+            {t === 'schedule' ? '🗓 Horario' : `📨 Solicitudes${upcomingBookings.filter((b:any)=>b.status==='PENDING').length > 0 ? ` (${upcomingBookings.filter((b:any)=>b.status==='PENDING').length} pendientes)` : ` (${upcomingBookings.length})`}`}
           </button>
         ))}
       </div>
@@ -220,48 +239,73 @@ export default function VenueManagePage() {
         </div>
       )}
 
-      {/* Bookings list */}
+      {/* Solicitudes */}
       {tab === 'bookings' && (
         <div className="flex flex-col gap-3">
           {upcomingBookings.length === 0 ? (
             <div className="text-center py-20 text-gray-400">
-              <div className="text-4xl mb-3">📅</div>
-              <p>Sin reservas próximas</p>
+              <div className="text-4xl mb-3">📨</div>
+              <p>No hay solicitudes pendientes</p>
             </div>
           ) : (
             upcomingBookings.map((b: any) => {
               const hours = (new Date(b.endTime).getTime() - new Date(b.startTime).getTime()) / 3600000
+              const isPending = b.status === 'PENDING'
               return (
-                <div key={b.id} className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 flex items-center gap-4">
-                  {/* Avatar */}
-                  <div className="w-10 h-10 rounded-full bg-[var(--accent)] flex items-center justify-center text-sm font-bold text-white shrink-0">
-                    {b.renter?.profile?.displayName?.[0]?.toUpperCase() || '?'}
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <p className="font-medium truncate">{b.renter?.profile?.displayName}</p>
-                      <span className={`text-xs px-2.5 py-1 rounded-full ${STATUS_STYLES[b.status]}`}>
-                        {STATUS_LABELS[b.status]}
-                      </span>
+                <div
+                  key={b.id}
+                  className={`bg-[var(--card)] border rounded-2xl p-5 ${isPending ? 'border-yellow-500/30' : 'border-[var(--border)]'}`}
+                >
+                  <div className="flex items-start gap-4">
+                    {/* Avatar */}
+                    <div className="w-10 h-10 rounded-full bg-[var(--accent)] flex items-center justify-center text-sm font-bold text-white shrink-0">
+                      {b.renter?.profile?.displayName?.[0]?.toUpperCase() || '?'}
                     </div>
-                    <p className="text-sm text-gray-400">
-                      {fmtDate(b.startTime)} · {fmtTime(b.startTime)} – {fmtTime(b.endTime)} ({hours}h)
-                    </p>
-                    <p className="text-sm font-medium mt-1">
-                      {(parseFloat(b.totalPrice) - parseFloat(b.platformFee)).toFixed(2)}€ netos
-                      <span className="text-gray-500 font-normal"> (total cliente: {parseFloat(b.totalPrice).toFixed(2)}€)</span>
-                    </p>
-                    {b.notes && <p className="text-xs text-gray-500 mt-1 italic">"{b.notes}"</p>}
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
+                        <p className="font-semibold">{b.renter?.profile?.displayName}</p>
+                        <span className={`text-xs px-2.5 py-1 rounded-full ${STATUS_STYLES[b.status]}`}>
+                          {STATUS_LABELS[b.status]}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-300">
+                        📅 {fmtDate(b.startTime)} · {fmtTime(b.startTime)} – {fmtTime(b.endTime)} ({hours}h)
+                      </p>
+                      <p className="text-sm font-medium text-green-400 mt-1">
+                        {(parseFloat(b.totalPrice) - parseFloat(b.platformFee)).toFixed(2)}€ netos
+                        <span className="text-gray-500 font-normal text-xs ml-1">(cobran {parseFloat(b.totalPrice).toFixed(2)}€)</span>
+                      </p>
+                      {b.notes && (
+                        <p className="text-xs text-gray-400 mt-1.5 bg-[var(--muted)] rounded-lg px-3 py-1.5 italic">
+                          "{b.notes}"
+                        </p>
+                      )}
+                    </div>
                   </div>
 
-                  {b.status === 'PENDING' && (
-                    <button
-                      onClick={() => confirmBooking(b.id)}
-                      className="bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/20 px-4 py-2 rounded-lg text-sm font-medium transition-colors shrink-0"
-                    >
-                      Confirmar
-                    </button>
+                  {/* Actions */}
+                  {isPending && (
+                    <div className="flex gap-2 mt-4 pt-4 border-t border-[var(--border)]">
+                      <button
+                        onClick={() => confirmBooking(b.id)}
+                        className="flex-1 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/20 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                      >
+                        ✓ Aceptar
+                      </button>
+                      <button
+                        onClick={() => messageRenter(b.renter.id)}
+                        className="flex-1 bg-[var(--muted)] hover:bg-[var(--accent)]/10 border border-[var(--border)] hover:border-[var(--accent)] py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                      >
+                        💬 Preguntar
+                      </button>
+                      <button
+                        onClick={() => rejectBooking(b.id)}
+                        className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                      >
+                        ✕ Rechazar
+                      </button>
+                    </div>
                   )}
                 </div>
               )

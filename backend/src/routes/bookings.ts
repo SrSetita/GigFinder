@@ -13,7 +13,16 @@ const createBookingSchema = z.object({
   notes: z.string().optional(),
 })
 
+async function getVenueOwnerUserId(server: FastifyInstance, venueId: string): Promise<string | null> {
+  const venue = await server.prisma.venue.findUnique({
+    where: { id: venueId },
+    include: { profile: { select: { userId: true } } },
+  })
+  return venue?.profile.userId ?? null
+}
+
 export default async function bookingRoutes(server: FastifyInstance) {
+  // Create a booking request (always starts as PENDING)
   server.post('/', { preHandler: authenticate }, async (request, reply) => {
     const { userId } = request.user
     const body = createBookingSchema.safeParse(request.body)
@@ -30,57 +39,49 @@ export default async function bookingRoutes(server: FastifyInstance) {
         venueId,
         ...(roomId && { roomId }),
         status: { in: ['PENDING', 'CONFIRMED'] },
-        OR: [
-          { startTime: { lt: end }, endTime: { gt: start } },
-        ],
+        OR: [{ startTime: { lt: end }, endTime: { gt: start } }],
       },
     })
-
-    if (conflict) return reply.code(409).send({ error: 'Time slot already booked' })
+    if (conflict) return reply.code(409).send({ error: 'That time slot already has a pending or confirmed request' })
 
     const target = roomId
       ? await server.prisma.room.findUnique({ where: { id: roomId } })
       : await server.prisma.venue.findUnique({ where: { id: venueId } })
-
     if (!target) return reply.code(404).send({ error: 'Venue or room not found' })
 
-    const hours = (end.getTime() - start.getTime()) / (1000 * 60 * 60)
+    const hours = (end.getTime() - start.getTime()) / 3600000
     const basePrice = parseFloat(target.hourlyRate.toString()) * hours
     const platformFee = basePrice * PLATFORM_FEE_RATE
-    const totalPrice = basePrice + platformFee
 
     const booking = await server.prisma.booking.create({
       data: {
-        venueId,
-        roomId,
-        bandId,
+        venueId, roomId, bandId,
         renterId: userId,
-        startTime: start,
-        endTime: end,
-        totalPrice,
-        platformFee,
-        notes,
+        startTime: start, endTime: end,
+        totalPrice: basePrice + platformFee,
+        platformFee, notes,
+        status: 'PENDING',
       },
     })
 
     return reply.code(201).send(booking)
   })
 
+  // Renter: list own requests/bookings
   server.get('/my', { preHandler: authenticate }, async (request) => {
     const { userId } = request.user
 
-    const bookings = await server.prisma.booking.findMany({
+    return server.prisma.booking.findMany({
       where: { renterId: userId },
       include: {
-        venue: { include: { profile: { select: { displayName: true, avatarUrl: true } } } },
+        venue: { include: { profile: { select: { displayName: true, avatarUrl: true, city: true } } } },
         room: true,
       },
       orderBy: { startTime: 'asc' },
     })
-
-    return bookings
   })
 
+  // Renter: cancel own request (only if still PENDING)
   server.patch('/:id/cancel', { preHandler: authenticate }, async (request, reply) => {
     const { userId } = request.user
     const { id } = request.params as { id: string }
@@ -90,11 +91,38 @@ export default async function bookingRoutes(server: FastifyInstance) {
     if (booking.renterId !== userId) return reply.code(403).send({ error: 'Not your booking' })
     if (booking.status === 'CANCELLED') return reply.code(400).send({ error: 'Already cancelled' })
 
-    const updated = await server.prisma.booking.update({
-      where: { id },
-      data: { status: 'CANCELLED' },
-    })
+    return server.prisma.booking.update({ where: { id }, data: { status: 'CANCELLED' } })
+  })
 
-    return updated
+  // Venue: confirm a request
+  server.patch('/:id/confirm', { preHandler: authenticate }, async (request, reply) => {
+    const { userId, role } = request.user
+    if (role !== 'VENUE') return reply.code(403).send({ error: 'Only venue accounts can confirm requests' })
+
+    const { id } = request.params as { id: string }
+    const booking = await server.prisma.booking.findUnique({ where: { id } })
+    if (!booking) return reply.code(404).send({ error: 'Booking not found' })
+
+    const ownerUserId = await getVenueOwnerUserId(server, booking.venueId)
+    if (ownerUserId !== userId) return reply.code(403).send({ error: 'Not your venue' })
+    if (booking.status !== 'PENDING') return reply.code(400).send({ error: `Cannot confirm a ${booking.status.toLowerCase()} request` })
+
+    return server.prisma.booking.update({ where: { id }, data: { status: 'CONFIRMED' } })
+  })
+
+  // Venue: reject a request
+  server.patch('/:id/reject', { preHandler: authenticate }, async (request, reply) => {
+    const { userId, role } = request.user
+    if (role !== 'VENUE') return reply.code(403).send({ error: 'Only venue accounts can reject requests' })
+
+    const { id } = request.params as { id: string }
+    const booking = await server.prisma.booking.findUnique({ where: { id } })
+    if (!booking) return reply.code(404).send({ error: 'Booking not found' })
+
+    const ownerUserId = await getVenueOwnerUserId(server, booking.venueId)
+    if (ownerUserId !== userId) return reply.code(403).send({ error: 'Not your venue' })
+    if (booking.status !== 'PENDING') return reply.code(400).send({ error: `Cannot reject a ${booking.status.toLowerCase()} request` })
+
+    return server.prisma.booking.update({ where: { id }, data: { status: 'CANCELLED' } })
   })
 }

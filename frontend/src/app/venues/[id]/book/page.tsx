@@ -87,14 +87,17 @@ export default function BookVenuePage() {
   if (done) {
     return (
       <div className="max-w-lg mx-auto px-6 py-32 text-center">
-        <div className="text-6xl mb-6">🎉</div>
-        <h1 className="text-2xl font-bold mb-2">¡Reserva confirmada!</h1>
-        <p className="text-gray-400 mb-8">
-          {venue?.profile?.displayName} · {selectedDate} · {pad(selectedStart!)}:00 – {pad(selectedStart! + duration)}:00
+        <div className="text-6xl mb-6">📨</div>
+        <h1 className="text-2xl font-bold mb-2">¡Solicitud enviada!</h1>
+        <p className="text-gray-400 mb-2">
+          {venue?.profile?.displayName} recibirá tu solicitud y la aceptará o rechazará.
+        </p>
+        <p className="text-gray-500 text-sm mb-8">
+          {selectedDate} · {pad(selectedStart!)}:00 – {pad(selectedStart! + duration)}:00
         </p>
         <div className="flex gap-3 justify-center">
           <button onClick={() => router.push('/bookings')} className="bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white px-6 py-2.5 rounded-lg font-medium transition-colors">
-            Ver mis reservas
+            Ver mis solicitudes
           </button>
           <button onClick={() => router.push('/search?type=venue')} className="border border-[var(--border)] hover:border-[var(--accent)] px-6 py-2.5 rounded-lg transition-colors">
             Buscar más salas
@@ -242,10 +245,10 @@ export default function BookVenuePage() {
               disabled={!selectedDate || selectedStart === null || submitting}
               className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-40 disabled:cursor-not-allowed text-white py-3 rounded-xl font-semibold transition-colors"
             >
-              {submitting ? 'Confirmando...' : selectedStart !== null ? `Reservar ${pad(selectedStart)}:00 – ${pad(selectedStart + duration)}:00` : 'Selecciona fecha y hora'}
+              {submitting ? 'Enviando solicitud...' : selectedStart !== null ? `Solicitar ${pad(selectedStart)}:00 – ${pad(selectedStart + duration)}:00` : 'Selecciona fecha y hora'}
             </button>
 
-            <p className="text-xs text-gray-600 text-center mt-3">Sin cargos hasta confirmar</p>
+            <p className="text-xs text-gray-600 text-center mt-3">La sala revisará tu solicitud antes de confirmar</p>
           </div>
         </div>
       </div>

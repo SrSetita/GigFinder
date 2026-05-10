@@ -37,12 +37,21 @@ export default function Navbar() {
               >
                 Mensajes
               </Link>
-              <Link
-                href="/bookings"
-                className="text-gray-400 hover:text-white transition-colors text-sm"
-              >
-                Mis reservas
-              </Link>
+              {user.role === 'VENUE' ? (
+                <Link
+                  href="/venues/manage"
+                  className="text-gray-400 hover:text-white transition-colors text-sm"
+                >
+                  Mi sala
+                </Link>
+              ) : (
+                <Link
+                  href="/bookings"
+                  className="text-gray-400 hover:text-white transition-colors text-sm"
+                >
+                  Mis solicitudes
+                </Link>
+              )}
               <Link
                 href={`/profiles/${user.profile?.id}`}
                 className="flex items-center gap-2 text-sm hover:opacity-80 transition-opacity"
