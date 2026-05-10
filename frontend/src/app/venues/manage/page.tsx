@@ -19,10 +19,11 @@ const STATUS_LABELS: Record<string, string> = {
 
 function pad(n: number) { return String(n).padStart(2, '0') }
 function fmtDate(iso: string) {
-  return new Date(iso).toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })
+  return new Date(iso).toLocaleDateString('es-ES', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'short' })
 }
 function fmtTime(iso: string) {
-  return new Date(iso).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+  const d = new Date(iso)
+  return `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`
 }
 
 interface DaySchedule {

@@ -28,12 +28,14 @@ const STATUS_DESC: Record<string, string> = {
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('es-ES', {
+    timeZone: 'UTC',
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
   })
 }
 
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+  const d = new Date(iso)
+  return `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`
 }
 
 export default function BookingsPage() {
