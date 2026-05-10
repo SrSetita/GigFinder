@@ -37,10 +37,12 @@ function RegisterForm() {
       const res = await api.post<{ token: string; user: any }>('/api/auth/register', form)
       setSession(res.token, res.user)
       setUser(res.user)
-      router.push('/')
+      window.location.href = '/'
     } catch (err: any) {
-      setError(err?.error || 'Error al registrarse')
-    } finally {
+      const msg = err instanceof TypeError
+        ? 'No se pudo conectar con el servidor'
+        : (err?.error || 'Error al registrarse. Inténtalo de nuevo.')
+      setError(msg)
       setLoading(false)
     }
   }
@@ -53,8 +55,8 @@ function RegisterForm() {
           <p className="text-gray-400 mb-8 text-sm">Crea tu cuenta y empieza a conectar</p>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg p-3 mb-6 text-sm">
-              {error}
+            <div className="bg-red-600 text-white rounded-lg p-3 mb-6 text-sm font-medium">
+              ⚠️ {error}
             </div>
           )}
 
