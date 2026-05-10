@@ -22,10 +22,12 @@ export default function LoginPage() {
       const res = await api.post<{ token: string; user: any }>('/api/auth/login', form)
       setSession(res.token, res.user)
       setUser(res.user)
-      router.push('/')
+      window.location.href = '/'
     } catch (err: any) {
-      setError(err?.error || 'Email o contraseña incorrectos')
-    } finally {
+      const msg = err instanceof TypeError
+        ? 'No se pudo conectar con el servidor'
+        : (err?.error || 'Email o contraseña incorrectos')
+      setError(msg)
       setLoading(false)
     }
   }
@@ -38,8 +40,8 @@ export default function LoginPage() {
           <p className="text-gray-400 mb-8 text-sm">Entra en tu cuenta de GigFinder</p>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg p-3 mb-6 text-sm">
-              {error}
+            <div className="bg-red-600 text-white rounded-lg p-3 mb-6 text-sm font-medium">
+              ⚠️ {error}
             </div>
           )}
 
