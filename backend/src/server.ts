@@ -29,8 +29,14 @@ const server = Fastify({ logger: true })
 
 server.decorate('prisma', prisma)
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:3000',
+  /^http:\/\/192\.168\.\d+\.\d+:\d+$/,  // cualquier IP local de red doméstica
+  /^http:\/\/10\.\d+\.\d+\.\d+:\d+$/,
+]
+
 server.register(cors, {
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
