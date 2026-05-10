@@ -17,12 +17,16 @@ export default function VerifyPage() {
     fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/auth/verify?token=${token}`)
       .then(async (res) => {
         if (!res.ok) throw new Error()
-        // Update stored user so banner disappears immediately
-        if (user) {
-          const updated = { ...user, emailVerified: true }
-          localStorage.setItem('gf_user', JSON.stringify(updated))
-          setUser(updated)
-        }
+        // Update localStorage directly — don't rely on AuthContext which may still be loading
+        try {
+          const raw = localStorage.getItem('gf_user')
+          if (raw) {
+            const stored = JSON.parse(raw)
+            const updated = { ...stored, emailVerified: true }
+            localStorage.setItem('gf_user', JSON.stringify(updated))
+            setUser(updated)
+          }
+        } catch {}
         setStatus('ok')
       })
       .catch(() => setStatus('error'))
