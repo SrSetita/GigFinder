@@ -98,10 +98,6 @@ export default function HomePage() {
       <MeshBackground className="flex flex-col items-center justify-center px-6 py-36 text-center min-h-[88vh]">
         <div className="relative z-10 flex flex-col items-center">
 
-          <div className="hero-badge inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 text-sm text-purple-300 mb-8">
-            <span className="w-2 h-2 bg-[var(--accent)] rounded-full animate-pulse" />
-            La plataforma musical de España
-          </div>
 
           <h1 className="hero-title text-5xl md:text-7xl font-black tracking-tight mb-6 leading-none">
             Tu escenario<br />
@@ -141,10 +137,9 @@ export default function HomePage() {
           {ROLES.map((r, i) => {
             const Icon = r.icon
             return (
+              <div key={r.label} style={{ transitionDelay: roles.inView ? `${i * 60}ms` : '0ms' }}>
               <Link
-                key={r.label}
                 href={r.href}
-                style={{ transitionDelay: roles.inView ? `${i * 60}ms` : '0ms' }}
                 className="flex flex-col items-center text-center gap-2 p-4 rounded-xl hover:bg-white/[0.05] transition-colors group cursor-pointer"
               >
                 <div className="w-10 h-10 rounded-xl bg-[var(--accent)]/15 flex items-center justify-center group-hover:bg-[var(--accent)]/25 transition-colors">
@@ -153,6 +148,7 @@ export default function HomePage() {
                 <span className="font-semibold text-sm">{r.label}</span>
                 <span className="text-xs text-gray-500 leading-snug">{r.desc}</span>
               </Link>
+              </div>
             )
           })}
         </div>
@@ -172,13 +168,12 @@ export default function HomePage() {
           {FEATURES.map((f, i) => {
             const Icon = f.icon
             return (
+              <div key={f.title} style={{ transitionDelay: features.inView ? `${i * 80}ms` : '0ms' }}>
               <GlassCard
-                key={f.title}
                 hover
                 glow
                 as="div"
-                style={{ transitionDelay: features.inView ? `${i * 80}ms` : '0ms' }}
-                className="group p-6 relative overflow-hidden cursor-pointer"
+                className="group p-6 relative overflow-hidden cursor-pointer h-full"
                 onClick={() => window.location.href = f.href}
               >
                 <div
@@ -196,6 +191,7 @@ export default function HomePage() {
                   </span>
                 </div>
               </GlassCard>
+              </div>
             )
           })}
         </div>
