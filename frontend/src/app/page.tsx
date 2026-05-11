@@ -13,8 +13,8 @@ const GENRES = ['Rock', 'Metal', 'Jazz', 'Pop', 'Hip-Hop', 'Electrónica', 'Flam
 const FEATURES = [
   {
     icon: Building2,
-    title: 'Reserva salas de ensayo',
-    desc: 'Encuentra y reserva salas por horas. Calendario en tiempo real, sin sorpresas.',
+    title: 'Reserva locales y salas',
+    desc: 'Encuentra locales para tocar, actuar o ensayar. Reserva por horas, calendario en tiempo real.',
     href: '/search?type=venue',
     accent: 'rgba(124,58,237,0.15)',
   },
@@ -63,7 +63,7 @@ const STEPS = [
 ]
 
 
-function useInView(threshold = 0.15) {
+function useInView(threshold = 0.05) {
   const ref = useRef<HTMLDivElement>(null)
   const [inView, setInView] = useState(false)
   useEffect(() => {
@@ -80,9 +80,7 @@ function useInView(threshold = 0.15) {
 }
 
 export default function HomePage() {
-  const features = useInView()
-  const steps    = useInView()
-  const genres   = useInView()
+  const genres = useInView()
 
   return (
     <div className="flex flex-col">
@@ -117,24 +115,39 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* Floating notes — clipped inside hero, visible on load */}
+        <div className="absolute bottom-0 inset-x-0 h-64 overflow-hidden pointer-events-none select-none z-10" aria-hidden="true"
+          style={{ maskImage: 'linear-gradient(to top, black 25%, transparent 85%)', WebkitMaskImage: 'linear-gradient(to top, black 25%, transparent 85%)' }}
+        >
+          {[
+            { note: '♪', left: '8%',  delay: '0s',    dur: '4s',  size: 'text-2xl', opacity: 'opacity-20' },
+            { note: '♫', left: '20%', delay: '1.2s',  dur: '5s',  size: 'text-lg',  opacity: 'opacity-15' },
+            { note: '♩', left: '35%', delay: '0.5s',  dur: '3.5s',size: 'text-3xl', opacity: 'opacity-25' },
+            { note: '♬', left: '50%', delay: '2s',    dur: '4.5s',size: 'text-xl',  opacity: 'opacity-20' },
+            { note: '♪', left: '65%', delay: '0.8s',  dur: '4s',  size: 'text-2xl', opacity: 'opacity-15' },
+            { note: '♫', left: '78%', delay: '1.8s',  dur: '5.5s',size: 'text-lg',  opacity: 'opacity-20' },
+            { note: '♩', left: '90%', delay: '0.3s',  dur: '3.8s',size: 'text-xl',  opacity: 'opacity-25' },
+          ].map((n, i) => (
+            <span
+              key={i}
+              className={`absolute bottom-0 text-[var(--accent)] ${n.size} ${n.opacity}`}
+              style={{ left: n.left, animation: `note-float ${n.dur} ${n.delay} ease-in infinite` }}
+            >
+              {n.note}
+            </span>
+          ))}
+        </div>
+
         <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[var(--background)] to-transparent pointer-events-none" />
       </MeshBackground>
 
       {/* ── Features ── */}
-      <section className="px-6 py-24 max-w-7xl mx-auto w-full">
-        <div className="text-center mb-14">
-          <h2 className="text-3xl font-bold mb-3">Todo lo que necesitas</h2>
-          <p className="text-gray-500">Una plataforma, todas las herramientas</p>
-        </div>
-
-        <div
-          ref={features.ref}
-          className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-700 ${features.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-        >
+      <section className="px-6 pb-20 max-w-7xl mx-auto w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {FEATURES.map((f, i) => {
             const Icon = f.icon
             return (
-              <div key={f.title} style={{ transitionDelay: features.inView ? `${i * 80}ms` : '0ms' }}>
+              <div key={f.title}>
               <GlassCard
                 hover
                 glow
@@ -171,10 +184,7 @@ export default function HomePage() {
             <p className="text-gray-500">Simple. Rápido. Sin complicaciones.</p>
           </div>
 
-          <div
-            ref={steps.ref}
-            className={`relative transition-all duration-700 ${steps.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-          >
+          <div className="relative">
             {/* Connector line — visible only on md+ */}
             <div className="hidden md:block absolute top-10 left-[16.5%] right-[16.5%] h-px z-0"
               style={{ background: 'linear-gradient(to right, transparent, rgba(124,58,237,0.5) 20%, rgba(124,58,237,0.5) 80%, transparent)' }}
@@ -186,7 +196,6 @@ export default function HomePage() {
               return (
                 <div
                   key={step.n}
-                  style={{ transitionDelay: steps.inView ? `${i * 100}ms` : '0ms' }}
                   className="flex flex-col items-center text-center"
                 >
                   <div className="mb-6 relative z-10">
@@ -225,7 +234,7 @@ export default function HomePage() {
               <Link
                 key={g}
                 href={`/search?genre=${encodeURIComponent(g)}`}
-                style={genres.inView ? { animationDelay: `${i * 45}ms` } : { opacity: 0 }}
+                style={{ animationDelay: `${i * 45}ms` }}
                 className="genre-pill glass hover:border-[var(--accent)]/50 hover:bg-[var(--accent)]/10 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-[0_0_14px_rgba(124,58,237,0.25)]"
               >
                 {g}

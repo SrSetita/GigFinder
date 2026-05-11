@@ -19,6 +19,7 @@ import uploadRoutes from './routes/upload'
 import notificationRoutes from './routes/notifications'
 import reviewRoutes from './routes/reviews'
 import gigOfferRoutes from './routes/gig-offers'
+import bandRoutes from './routes/bands'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -70,6 +71,7 @@ server.register(uploadRoutes,       { prefix: '/api/upload' })
 server.register(notificationRoutes, { prefix: '/api/notifications' })
 server.register(reviewRoutes,       { prefix: '/api/reviews' })
 server.register(gigOfferRoutes,     { prefix: '/api/gig-offers' })
+server.register(bandRoutes)
 
 server.get('/api/health', async () => ({ status: 'ok' }))
 

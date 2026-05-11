@@ -66,7 +66,15 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4000/api/health)",
       "Bash(curl -s http://localhost:4000/socket.io/)",
       "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"sí, hazlo\" npx prisma migrate reset --force)",
-      "Bash(npx next *)"
+      "Bash(npx next *)",
+      "Bash(ip route *)",
+      "Bash(awk '{print $7; exit}')",
+      "Bash(awk '{print $1}')",
+      "Bash(pkill -f \"tsx watch\")",
+      "Bash(echo \"backend PID: $!\")",
+      "Bash(echo \"frontend PID: $!\")",
+      "Bash(curl -s http://192.168.0.35:3000)",
+      "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"sí, hazlo\" npx prisma migrate dev --name band_musician_owned)"
     ]
   }
 }

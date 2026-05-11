@@ -22,7 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    setUserState(getUser())
+    try { setUserState(getUser()) } catch { /* localStorage blocked */ }
     setLoading(false)
   }, [])
 

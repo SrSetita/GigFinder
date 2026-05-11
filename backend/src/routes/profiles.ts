@@ -37,7 +37,7 @@ export default async function profileRoutes(server: FastifyInstance) {
         user:    { select: { role: true } },
         media:   { orderBy: { sortOrder: 'asc' } },
         musician: true,
-        band:    { include: { members: { include: { musician: { include: { profile: { select: { displayName: true, avatarUrl: true } } } } } } } },
+        band:    { include: { members: { include: { user: { include: { profile: { select: { displayName: true, avatarUrl: true } } } } } } } },
         venue:   { include: { rooms: true } },
         promoter: true,
       },

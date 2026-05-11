@@ -2,18 +2,18 @@
 
 import Link from 'next/link'
 import { useAuth } from '@/lib/AuthContext'
-import { Mail, Building2, CalendarDays, LogOut, User } from 'lucide-react'
+import { Mail, Building2, CalendarDays, LogOut, User, Music2 } from 'lucide-react'
 import NotificationBell from '@/components/ui/NotificationBell'
 
 export default function Navbar() {
   const { user, loading, logout } = useAuth()
 
   return (
-    <nav className="border-b border-white/[0.07] backdrop-blur-md bg-white/[0.03] sticky top-0 z-50">
+    <nav className="border-b border-white/[0.07] backdrop-blur-md bg-white/[0.03] sticky top-0 z-[200]">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
         <Link href="/" className="flex-shrink-0 group">
-          <span className="text-xl font-black tracking-tight">
-            Gig<span className="text-[var(--accent)] group-hover:text-white transition-colors duration-200" style={{ textShadow: '0 0 20px rgba(124,58,237,0.6)' }}>Finder</span>
+          <span className="text-xl font-black tracking-tight transition-all duration-200 group-hover:scale-105 inline-block group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.45)]">
+            Gig<span className="text-[var(--accent)]" style={{ textShadow: '0 0 20px rgba(124,58,237,0.6)' }}>Finder</span>
           </span>
         </Link>
 
@@ -41,6 +41,10 @@ export default function Navbar() {
               <Link href="/messages" className="hidden md:flex items-center gap-1.5 text-gray-400 hover:text-white hover:bg-white/[0.06] px-3 py-1.5 rounded-lg transition-all text-sm">
                 <Mail size={14} />
                 Mensajes
+              </Link>
+              <Link href="/dashboard" className="hidden md:flex items-center gap-1.5 text-gray-400 hover:text-white hover:bg-white/[0.06] px-3 py-1.5 rounded-lg transition-all text-sm">
+                <Music2 size={14} />
+                Mis bandas
               </Link>
               {user.role === 'VENUE' ? (
                 <Link href="/venues/manage" className="hidden md:flex items-center gap-1.5 text-gray-400 hover:text-white hover:bg-white/[0.06] px-3 py-1.5 rounded-lg transition-all text-sm">
@@ -102,6 +106,9 @@ export default function Navbar() {
           <>
             <Link href="/messages" className="flex-shrink-0 text-xs text-gray-400 hover:text-white bg-white/[0.05] hover:bg-[var(--accent)]/20 px-3 py-1.5 rounded-full transition-colors">
               Mensajes
+            </Link>
+            <Link href="/dashboard" className="flex-shrink-0 text-xs text-gray-400 hover:text-white bg-white/[0.05] hover:bg-[var(--accent)]/20 px-3 py-1.5 rounded-full transition-colors">
+              Mis bandas
             </Link>
             {user.role === 'VENUE' ? (
               <Link href="/venues/manage" className="flex-shrink-0 text-xs text-gray-400 hover:text-white bg-white/[0.05] hover:bg-[var(--accent)]/20 px-3 py-1.5 rounded-full transition-colors">

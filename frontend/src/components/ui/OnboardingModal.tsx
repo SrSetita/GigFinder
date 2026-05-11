@@ -70,8 +70,8 @@ export default function OnboardingModal() {
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center px-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={dismiss} />
-      <div className="relative w-full max-w-lg glass-blur border border-white/[0.1] rounded-2xl p-8 shadow-2xl">
+      <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={dismiss} />
+      <div className="relative w-full max-w-lg border border-white/[0.15] rounded-2xl p-8 shadow-2xl" style={{ backgroundColor: 'rgba(12,12,20,0.97)', backdropFilter: 'blur(20px)' }}>
         <button
           onClick={dismiss}
           className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"
