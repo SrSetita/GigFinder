@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'
 import { randomBytes } from 'crypto'
 import { z } from 'zod'
 import { Role } from '../generated/prisma/client'
-import { sendVerificationEmail } from '../lib/email'
+import { sendVerificationEmail, sendPasswordResetEmail } from '../lib/email'
 
 const RESEND_COOLDOWN_MS = 2 * 60 * 1000 // 2 minutes
 const resendRateLimit = new Map<string, number>() // email → last sent timestamp
@@ -106,6 +106,48 @@ export default async function authRoutes(server: FastifyInstance) {
     await server.prisma.user.update({
       where: { id: user.id },
       data: { emailVerifiedAt: new Date(), verificationToken: null },
+    })
+
+    return { ok: true }
+  })
+
+  server.post('/forgot-password', async (request, reply) => {
+    const { email } = request.body as { email?: string }
+    if (!email) return reply.code(400).send({ error: 'Email required' })
+
+    const user = await server.prisma.user.findUnique({ where: { email } })
+    if (user) {
+      const resetToken = generateToken()
+      const resetExpiry = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
+
+      await server.prisma.user.update({
+        where: { id: user.id },
+        data: { passwordResetToken: resetToken, passwordResetExpiry: resetExpiry },
+      })
+
+      sendPasswordResetEmail(email, resetToken).catch(() => {})
+    }
+
+    return { ok: true }
+  })
+
+  server.post('/reset-password', async (request, reply) => {
+    const { token, newPassword } = request.body as { token?: string; newPassword?: string }
+
+    if (!token || !newPassword || newPassword.length < 8) {
+      return reply.code(400).send({ error: 'Se requiere token y contraseña de mínimo 8 caracteres' })
+    }
+
+    const user = await server.prisma.user.findUnique({ where: { passwordResetToken: token } })
+
+    if (!user || !user.passwordResetExpiry || user.passwordResetExpiry < new Date()) {
+      return reply.code(400).send({ error: 'El enlace ha expirado o no es válido' })
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 12)
+    await server.prisma.user.update({
+      where: { id: user.id },
+      data: { passwordHash, passwordResetToken: null, passwordResetExpiry: null },
     })
 
     return { ok: true }

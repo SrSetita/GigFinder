@@ -32,9 +32,11 @@ model User {
   email             String    @unique
   passwordHash      String    @map("password_hash")
   role              Role
-  emailVerifiedAt   DateTime? @map("email_verified_at")
-  verificationToken String?   @unique @map("verification_token")
-  createdAt         DateTime  @default(now()) @map("created_at")
+  emailVerifiedAt      DateTime? @map("email_verified_at")
+  verificationToken    String?   @unique @map("verification_token")
+  passwordResetToken   String?   @unique @map("password_reset_token")
+  passwordResetExpiry  DateTime? @map("password_reset_expiry")
+  createdAt            DateTime  @default(now()) @map("created_at")
   updatedAt         DateTime  @updatedAt @map("updated_at")
 
   profile          Profile?

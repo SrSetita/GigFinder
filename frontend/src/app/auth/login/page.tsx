@@ -3,9 +3,12 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { AlertCircle, Music4 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { setSession } from '@/lib/auth'
 import { useAuth } from '@/lib/AuthContext'
+import MeshBackground from '@/components/ui/MeshBackground'
+import GlassCard from '@/components/ui/GlassCard'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -33,15 +36,21 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-8">
-          <h1 className="text-2xl font-bold mb-2">Bienvenido de vuelta</h1>
-          <p className="text-gray-400 mb-8 text-sm">Entra en tu cuenta de GigFinder</p>
+    <MeshBackground className="min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-md relative z-10">
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-10 h-10 rounded-xl bg-[var(--accent)] flex items-center justify-center mb-4">
+            <Music4 size={20} className="text-white" />
+          </div>
+          <h1 className="text-2xl font-bold mb-1">Bienvenido de vuelta</h1>
+          <p className="text-gray-400 text-sm">Entra en tu cuenta de GigFinder</p>
+        </div>
 
+        <GlassCard className="p-8 glass-blur">
           {error && (
-            <div className="bg-red-600 text-white rounded-lg p-3 mb-6 text-sm font-medium">
-              ⚠️ {error}
+            <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl p-3 mb-6 text-sm">
+              <AlertCircle size={16} className="shrink-0" />
+              {error}
             </div>
           )}
 
@@ -53,7 +62,7 @@ export default function LoginPage() {
                 required
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)] transition-colors"
+                className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
                 placeholder="tu@email.com"
               />
             </div>
@@ -64,27 +73,32 @@ export default function LoginPage() {
                 required
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)] transition-colors"
+                className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
                 placeholder="••••••••"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-white py-3 rounded-lg font-semibold transition-colors mt-2"
+              className="btn-primary-glow py-3 rounded-xl font-semibold mt-2 disabled:opacity-50 disabled:transform-none"
             >
               {loading ? 'Entrando...' : 'Entrar'}
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-400 mt-6">
-            ¿No tienes cuenta?{' '}
-            <Link href="/auth/register" className="text-[var(--accent)] hover:underline">
-              Regístrate
+          <div className="flex flex-col items-center gap-2 mt-6">
+            <p className="text-sm text-gray-400">
+              ¿No tienes cuenta?{' '}
+              <Link href="/auth/register" className="text-[var(--accent)] hover:underline">
+                Regístrate
+              </Link>
+            </p>
+            <Link href="/auth/forgot-password" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
+              ¿Olvidaste tu contraseña?
             </Link>
-          </p>
-        </div>
+          </div>
+        </GlassCard>
       </div>
-    </div>
+    </MeshBackground>
   )
 }

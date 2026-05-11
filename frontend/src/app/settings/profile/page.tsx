@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { ArrowLeft, Camera, Play, Globe, Music2, Radio, AtSign, Link2 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/AuthContext'
+import GlassCard from '@/components/ui/GlassCard'
 
 const GENRE_OPTIONS = [
   'Rock', 'Metal', 'Pop', 'Jazz', 'Blues', 'Funk', 'Soul', 'R&B',
@@ -17,28 +19,23 @@ const INSTRUMENT_OPTIONS = [
   'DJ / Producción', 'Otro',
 ]
 
-const WANTED_ROLES = [
-  'Guitarra', 'Bajo', 'Batería', 'Teclado', 'Voz', 'Saxofón',
-  'Trompeta', 'Trombón', 'Otro',
-]
+const WANTED_ROLES = ['Guitarra', 'Bajo', 'Batería', 'Teclado', 'Voz', 'Saxofón', 'Trompeta', 'Trombón', 'Otro']
 
-const EVENT_TYPES = [
-  'Concierto', 'Festival', 'Privado', 'Boda', 'Corporativo',
-  'Club', 'Teatro', 'Al aire libre',
-]
+const EVENT_TYPES = ['Concierto', 'Festival', 'Privado', 'Boda', 'Corporativo', 'Club', 'Teatro', 'Al aire libre']
 
 const SOCIAL_PLATFORMS = ['instagram', 'spotify', 'youtube', 'soundcloud', 'twitter', 'facebook', 'web']
 
-const SOCIAL_ICONS: Record<string, string> = {
-  instagram: '📸', spotify: '🎵', youtube: '▶️',
-  soundcloud: '☁️', twitter: '🐦', facebook: '📘', web: '🌐',
+const SOCIAL_ICONS: Record<string, React.ElementType> = {
+  instagram:  Camera,
+  spotify:    Music2,
+  youtube:    Play,
+  soundcloud: Radio,
+  twitter:    AtSign,
+  facebook:   Globe,
+  web:        Globe,
 }
 
-function ChipSelector({
-  options,
-  selected,
-  onChange,
-}: {
+function ChipSelector({ options, selected, onChange }: {
   options: string[]
   selected: string[]
   onChange: (v: string[]) => void
@@ -55,7 +52,7 @@ function ChipSelector({
           className={`px-3 py-1 rounded-full text-sm border transition-colors ${
             selected.includes(o)
               ? 'bg-[var(--accent)] border-[var(--accent)] text-white'
-              : 'border-[var(--border)] text-gray-400 hover:border-[var(--accent)] hover:text-white'
+              : 'border-white/[0.07] text-gray-400 hover:border-[var(--accent)]/40 hover:text-white'
           }`}
         >
           {o}
@@ -73,28 +70,23 @@ export default function EditProfilePage() {
   const [saveError, setSaveError] = useState<string | null>(null)
   const [profile, setProfile] = useState<any>(null)
 
-  // Form state
   const [displayName, setDisplayName] = useState('')
   const [bio, setBio] = useState('')
   const [city, setCity] = useState('')
   const [genres, setGenres] = useState<string[]>([])
   const [socialLinks, setSocialLinks] = useState<Record<string, string>>({})
 
-  // Musician
   const [instruments, setInstruments] = useState<string[]>([])
   const [yearsExperience, setYearsExperience] = useState('')
   const [lookingForBand, setLookingForBand] = useState(false)
   const [openToCollabs, setOpenToCollabs] = useState(true)
 
-  // Band
   const [lookingForMembers, setLookingForMembers] = useState(false)
   const [wantedRoles, setWantedRoles] = useState<string[]>([])
 
-  // Promoter
   const [eventTypes, setEventTypes] = useState<string[]>([])
   const [website, setWebsite] = useState('')
 
-  // Upload state
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [bannerPreview, setBannerPreview] = useState<string | null>(null)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
@@ -200,7 +192,7 @@ export default function EditProfilePage() {
       router.push(`/profiles/${profile.id}?saved=1`)
     } catch (err: any) {
       if (err instanceof TypeError && err.message === 'Failed to fetch') {
-        setSaveError('No se pudo conectar con el servidor. Asegúrate de que el backend está en marcha.')
+        setSaveError('No se pudo conectar con el servidor.')
       } else {
         setSaveError(err?.error ? JSON.stringify(err.error) : (err?.message || 'Error al guardar los cambios.'))
       }
@@ -222,9 +214,9 @@ export default function EditProfilePage() {
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto px-6 py-16 animate-pulse">
-        <div className="h-8 w-48 bg-[var(--muted)] rounded mb-8" />
-        <div className="h-40 bg-[var(--muted)] rounded-2xl mb-6" />
-        <div className="h-64 bg-[var(--muted)] rounded-2xl" />
+        <div className="h-8 w-48 bg-white/[0.05] rounded mb-8" />
+        <div className="h-40 bg-white/[0.05] rounded-2xl mb-6" />
+        <div className="h-64 bg-white/[0.05] rounded-2xl" />
       </div>
     )
   }
@@ -236,43 +228,37 @@ export default function EditProfilePage() {
       <div className="flex items-center gap-4 mb-8">
         <button
           onClick={() => router.back()}
-          className="text-gray-400 hover:text-white text-sm transition-colors"
+          className="flex items-center gap-1.5 text-gray-400 hover:text-white text-sm transition-colors"
         >
-          ← Volver
+          <ArrowLeft size={16} />
+          Volver
         </button>
         <h1 className="text-2xl font-bold">Editar perfil</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         {/* Banner + Avatar */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden">
-          {/* Banner */}
+        <GlassCard className="overflow-hidden">
           <div
-            className="h-36 bg-gradient-to-br from-[var(--accent)]/30 to-[var(--muted)] relative cursor-pointer group"
+            className="h-36 bg-gradient-to-br from-[var(--accent)]/25 to-white/[0.02] relative cursor-pointer group"
             onClick={() => bannerInputRef.current?.click()}
           >
             {bannerPreview && (
               <img src={bannerPreview} alt="" className="w-full h-full object-cover" />
             )}
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <span className="text-white text-sm font-medium">
-                {uploadingBanner ? 'Subiendo...' : '📷 Cambiar banner'}
+              <span className="flex items-center gap-2 text-white text-sm font-medium">
+                <Camera size={16} />
+                {uploadingBanner ? 'Subiendo...' : 'Cambiar banner'}
               </span>
             </div>
-            <input
-              ref={bannerInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleBannerChange}
-            />
+            <input ref={bannerInputRef} type="file" accept="image/*" className="hidden" onChange={handleBannerChange} />
           </div>
 
           <div className="px-6 pb-6">
-            {/* Avatar */}
             <div className="flex items-end gap-4 -mt-10 mb-4 relative z-10">
               <div
-                className="w-20 h-20 rounded-full border-4 border-[var(--card)] bg-[var(--accent)] flex items-center justify-center text-2xl font-bold text-white overflow-hidden cursor-pointer relative group flex-shrink-0"
+                className="w-20 h-20 rounded-full border-4 border-[#12121f] bg-[var(--accent)] flex items-center justify-center text-2xl font-bold text-white overflow-hidden cursor-pointer relative group flex-shrink-0"
                 onClick={() => avatarInputRef.current?.click()}
               >
                 {avatarPreview ? (
@@ -281,58 +267,43 @@ export default function EditProfilePage() {
                   displayName?.[0]?.toUpperCase()
                 )}
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
-                  <span className="text-white text-xs">{uploadingAvatar ? '...' : '📷'}</span>
+                  <Camera size={16} className="text-white" />
                 </div>
-                <input
-                  ref={avatarInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleAvatarChange}
-                />
+                <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
               </div>
-              <p className="text-xs text-gray-500 pb-1">Haz clic en el avatar o banner para cambiarlos</p>
+              <p className="text-xs text-gray-500 pb-1">Clic en avatar o banner para cambiarlos</p>
             </div>
           </div>
-        </div>
+        </GlassCard>
 
         {/* Basic info */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 flex flex-col gap-4">
-          <h2 className="font-semibold text-sm text-gray-400 uppercase tracking-wider">Información básica</h2>
+        <GlassCard className="p-6 flex flex-col gap-4">
+          <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Información básica</h2>
 
           <div>
             <label className="block text-sm text-gray-400 mb-1.5">Nombre / Nombre artístico</label>
             <input
-              type="text"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              required
-              minLength={2}
-              maxLength={60}
-              className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
+              type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)}
+              required minLength={2} maxLength={60}
+              className="w-full bg-white/[0.05] border border-white/[0.07] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--accent)]/50 transition-colors"
             />
           </div>
 
           <div>
             <label className="block text-sm text-gray-400 mb-1.5">Ciudad</label>
             <input
-              type="text"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              required
-              className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
+              type="text" value={city} onChange={(e) => setCity(e.target.value)} required
+              className="w-full bg-white/[0.05] border border-white/[0.07] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--accent)]/50 transition-colors"
             />
           </div>
 
           <div>
             <label className="block text-sm text-gray-400 mb-1.5">Bio</label>
             <textarea
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              maxLength={1000}
-              rows={4}
+              value={bio} onChange={(e) => setBio(e.target.value)}
+              maxLength={1000} rows={4}
               placeholder="Cuéntanos sobre ti o tu proyecto..."
-              className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--accent)] transition-colors resize-none"
+              className="w-full bg-white/[0.05] border border-white/[0.07] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--accent)]/50 transition-colors resize-none"
             />
             <p className="text-xs text-gray-600 mt-1 text-right">{bio.length}/1000</p>
           </div>
@@ -341,15 +312,18 @@ export default function EditProfilePage() {
             <label className="block text-sm text-gray-400 mb-2">Géneros</label>
             <ChipSelector options={GENRE_OPTIONS} selected={genres} onChange={setGenres} />
           </div>
-        </div>
+        </GlassCard>
 
         {/* Social links */}
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 flex flex-col gap-4">
-          <h2 className="font-semibold text-sm text-gray-400 uppercase tracking-wider">Redes y plataformas</h2>
-          {SOCIAL_PLATFORMS.map((platform) => (
-            <div key={platform} className="flex items-center gap-3">
-              <span className="w-8 text-center text-lg flex-shrink-0">{SOCIAL_ICONS[platform]}</span>
-              <div className="flex-1">
+        <GlassCard className="p-6 flex flex-col gap-4">
+          <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Redes y plataformas</h2>
+          {SOCIAL_PLATFORMS.map((platform) => {
+            const Icon = SOCIAL_ICONS[platform] || Link2
+            return (
+              <div key={platform} className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-white/[0.05] flex items-center justify-center shrink-0">
+                  <Icon size={14} className="text-gray-400" />
+                </div>
                 <input
                   type="text"
                   value={socialLinks[platform] || ''}
@@ -359,17 +333,17 @@ export default function EditProfilePage() {
                     : platform === 'spotify' ? 'URL de artista o usuario'
                     : `@usuario o URL`
                   }
-                  className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
+                  className="flex-1 bg-white/[0.05] border border-white/[0.07] rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[var(--accent)]/50 transition-colors"
                 />
               </div>
-            </div>
-          ))}
-        </div>
+            )
+          })}
+        </GlassCard>
 
         {/* Role-specific */}
         {role === 'MUSICIAN' && (
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 flex flex-col gap-4">
-            <h2 className="font-semibold text-sm text-gray-400 uppercase tracking-wider">Información de músico</h2>
+          <GlassCard className="p-6 flex flex-col gap-4">
+            <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Información de músico</h2>
 
             <div>
               <label className="block text-sm text-gray-400 mb-2">Instrumentos</label>
@@ -379,43 +353,35 @@ export default function EditProfilePage() {
             <div>
               <label className="block text-sm text-gray-400 mb-1.5">Años de experiencia</label>
               <input
-                type="number"
-                min={0}
-                max={60}
-                value={yearsExperience}
+                type="number" min={0} max={60} value={yearsExperience}
                 onChange={(e) => setYearsExperience(e.target.value)}
-                className="w-32 bg-[var(--muted)] border border-[var(--border)] rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
+                className="w-32 bg-white/[0.05] border border-white/[0.07] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--accent)]/50 transition-colors"
               />
             </div>
 
             <div className="flex flex-col gap-3">
-              <label className="flex items-center justify-between cursor-pointer">
-                <span className="text-sm">Busco banda</span>
-                <button
-                  type="button"
-                  onClick={() => setLookingForBand(!lookingForBand)}
-                  className={`w-11 h-6 rounded-full transition-colors relative ${lookingForBand ? 'bg-[var(--accent)]' : 'bg-[var(--muted)]'}`}
-                >
-                  <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${lookingForBand ? 'left-6' : 'left-1'}`} />
-                </button>
-              </label>
-              <label className="flex items-center justify-between cursor-pointer">
-                <span className="text-sm">Abierto a colaboraciones</span>
-                <button
-                  type="button"
-                  onClick={() => setOpenToCollabs(!openToCollabs)}
-                  className={`w-11 h-6 rounded-full transition-colors relative ${openToCollabs ? 'bg-[var(--accent)]' : 'bg-[var(--muted)]'}`}
-                >
-                  <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${openToCollabs ? 'left-6' : 'left-1'}`} />
-                </button>
-              </label>
+              {[
+                { label: 'Busco banda', state: lookingForBand, set: setLookingForBand },
+                { label: 'Abierto a colaboraciones', state: openToCollabs, set: setOpenToCollabs },
+              ].map(({ label, state, set }) => (
+                <label key={label} className="flex items-center justify-between cursor-pointer">
+                  <span className="text-sm">{label}</span>
+                  <button
+                    type="button"
+                    onClick={() => set(!state)}
+                    className={`w-11 h-6 rounded-full transition-colors relative ${state ? 'bg-[var(--accent)]' : 'bg-[var(--muted)]'}`}
+                  >
+                    <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${state ? 'left-6' : 'left-1'}`} />
+                  </button>
+                </label>
+              ))}
             </div>
-          </div>
+          </GlassCard>
         )}
 
         {role === 'BAND' && (
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 flex flex-col gap-4">
-            <h2 className="font-semibold text-sm text-gray-400 uppercase tracking-wider">Información de banda</h2>
+          <GlassCard className="p-6 flex flex-col gap-4">
+            <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Información de banda</h2>
 
             <label className="flex items-center justify-between cursor-pointer">
               <span className="text-sm">Buscamos miembros</span>
@@ -434,12 +400,12 @@ export default function EditProfilePage() {
                 <ChipSelector options={WANTED_ROLES} selected={wantedRoles} onChange={setWantedRoles} />
               </div>
             )}
-          </div>
+          </GlassCard>
         )}
 
         {role === 'PROMOTER' && (
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 flex flex-col gap-4">
-            <h2 className="font-semibold text-sm text-gray-400 uppercase tracking-wider">Información de promotor</h2>
+          <GlassCard className="p-6 flex flex-col gap-4">
+            <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Información de promotor</h2>
 
             <div>
               <label className="block text-sm text-gray-400 mb-2">Tipos de eventos</label>
@@ -449,24 +415,20 @@ export default function EditProfilePage() {
             <div>
               <label className="block text-sm text-gray-400 mb-1.5">Web</label>
               <input
-                type="url"
-                value={website}
-                onChange={(e) => setWebsite(e.target.value)}
+                type="url" value={website} onChange={(e) => setWebsite(e.target.value)}
                 placeholder="https://mipromotora.com"
-                className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
+                className="w-full bg-white/[0.05] border border-white/[0.07] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--accent)]/50 transition-colors"
               />
             </div>
-          </div>
+          </GlassCard>
         )}
 
-        {/* Error */}
         {saveError && (
-          <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm px-4 py-3 rounded-xl">
+          <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl">
             {saveError}
           </div>
         )}
 
-        {/* Save */}
         <div className="flex items-center justify-between">
           <button
             type="button"
@@ -478,7 +440,7 @@ export default function EditProfilePage() {
           <button
             type="submit"
             disabled={saving || uploadingAvatar || uploadingBanner}
-            className="bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-white px-6 py-2.5 rounded-lg font-medium text-sm transition-colors"
+            className="btn-primary-glow px-6 py-2.5 rounded-lg font-medium text-sm disabled:opacity-50 disabled:transform-none"
           >
             {saving ? 'Guardando...' : 'Guardar cambios'}
           </button>

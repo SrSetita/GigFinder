@@ -54,6 +54,8 @@ export default async function messagingRoutes(server: FastifyInstance) {
       data: { readAt: new Date() },
     })
 
+    server.io.to(id).emit('messages_read', { conversationId: id, readAt: new Date() })
+
     return conversation
   })
 
@@ -104,6 +106,8 @@ export default async function messagingRoutes(server: FastifyInstance) {
       where: { id: conversation.id },
       data: { updatedAt: new Date() },
     })
+
+    server.io.to(conversation.id).emit('new_message', message)
 
     return reply.code(201).send(message)
   })

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/lib/AuthContext'
+import { AlertTriangle, CheckCircle2 } from 'lucide-react'
 
 const COOLDOWN_SECONDS = 120
 const LS_KEY = 'gf_verify_sent_at'
@@ -23,13 +24,11 @@ export default function VerificationBanner() {
   const [sent, setSent] = useState(false)
   const [cooldown, setCooldown] = useState(0)
 
-  // Restore cooldown on mount
   useEffect(() => {
     const s = getSecondsLeft()
     if (s > 0) setCooldown(s)
   }, [])
 
-  // Tick the countdown
   useEffect(() => {
     if (cooldown <= 0) return
     const id = setInterval(() => {
@@ -58,7 +57,6 @@ export default function VerificationBanner() {
         localStorage.setItem(LS_KEY, String(Date.now()))
         setSent(true)
         setCooldown(COOLDOWN_SECONDS)
-        // Hide the "sent" message after 4 s, keep cooldown running
         setTimeout(() => setSent(false), 4000)
       }
     } finally {
@@ -68,12 +66,15 @@ export default function VerificationBanner() {
 
   return (
     <div className="bg-yellow-500/10 border-b border-yellow-500/20 px-4 py-2.5 flex items-center justify-center gap-3 text-sm flex-wrap">
-      <span className="text-yellow-400">⚠️</span>
+      <AlertTriangle size={14} className="text-yellow-400 shrink-0" />
       <span className="text-yellow-300">
-        Verifica tu email <span className="font-medium text-yellow-200">{user.email}</span> para poder reservar salas y enviar mensajes.
+        Verifica tu email <span className="font-medium text-yellow-200">{user.email}</span> para reservar salas y enviar mensajes.
       </span>
       {sent ? (
-        <span className="text-green-400 text-xs font-medium">✓ Email enviado, revisa tu bandeja</span>
+        <span className="flex items-center gap-1 text-green-400 text-xs font-medium">
+          <CheckCircle2 size={12} />
+          Email enviado, revisa tu bandeja
+        </span>
       ) : cooldown > 0 ? (
         <span className="text-yellow-600 text-xs">Podrás reenviar en {fmt(cooldown)}</span>
       ) : (

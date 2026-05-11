@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { CalendarDays, Euro, Clock, CheckCircle2, X, MessageCircle, TrendingUp, AlertCircle } from 'lucide-react'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/AuthContext'
+import GlassCard from '@/components/ui/GlassCard'
 
 const DAY_NAMES = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
 
@@ -36,12 +38,12 @@ interface DaySchedule {
 export default function VenueManagePage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [venue, setVenue]         = useState<any>(null)
-  const [schedule, setSchedule]   = useState<DaySchedule[]>([])
-  const [saving, setSaving]       = useState(false)
-  const [saved, setSaved]         = useState(false)
-  const [loading, setLoading]     = useState(true)
-  const [tab, setTab]             = useState<'schedule' | 'bookings'>('schedule')
+  const [venue, setVenue]       = useState<any>(null)
+  const [schedule, setSchedule] = useState<DaySchedule[]>([])
+  const [saving, setSaving]     = useState(false)
+  const [saved, setSaved]       = useState(false)
+  const [loading, setLoading]   = useState(true)
+  const [tab, setTab]           = useState<'schedule' | 'bookings'>('schedule')
 
   useEffect(() => {
     if (authLoading) return
@@ -59,7 +61,6 @@ export default function VenueManagePage() {
             closeHour: s.closeHour,
           })))
         } else {
-          // Default schedule
           setSchedule(Array.from({ length: 7 }, (_, i) => ({
             dayOfWeek: i,
             isOpen: i < 6,
@@ -118,13 +119,14 @@ export default function VenueManagePage() {
   }
 
   if (authLoading || loading) {
-    return <div className="max-w-3xl mx-auto px-6 py-10 text-gray-400">Cargando...</div>
+    return <div className="max-w-3xl mx-auto px-6 py-10 text-gray-400 text-sm">Cargando...</div>
   }
 
   const upcomingBookings = venue?.bookings ?? []
   const totalRevenue = upcomingBookings
     .filter((b: any) => b.status === 'CONFIRMED' || b.status === 'COMPLETED')
     .reduce((sum: number, b: any) => sum + parseFloat(b.totalPrice) - parseFloat(b.platformFee), 0)
+  const pending = upcomingBookings.filter((b: any) => b.status === 'PENDING').length
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
@@ -135,49 +137,54 @@ export default function VenueManagePage() {
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 text-center">
+        <GlassCard className="p-5 text-center">
+          <CalendarDays size={20} className="text-[var(--accent)] mx-auto mb-2" />
           <p className="text-3xl font-bold text-[var(--accent)]">{upcomingBookings.length}</p>
-          <p className="text-sm text-gray-400 mt-1">Próximas reservas</p>
-        </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 text-center">
+          <p className="text-xs text-gray-400 mt-1">Próximas reservas</p>
+        </GlassCard>
+        <GlassCard className="p-5 text-center">
+          <TrendingUp size={20} className="text-green-400 mx-auto mb-2" />
           <p className="text-3xl font-bold text-green-400">{totalRevenue.toFixed(0)}€</p>
-          <p className="text-sm text-gray-400 mt-1">Ingresos confirmados</p>
-        </div>
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 text-center">
-          <p className="text-3xl font-bold">{upcomingBookings.filter((b: any) => b.status === 'PENDING').length}</p>
-          <p className="text-sm text-gray-400 mt-1">Pendientes de confirmar</p>
-        </div>
+          <p className="text-xs text-gray-400 mt-1">Ingresos confirmados</p>
+        </GlassCard>
+        <GlassCard className="p-5 text-center">
+          <AlertCircle size={20} className="text-yellow-400 mx-auto mb-2" />
+          <p className="text-3xl font-bold text-yellow-400">{pending}</p>
+          <p className="text-xs text-gray-400 mt-1">Pendientes</p>
+        </GlassCard>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-[var(--border)]">
+      <div className="flex gap-2 mb-6 border-b border-white/[0.06]">
         {(['schedule', 'bookings'] as const).map(t => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
               tab === t
                 ? 'border-[var(--accent)] text-white'
                 : 'border-transparent text-gray-400 hover:text-white'
             }`}
           >
-            {t === 'schedule' ? '🗓 Horario' : `📨 Solicitudes${upcomingBookings.filter((b:any)=>b.status==='PENDING').length > 0 ? ` (${upcomingBookings.filter((b:any)=>b.status==='PENDING').length} pendientes)` : ` (${upcomingBookings.length})`}`}
+            {t === 'schedule' ? (
+              <><CalendarDays size={14} /> Horario</>
+            ) : (
+              <><MessageCircle size={14} /> Solicitudes{pending > 0 ? ` (${pending} pendientes)` : ` (${upcomingBookings.length})`}</>
+            )}
           </button>
         ))}
       </div>
 
-      {/* Schedule editor */}
       {tab === 'schedule' && (
-        <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-[var(--border)]">
+        <GlassCard className="overflow-hidden">
+          <div className="px-6 py-4 border-b border-white/[0.06]">
             <h2 className="font-semibold">Horario semanal</h2>
             <p className="text-xs text-gray-400 mt-0.5">Define en qué días y horas está disponible tu sala</p>
           </div>
 
-          <div className="divide-y divide-[var(--border)]">
+          <div className="divide-y divide-white/[0.05]">
             {schedule.map(day => (
               <div key={day.dayOfWeek} className={`flex items-center gap-4 px-6 py-4 ${!day.isOpen ? 'opacity-50' : ''}`}>
-                {/* Toggle */}
                 <button
                   onClick={() => updateDay(day.dayOfWeek, { isOpen: !day.isOpen })}
                   className={`relative w-10 h-5 rounded-full transition-colors shrink-0 ${day.isOpen ? 'bg-[var(--accent)]' : 'bg-gray-700'}`}
@@ -185,10 +192,8 @@ export default function VenueManagePage() {
                   <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${day.isOpen ? 'translate-x-5' : 'translate-x-0.5'}`} />
                 </button>
 
-                {/* Day name */}
                 <span className="w-24 text-sm font-medium">{DAY_NAMES[day.dayOfWeek]}</span>
 
-                {/* Hours */}
                 {day.isOpen ? (
                   <div className="flex items-center gap-3 text-sm flex-1">
                     <div className="flex items-center gap-2">
@@ -196,7 +201,7 @@ export default function VenueManagePage() {
                       <select
                         value={day.openHour}
                         onChange={e => updateDay(day.dayOfWeek, { openHour: parseInt(e.target.value) })}
-                        className="bg-[var(--muted)] border border-[var(--border)] rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-[var(--accent)]"
+                        className="bg-white/[0.05] border border-white/[0.07] rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-[var(--accent)]/50"
                       >
                         {Array.from({ length: 24 }, (_, h) => (
                           <option key={h} value={h}>{pad(h)}:00</option>
@@ -209,15 +214,16 @@ export default function VenueManagePage() {
                       <select
                         value={day.closeHour}
                         onChange={e => updateDay(day.dayOfWeek, { closeHour: parseInt(e.target.value) })}
-                        className="bg-[var(--muted)] border border-[var(--border)] rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-[var(--accent)]"
+                        className="bg-white/[0.05] border border-white/[0.07] rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-[var(--accent)]/50"
                       >
                         {Array.from({ length: 24 }, (_, h) => h + 1).map(h => (
                           <option key={h} value={h} disabled={h <= day.openHour}>{pad(h)}:00</option>
                         ))}
                       </select>
                     </div>
-                    <span className="text-gray-500 text-xs ml-2">
-                      ({day.closeHour - day.openHour}h disponibles)
+                    <span className="text-gray-500 text-xs ml-2 flex items-center gap-1">
+                      <Clock size={11} />
+                      {day.closeHour - day.openHour}h disponibles
                     </span>
                   </div>
                 ) : (
@@ -227,25 +233,31 @@ export default function VenueManagePage() {
             ))}
           </div>
 
-          <div className="px-6 py-4 border-t border-[var(--border)] flex items-center gap-3">
+          <div className="px-6 py-4 border-t border-white/[0.06] flex items-center gap-3">
             <button
               onClick={saveSchedule}
               disabled={saving}
-              className="bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-white px-6 py-2.5 rounded-lg font-medium text-sm transition-colors"
+              className="btn-primary-glow px-6 py-2.5 rounded-lg font-medium text-sm disabled:opacity-50 disabled:transform-none"
             >
               {saving ? 'Guardando...' : 'Guardar horario'}
             </button>
-            {saved && <span className="text-green-400 text-sm">✓ Guardado</span>}
+            {saved && (
+              <span className="flex items-center gap-1.5 text-green-400 text-sm">
+                <CheckCircle2 size={14} />
+                Guardado
+              </span>
+            )}
           </div>
-        </div>
+        </GlassCard>
       )}
 
-      {/* Solicitudes */}
       {tab === 'bookings' && (
         <div className="flex flex-col gap-3">
           {upcomingBookings.length === 0 ? (
             <div className="text-center py-20 text-gray-400">
-              <div className="text-4xl mb-3">📨</div>
+              <div className="w-14 h-14 rounded-2xl glass flex items-center justify-center mx-auto mb-4">
+                <CalendarDays size={22} className="text-gray-500" />
+              </div>
               <p>No hay solicitudes pendientes</p>
             </div>
           ) : (
@@ -253,12 +265,11 @@ export default function VenueManagePage() {
               const hours = (new Date(b.endTime).getTime() - new Date(b.startTime).getTime()) / 3600000
               const isPending = b.status === 'PENDING'
               return (
-                <div
+                <GlassCard
                   key={b.id}
-                  className={`bg-[var(--card)] border rounded-2xl p-5 ${isPending ? 'border-yellow-500/30' : 'border-[var(--border)]'}`}
+                  className={`p-5 ${isPending ? 'border-yellow-500/20' : ''}`}
                 >
                   <div className="flex items-start gap-4">
-                    {/* Avatar */}
                     <div className="w-10 h-10 rounded-full bg-[var(--accent)] flex items-center justify-center text-sm font-bold text-white shrink-0">
                       {b.renter?.profile?.displayName?.[0]?.toUpperCase() || '?'}
                     </div>
@@ -270,45 +281,49 @@ export default function VenueManagePage() {
                           {STATUS_LABELS[b.status]}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-300">
-                        📅 {fmtDate(b.startTime)} · {fmtTime(b.startTime)} – {fmtTime(b.endTime)} ({hours}h)
+                      <p className="flex items-center gap-1.5 text-sm text-gray-300">
+                        <CalendarDays size={12} className="text-gray-500" />
+                        {fmtDate(b.startTime)} · {fmtTime(b.startTime)} – {fmtTime(b.endTime)} ({hours}h)
                       </p>
-                      <p className="text-sm font-medium text-green-400 mt-1">
-                        {(parseFloat(b.totalPrice) - parseFloat(b.platformFee)).toFixed(2)}€ netos
+                      <p className="flex items-center gap-1 text-sm font-medium text-green-400 mt-1">
+                        <Euro size={12} />
+                        {(parseFloat(b.totalPrice) - parseFloat(b.platformFee)).toFixed(2)} netos
                         <span className="text-gray-500 font-normal text-xs ml-1">(cobran {parseFloat(b.totalPrice).toFixed(2)}€)</span>
                       </p>
                       {b.notes && (
-                        <p className="text-xs text-gray-400 mt-1.5 bg-[var(--muted)] rounded-lg px-3 py-1.5 italic">
+                        <p className="text-xs text-gray-400 mt-1.5 glass rounded-lg px-3 py-1.5 italic">
                           "{b.notes}"
                         </p>
                       )}
                     </div>
                   </div>
 
-                  {/* Actions */}
                   {isPending && (
-                    <div className="flex gap-2 mt-4 pt-4 border-t border-[var(--border)]">
+                    <div className="flex gap-2 mt-4 pt-4 border-t border-white/[0.05]">
                       <button
                         onClick={() => confirmBooking(b.id)}
-                        className="flex-1 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/20 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                        className="flex-1 flex items-center justify-center gap-1.5 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/20 py-2.5 rounded-xl text-sm font-semibold transition-colors"
                       >
-                        ✓ Aceptar
+                        <CheckCircle2 size={14} />
+                        Aceptar
                       </button>
                       <button
                         onClick={() => messageRenter(b.renter.id)}
-                        className="flex-1 bg-[var(--muted)] hover:bg-[var(--accent)]/10 border border-[var(--border)] hover:border-[var(--accent)] py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                        className="flex-1 flex items-center justify-center gap-1.5 glass hover:border-[var(--accent)]/30 py-2.5 rounded-xl text-sm font-semibold transition-colors"
                       >
-                        💬 Preguntar
+                        <MessageCircle size={14} />
+                        Preguntar
                       </button>
                       <button
                         onClick={() => rejectBooking(b.id)}
-                        className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                        className="flex-1 flex items-center justify-center gap-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 py-2.5 rounded-xl text-sm font-semibold transition-colors"
                       >
-                        ✕ Rechazar
+                        <X size={14} />
+                        Rechazar
                       </button>
                     </div>
                   )}
-                </div>
+                </GlassCard>
               )
             })
           )}

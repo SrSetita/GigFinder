@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/layout/Navbar'
 import VerificationBanner from '@/components/layout/VerificationBanner'
+import PageTransition from '@/components/ui/PageTransition'
 import { AuthProvider } from '@/lib/AuthContext'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -19,7 +20,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <Navbar />
           <VerificationBanner />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1">
+            <PageTransition>{children}</PageTransition>
+          </main>
         </AuthProvider>
       </body>
     </html>

@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { ArrowLeft, MapPin, Euro, CalendarDays, Clock, AlertCircle, CheckCircle2, Search } from 'lucide-react'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/AuthContext'
 import Calendar from '@/components/booking/Calendar'
+import GlassCard from '@/components/ui/GlassCard'
 
 const PLATFORM_FEE = 0.10
 
@@ -15,16 +17,16 @@ export default function BookVenuePage() {
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
 
-  const [venue, setVenue]           = useState<any>(null)
+  const [venue, setVenue]               = useState<any>(null)
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [availability, setAvailability] = useState<any>(null)
   const [selectedStart, setSelectedStart] = useState<number | null>(null)
-  const [duration, setDuration]     = useState(2)
-  const [notes, setNotes]           = useState('')
-  const [loading, setLoading]       = useState(true)
-  const [submitting, setSubmitting] = useState(false)
-  const [error, setError]           = useState('')
-  const [done, setDone]             = useState(false)
+  const [duration, setDuration]         = useState(2)
+  const [notes, setNotes]               = useState('')
+  const [loading, setLoading]           = useState(true)
+  const [submitting, setSubmitting]     = useState(false)
+  const [error, setError]               = useState('')
+  const [done, setDone]                 = useState(false)
 
   useEffect(() => {
     api.get<any>(`/api/venues/${id}`)
@@ -47,7 +49,6 @@ export default function BookVenuePage() {
   const fee        = basePrice * PLATFORM_FEE
   const total      = basePrice + fee
 
-  // Build slot list from schedule
   const slots: { hour: number; available: boolean }[] = []
   if (availability?.schedule?.isOpen) {
     const { openHour, closeHour } = availability.schedule
@@ -87,7 +88,9 @@ export default function BookVenuePage() {
   if (done) {
     return (
       <div className="max-w-lg mx-auto px-6 py-32 text-center">
-        <div className="text-6xl mb-6">📨</div>
+        <div className="w-16 h-16 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mx-auto mb-6">
+          <CheckCircle2 size={28} className="text-green-400" />
+        </div>
         <h1 className="text-2xl font-bold mb-2">¡Solicitud enviada!</h1>
         <p className="text-gray-400 mb-2">
           {venue?.profile?.displayName} recibirá tu solicitud y la aceptará o rechazará.
@@ -96,11 +99,19 @@ export default function BookVenuePage() {
           {selectedDate} · {pad(selectedStart!)}:00 – {pad(selectedStart! + duration)}:00
         </p>
         <div className="flex gap-3 justify-center">
-          <button onClick={() => router.push('/bookings')} className="bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white px-6 py-2.5 rounded-lg font-medium transition-colors">
+          <button
+            onClick={() => router.push('/bookings')}
+            className="btn-primary-glow px-6 py-2.5 rounded-lg font-medium flex items-center gap-2"
+          >
+            <CalendarDays size={16} />
             Ver mis solicitudes
           </button>
-          <button onClick={() => router.push('/search?type=venue')} className="border border-[var(--border)] hover:border-[var(--accent)] px-6 py-2.5 rounded-lg transition-colors">
-            Buscar más salas
+          <button
+            onClick={() => router.push('/search?type=venue')}
+            className="glass hover:border-[var(--accent)]/30 px-6 py-2.5 rounded-lg transition-colors flex items-center gap-2"
+          >
+            <Search size={16} />
+            Más salas
           </button>
         </div>
       </div>
@@ -108,22 +119,30 @@ export default function BookVenuePage() {
   }
 
   if (loading) {
-    return <div className="max-w-5xl mx-auto px-6 py-10 animate-pulse"><div className="h-10 w-64 bg-[var(--muted)] rounded mb-8" /></div>
+    return <div className="max-w-5xl mx-auto px-6 py-10 animate-pulse"><div className="h-10 w-64 bg-white/[0.05] rounded mb-8" /></div>
   }
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
-      {/* Header */}
       <div className="mb-8">
-        <button onClick={() => router.back()} className="text-gray-400 hover:text-white text-sm mb-4 flex items-center gap-1 transition-colors">
-          ← Volver
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-1.5 text-gray-400 hover:text-white text-sm mb-4 transition-colors"
+        >
+          <ArrowLeft size={16} />
+          Volver
         </button>
         <h1 className="text-2xl font-bold">Reservar {venue?.profile?.displayName}</h1>
-        <p className="text-gray-400 text-sm mt-1">📍 {venue?.address} · {hourlyRate}€/hora</p>
+        <p className="flex items-center gap-1.5 text-gray-400 text-sm mt-1">
+          <MapPin size={13} />
+          {venue?.address}
+          <span className="mx-1 text-gray-600">·</span>
+          <Euro size={11} />
+          {hourlyRate}/hora
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Left: calendar + slots */}
         <div className="flex flex-col gap-6">
           <div>
             <h2 className="font-semibold mb-3">1. Elige un día</h2>
@@ -138,7 +157,11 @@ export default function BookVenuePage() {
                   <button
                     key={h}
                     onClick={() => { setDuration(h); setSelectedStart(null) }}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${duration === h ? 'bg-[var(--accent)] text-white' : 'bg-[var(--muted)] hover:bg-[var(--accent)]/20 border border-[var(--border)]'}`}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+                      duration === h
+                        ? 'bg-[var(--accent)] text-white'
+                        : 'glass hover:border-[var(--accent)]/30'
+                    }`}
                   >
                     {h}h
                   </button>
@@ -151,13 +174,13 @@ export default function BookVenuePage() {
             <div>
               <h2 className="font-semibold mb-3">3. Hora de inicio</h2>
               {!availability.schedule?.isOpen ? (
-                <div className="bg-[var(--muted)] border border-[var(--border)] rounded-xl p-4 text-center text-gray-400 text-sm">
+                <GlassCard className="p-4 text-center text-gray-400 text-sm">
                   La sala está cerrada este día
-                </div>
+                </GlassCard>
               ) : slots.length === 0 ? (
-                <div className="bg-[var(--muted)] border border-[var(--border)] rounded-xl p-4 text-center text-gray-400 text-sm">
+                <GlassCard className="p-4 text-center text-gray-400 text-sm">
                   No hay huecos disponibles para {duration}h este día
-                </div>
+                </GlassCard>
               ) : (
                 <div className="grid grid-cols-4 gap-2">
                   {slots.map(({ hour, available }) => (
@@ -170,7 +193,7 @@ export default function BookVenuePage() {
                           ? 'bg-red-500/10 text-red-400/50 border border-red-500/10 cursor-not-allowed line-through'
                           : selectedStart === hour
                             ? 'bg-[var(--accent)] text-white'
-                            : 'bg-[var(--muted)] hover:bg-[var(--accent)]/20 border border-[var(--border)] hover:border-[var(--accent)]'
+                            : 'glass hover:border-[var(--accent)]/40'
                       }`}
                     >
                       {pad(hour)}:00
@@ -182,12 +205,13 @@ export default function BookVenuePage() {
           )}
         </div>
 
-        {/* Right: summary */}
         <div>
           <h2 className="font-semibold mb-3">Resumen</h2>
-          <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 sticky top-4">
-            <div className="flex items-center gap-3 mb-5 pb-5 border-b border-[var(--border)]">
-              <div className="w-12 h-12 rounded-xl bg-[var(--accent)]/20 flex items-center justify-center text-xl">🏠</div>
+          <GlassCard className="p-6 sticky top-20">
+            <div className="flex items-center gap-3 mb-5 pb-5 border-b border-white/[0.06]">
+              <div className="w-12 h-12 rounded-xl bg-[var(--accent)]/15 flex items-center justify-center">
+                <MapPin size={20} className="text-[var(--accent)]" />
+              </div>
               <div>
                 <p className="font-semibold">{venue?.profile?.displayName}</p>
                 <p className="text-xs text-gray-400">{venue?.address}</p>
@@ -195,29 +219,28 @@ export default function BookVenuePage() {
             </div>
 
             <div className="flex flex-col gap-3 text-sm mb-5">
-              <div className="flex justify-between">
-                <span className="text-gray-400">Fecha</span>
-                <span>{selectedDate ? new Date(selectedDate + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) : '—'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Horario</span>
-                <span>
-                  {selectedStart !== null ? `${pad(selectedStart)}:00 – ${pad(selectedStart + duration)}:00` : '—'}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Duración</span>
-                <span>{duration}h × {hourlyRate}€</span>
-              </div>
-              <div className="flex justify-between border-t border-[var(--border)] pt-3">
+              {[
+                { label: 'Fecha', value: selectedDate ? new Date(selectedDate + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) : '—', icon: CalendarDays },
+                { label: 'Horario', value: selectedStart !== null ? `${pad(selectedStart)}:00 – ${pad(selectedStart + duration)}:00` : '—', icon: Clock },
+                { label: 'Duración', value: `${duration}h × ${hourlyRate}€`, icon: Clock },
+              ].map(({ label, value, icon: Icon }) => (
+                <div key={label} className="flex justify-between items-center">
+                  <span className="flex items-center gap-1.5 text-gray-400">
+                    <Icon size={13} />
+                    {label}
+                  </span>
+                  <span>{value}</span>
+                </div>
+              ))}
+              <div className="flex justify-between border-t border-white/[0.06] pt-3">
                 <span className="text-gray-400">Subtotal</span>
                 <span>{basePrice.toFixed(2)}€</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Gastos de gestión (10%)</span>
+                <span className="text-gray-400">Gestión (10%)</span>
                 <span>{fee.toFixed(2)}€</span>
               </div>
-              <div className="flex justify-between font-bold text-base border-t border-[var(--border)] pt-3">
+              <div className="flex justify-between font-bold text-base border-t border-white/[0.06] pt-3">
                 <span>Total</span>
                 <span className="text-[var(--accent)]">{total.toFixed(2)}€</span>
               </div>
@@ -230,12 +253,13 @@ export default function BookVenuePage() {
                 onChange={e => setNotes(e.target.value)}
                 placeholder="¿Algo que deba saber la sala?"
                 rows={2}
-                className="w-full bg-[var(--muted)] border border-[var(--border)] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--accent)] transition-colors resize-none"
+                className="w-full bg-white/[0.05] border border-white/[0.07] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--accent)]/50 transition-colors resize-none"
               />
             </div>
 
             {error && (
-              <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg px-3 py-2 mb-4">
+              <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl px-3 py-2 mb-4">
+                <AlertCircle size={14} />
                 {error}
               </div>
             )}
@@ -243,13 +267,18 @@ export default function BookVenuePage() {
             <button
               onClick={handleBook}
               disabled={!selectedDate || selectedStart === null || submitting}
-              className="w-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-40 disabled:cursor-not-allowed text-white py-3 rounded-xl font-semibold transition-colors"
+              className="w-full btn-primary-glow py-3 rounded-xl font-semibold disabled:opacity-40 disabled:transform-none disabled:cursor-not-allowed"
             >
-              {submitting ? 'Enviando solicitud...' : selectedStart !== null ? `Solicitar ${pad(selectedStart)}:00 – ${pad(selectedStart + duration)}:00` : 'Selecciona fecha y hora'}
+              {submitting
+                ? 'Enviando solicitud...'
+                : selectedStart !== null
+                  ? `Solicitar ${pad(selectedStart)}:00 – ${pad(selectedStart + duration)}:00`
+                  : 'Selecciona fecha y hora'
+              }
             </button>
 
             <p className="text-xs text-gray-600 text-center mt-3">La sala revisará tu solicitud antes de confirmar</p>
-          </div>
+          </GlassCard>
         </div>
       </div>
     </div>
