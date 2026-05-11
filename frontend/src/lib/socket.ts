@@ -9,6 +9,11 @@ export function getSocket(): Socket | null {
     socket = io(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000', {
       auth: { token },
       autoConnect: false,
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 10000,
+      timeout: 20000,
     })
   }
   return socket

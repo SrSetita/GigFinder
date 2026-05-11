@@ -6,17 +6,26 @@ import {
   MapPin, GraduationCap, CheckCircle2, Handshake, Users, Film,
   Plus, X, MessageCircle, Edit3, Building2,
   Camera, Play, Globe, Music2, Radio, AtSign, Link2,
-  CalendarDays, Megaphone, CheckCircle,
+  CalendarDays, Megaphone, CheckCircle, Star,
 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/AuthContext'
 import GlassCard from '@/components/ui/GlassCard'
+import { useToast } from '@/lib/ToastContext'
+import { SkeletonProfile } from '@/components/ui/Skeleton'
 
 const ROLE_LABELS: Record<string, string> = {
   MUSICIAN: 'Músico',
   BAND:     'Banda',
   VENUE:    'Sala de ensayo',
   PROMOTER: 'Promotor',
+}
+
+const ROLE_BANNER: Record<string, string> = {
+  MUSICIAN: 'from-blue-900/40 via-[var(--accent)]/20 to-indigo-900/30',
+  BAND:     'from-pink-900/40 via-purple-900/30 to-[var(--accent)]/20',
+  VENUE:    'from-[var(--accent)]/30 via-purple-900/20 to-indigo-900/30',
+  PROMOTER: 'from-orange-900/30 via-red-900/20 to-pink-900/30',
 }
 
 const SOCIAL_ICONS: Record<string, React.ElementType> = {
@@ -34,18 +43,20 @@ export default function ProfilePage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user } = useAuth()
+  const { toast } = useToast()
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [messaging, setMessaging] = useState(false)
   const [uploading, setUploading] = useState(false)
-  const [showSavedToast, setShowSavedToast] = useState(false)
+  const [reviews, setReviews] = useState<any[]>([])
+  const [myRating, setMyRating] = useState(0)
+  const [myReviewBody, setMyReviewBody] = useState('')
+  const [submittingReview, setSubmittingReview] = useState(false)
   const mediaInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (searchParams.get('saved') === '1') {
-      setShowSavedToast(true)
-      const t = setTimeout(() => setShowSavedToast(false), 3500)
-      return () => clearTimeout(t)
+      toast('Cambios guardados correctamente', 'success')
     }
   }, [searchParams])
 
@@ -54,6 +65,15 @@ export default function ProfilePage() {
       .then(setProfile)
       .catch(() => setProfile(null))
       .finally(() => setLoading(false))
+    api.get<any[]>(`/api/reviews/profile/${id}`)
+      .then(data => {
+        setReviews(data)
+        if (user) {
+          const mine = data.find((r: any) => r.reviewerId === user.id)
+          if (mine) { setMyRating(mine.rating); setMyReviewBody(mine.body || '') }
+        }
+      })
+      .catch(() => {})
   }, [id])
 
   const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,12 +120,30 @@ export default function ProfilePage() {
     }
   }
 
+  const submitReview = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!myRating) return
+    setSubmittingReview(true)
+    try {
+      const saved = await api.post<any>('/api/reviews', { profileId: id, rating: myRating, body: myReviewBody || undefined })
+      setReviews(prev => {
+        const others = prev.filter(r => r.reviewerId !== user?.id)
+        return [saved, ...others]
+      })
+      toast('Reseña guardada', 'success')
+    } catch {
+      toast('Error al guardar la reseña', 'error')
+    } finally {
+      setSubmittingReview(false)
+    }
+  }
+
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-6 py-16 animate-pulse">
-        <div className="h-40 rounded-2xl bg-white/[0.05] mb-6" />
-        <div className="h-8 w-64 bg-white/[0.05] rounded mb-3" />
-        <div className="h-4 w-48 bg-white/[0.05] rounded" />
+      <div className="max-w-4xl mx-auto px-6 py-10">
+        <GlassCard className="overflow-hidden mb-6">
+          <SkeletonProfile />
+        </GlassCard>
       </div>
     )
   }
@@ -125,18 +163,15 @@ export default function ProfilePage() {
   const isOwnProfile = user?.profile?.id === id
   const role = profile.user?.role
 
+  const avgRating = reviews.length > 0
+    ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length
+    : 0
+
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
-      {showSavedToast && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-green-600/90 backdrop-blur-sm text-white text-sm px-5 py-3 rounded-xl shadow-lg border border-green-500/30">
-          <CheckCircle size={16} />
-          Cambios guardados correctamente
-        </div>
-      )}
-
       {/* Header */}
       <GlassCard className="overflow-hidden mb-6">
-        <div className="h-40 bg-gradient-to-br from-[var(--accent)]/25 to-white/[0.02] relative">
+        <div className={`h-40 bg-gradient-to-br ${ROLE_BANNER[role] || 'from-[var(--accent)]/25 to-white/[0.02]'} relative`}>
           {profile.bannerUrl && (
             <img src={profile.bannerUrl} alt="" className="w-full h-full object-cover" />
           )}
@@ -184,6 +219,13 @@ export default function ProfilePage() {
               <span className="text-xs glass px-2 py-0.5 rounded-full text-gray-400">
                 {ROLE_LABELS[role] || role}
               </span>
+              {avgRating > 0 && (
+                <span className="flex items-center gap-1 text-yellow-400 text-xs font-medium">
+                  <Star size={12} className="fill-yellow-400" />
+                  {avgRating.toFixed(1)}
+                  <span className="text-gray-500">({reviews.length})</span>
+                </span>
+              )}
             </div>
             {profile.city && (
               <p className="flex items-center gap-1 text-gray-400 text-sm">
@@ -436,6 +478,83 @@ export default function ProfilePage() {
           )}
         </div>
       </div>
+
+      {/* Reviews */}
+      <GlassCard className="p-6 mt-6">
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-2">
+            <Star size={16} className="text-yellow-400" />
+            <h2 className="font-semibold">Reseñas</h2>
+            {avgRating > 0 && (
+              <span className="text-sm text-yellow-400 font-medium">
+                {avgRating.toFixed(1)} · {reviews.length} reseña{reviews.length !== 1 ? 's' : ''}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {user && !isOwnProfile && (
+          <form onSubmit={submitReview} className="mb-6 p-4 bg-white/[0.03] rounded-xl border border-white/[0.06]">
+            <p className="text-sm text-gray-400 mb-3">Tu valoración</p>
+            <div className="flex gap-1 mb-3">
+              {[1, 2, 3, 4, 5].map(star => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setMyRating(star)}
+                  className={`transition-colors ${star <= myRating ? 'text-yellow-400' : 'text-gray-600 hover:text-yellow-300'}`}
+                >
+                  <Star size={22} className={star <= myRating ? 'fill-yellow-400' : ''} />
+                </button>
+              ))}
+            </div>
+            <textarea
+              value={myReviewBody}
+              onChange={e => setMyReviewBody(e.target.value)}
+              placeholder="Comparte tu experiencia (opcional)..."
+              rows={2}
+              className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600 resize-none mb-3"
+            />
+            <button
+              type="submit"
+              disabled={!myRating || submittingReview}
+              className="btn-primary-glow px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-40 disabled:transform-none"
+            >
+              {submittingReview ? 'Guardando...' : 'Enviar reseña'}
+            </button>
+          </form>
+        )}
+
+        {reviews.length === 0 ? (
+          <div className="text-center py-8 text-gray-500 text-sm">
+            Sin reseñas todavía
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {reviews.map(r => (
+              <div key={r.id} className="flex gap-3">
+                <div className="w-8 h-8 rounded-full bg-[var(--accent)]/30 flex items-center justify-center text-xs font-bold shrink-0">
+                  {r.reviewer?.profile?.displayName?.[0]?.toUpperCase() || '?'}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-sm font-medium">{r.reviewer?.profile?.displayName || 'Usuario'}</span>
+                    <div className="flex gap-0.5">
+                      {[1,2,3,4,5].map(s => (
+                        <Star key={s} size={11} className={s <= r.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-700'} />
+                      ))}
+                    </div>
+                    <span className="text-xs text-gray-600">
+                      {new Date(r.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </span>
+                  </div>
+                  {r.body && <p className="text-sm text-gray-400">{r.body}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </GlassCard>
     </div>
   )
 }

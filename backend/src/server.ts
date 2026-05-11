@@ -16,6 +16,9 @@ import bookingRoutes from './routes/bookings'
 import messagingRoutes from './routes/messaging'
 import searchRoutes from './routes/search'
 import uploadRoutes from './routes/upload'
+import notificationRoutes from './routes/notifications'
+import reviewRoutes from './routes/reviews'
+import gigOfferRoutes from './routes/gig-offers'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -62,8 +65,11 @@ server.register(profileRoutes,  { prefix: '/api/profiles' })
 server.register(venueRoutes,    { prefix: '/api/venues' })
 server.register(bookingRoutes,  { prefix: '/api/bookings' })
 server.register(messagingRoutes,{ prefix: '/api/messages' })
-server.register(searchRoutes,   { prefix: '/api/search' })
-server.register(uploadRoutes,   { prefix: '/api/upload' })
+server.register(searchRoutes,       { prefix: '/api/search' })
+server.register(uploadRoutes,       { prefix: '/api/upload' })
+server.register(notificationRoutes, { prefix: '/api/notifications' })
+server.register(reviewRoutes,       { prefix: '/api/reviews' })
+server.register(gigOfferRoutes,     { prefix: '/api/gig-offers' })
 
 server.get('/api/health', async () => ({ status: 'ok' }))
 

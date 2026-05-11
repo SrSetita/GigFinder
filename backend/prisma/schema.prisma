@@ -43,6 +43,9 @@ model User {
   bookingsAsRenter Booking[]                 @relation("RenterBookings")
   sentMessages     Message[]                 @relation("SentMessages")
   participants     ConversationParticipant[]
+  notifications    Notification[]
+  reviewsGiven     Review[]                  @relation("ReviewsGiven")
+  gigOffers        GigOffer[]
 
   @@map("users")
 }
@@ -68,6 +71,7 @@ model Profile {
   band     Band?
   venue    Venue?
   promoter Promoter?
+  reviews  Review[]
 
   @@map("profiles")
 }
@@ -246,4 +250,55 @@ model Message {
   sender       User         @relation("SentMessages", fields: [senderId], references: [id])
 
   @@map("messages")
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  type      String
+  title     String
+  body      String
+  link      String?
+  readAt    DateTime? @map("read_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  reviewerId String   @map("reviewer_id")
+  profileId  String   @map("profile_id")
+  rating     Int
+  body       String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  reviewer User    @relation("ReviewsGiven", fields: [reviewerId], references: [id], onDelete: Cascade)
+  profile  Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([reviewerId, profileId])
+  @@map("reviews")
+}
+
+model GigOffer {
+  id          String    @id @default(cuid())
+  authorId    String    @map("author_id")
+  title       String
+  description String?
+  city        String
+  date        DateTime?
+  budget      Decimal?  @db.Decimal(10, 2)
+  currency    String    @default("EUR")
+  genres      String[]
+  offerType   String    @map("offer_type")
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("gig_offers")
 }

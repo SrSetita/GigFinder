@@ -100,13 +100,12 @@ export default function HomePage() {
 
 
           <h1 className="hero-title text-5xl md:text-7xl font-black tracking-tight mb-6 leading-none">
-            Tu escenario<br />
-            <span className="text-[var(--accent)] glow-text">empieza aquí</span>
+            Encuentra tu banda.<br />
+            <span className="text-[var(--accent)] glow-text">Llena tu sala.</span>
           </h1>
 
           <p className="hero-subtitle text-xl text-gray-400 max-w-2xl mb-8">
-            Músicos, bandas, salas de ensayo y promotores.
-            Reserva, conecta y promociona tu música.
+            La red musical donde músicos, bandas, salas y promotores se conectan y hacen que pase.
           </p>
 
           <AudioWave className="hero-subtitle mb-8 opacity-70" />

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useAuth } from '@/lib/AuthContext'
 import { Mail, Building2, CalendarDays, LogOut, User } from 'lucide-react'
+import NotificationBell from '@/components/ui/NotificationBell'
 
 export default function Navbar() {
   const { user, loading, logout } = useAuth()
@@ -22,6 +23,7 @@ export default function Navbar() {
             { href: '/search?type=band',     label: 'Bandas' },
             { href: '/search?type=musician', label: 'Músicos' },
             { href: '/search?type=promoter', label: 'Promotores' },
+            { href: '/gigs',                 label: 'Tablón' },
           ].map(({ href, label }) => (
             <Link
               key={href}
@@ -51,6 +53,7 @@ export default function Navbar() {
                   Solicitudes
                 </Link>
               )}
+              <NotificationBell />
               <Link href={`/profiles/${user.profile?.id}`} className="flex items-center hover:opacity-80 transition-opacity">
                 <div className="w-8 h-8 rounded-full bg-[var(--accent)] flex items-center justify-center text-white font-medium text-xs">
                   {user.profile?.displayName?.[0]?.toUpperCase() || <User size={14} />}
@@ -85,6 +88,7 @@ export default function Navbar() {
           { href: '/search?type=band',     label: 'Bandas' },
           { href: '/search?type=musician', label: 'Músicos' },
           { href: '/search?type=promoter', label: 'Promotores' },
+          { href: '/gigs',                 label: 'Tablón' },
         ].map(({ href, label }) => (
           <Link
             key={href}
