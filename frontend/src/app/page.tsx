@@ -105,7 +105,7 @@ export default function HomePage() {
           </h1>
 
           <p className="hero-subtitle text-xl text-gray-400 max-w-2xl mb-8">
-            La red musical donde músicos, bandas, salas y promotores se conectan y hacen que pase.
+            Todo lo que necesita tu música, en un solo sitio.
           </p>
 
           <AudioWave className="hero-subtitle mb-8 opacity-70" />
