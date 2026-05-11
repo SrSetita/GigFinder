@@ -138,6 +138,14 @@ body {
   50%      { opacity: 1;   transform: translateY(4px); }
 }
 
+/* ─── Steps connector travelling dot ─── */
+@keyframes connector-travel {
+  0%   { left: 0%;   opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+
 /* ─── Toast slide-in ─── */
 @keyframes toast-in {
   from { opacity: 0; transform: translateX(20px); }

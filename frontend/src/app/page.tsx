@@ -62,12 +62,6 @@ const STEPS = [
   },
 ]
 
-const ROLES = [
-  { icon: Guitar,    label: 'Músicos',    desc: 'Busca banda o colaboraciones',      href: '/search?type=musician' },
-  { icon: Mic2,      label: 'Bandas',     desc: 'Encuentra miembros y salas',        href: '/search?type=band' },
-  { icon: Building2, label: 'Salas',      desc: 'Gestiona reservas y horarios',      href: '/search?type=venue' },
-  { icon: Megaphone, label: 'Promotores', desc: 'Descubre talento para tus eventos', href: '/search?type=promoter' },
-]
 
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null)
@@ -86,7 +80,6 @@ function useInView(threshold = 0.15) {
 }
 
 export default function HomePage() {
-  const roles    = useInView()
   const features = useInView()
   const steps    = useInView()
   const genres   = useInView()
@@ -126,32 +119,6 @@ export default function HomePage() {
 
         <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[var(--background)] to-transparent pointer-events-none" />
       </MeshBackground>
-
-      {/* ── Roles bar ── */}
-      <div
-        ref={roles.ref}
-        className={`px-6 py-12 border-y border-white/[0.06] backdrop-blur-sm bg-white/[0.02] transition-all duration-700 ${roles.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-      >
-        <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
-          {ROLES.map((r, i) => {
-            const Icon = r.icon
-            return (
-              <div key={r.label} style={{ transitionDelay: roles.inView ? `${i * 60}ms` : '0ms' }}>
-              <Link
-                href={r.href}
-                className="flex flex-col items-center text-center gap-2 p-4 rounded-xl hover:bg-white/[0.05] transition-colors group cursor-pointer"
-              >
-                <div className="w-10 h-10 rounded-xl bg-[var(--accent)]/15 flex items-center justify-center group-hover:bg-[var(--accent)]/25 transition-colors">
-                  <Icon size={18} className="text-[var(--accent)]" />
-                </div>
-                <span className="font-semibold text-sm">{r.label}</span>
-                <span className="text-xs text-gray-500 leading-snug">{r.desc}</span>
-              </Link>
-              </div>
-            )
-          })}
-        </div>
-      </div>
 
       {/* ── Features ── */}
       <section className="px-6 py-24 max-w-7xl mx-auto w-full">
@@ -201,13 +168,19 @@ export default function HomePage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-3">¿Cómo funciona?</h2>
-            <p className="text-gray-500">En tres pasos empiezas a tocar</p>
+            <p className="text-gray-500">Simple. Rápido. Sin complicaciones.</p>
           </div>
 
           <div
             ref={steps.ref}
-            className={`grid grid-cols-1 md:grid-cols-3 gap-10 transition-all duration-700 ${steps.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+            className={`relative transition-all duration-700 ${steps.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
           >
+            {/* Connector line — visible only on md+ */}
+            <div className="hidden md:block absolute top-10 left-[16.5%] right-[16.5%] h-px z-0"
+              style={{ background: 'linear-gradient(to right, transparent, rgba(124,58,237,0.5) 20%, rgba(124,58,237,0.5) 80%, transparent)' }}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {STEPS.map((step, i) => {
               const Icon = step.icon
               return (
@@ -216,13 +189,16 @@ export default function HomePage() {
                   style={{ transitionDelay: steps.inView ? `${i * 100}ms` : '0ms' }}
                   className="flex flex-col items-center text-center"
                 >
-                  <div className="relative mb-6">
-                    <div className="w-20 h-20 rounded-full glass border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] font-black text-xl hover:bg-[var(--accent)]/10 hover:scale-105 transition-all duration-300 cursor-default">
+                  <div className="mb-6 relative z-10">
+                    <div
+                      className="w-20 h-20 rounded-full border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] font-black text-xl hover:bg-[var(--accent)]/10 hover:scale-105 transition-all duration-300 cursor-default"
+                      style={{
+                        backgroundColor: 'var(--background)',
+                        boxShadow: '0 0 0 5px var(--background), 0 0 0 7px rgba(124,58,237,0.25)',
+                      }}
+                    >
                       {step.n}
                     </div>
-                    {i < STEPS.length - 1 && (
-                      <div className="hidden md:block absolute top-1/2 left-full w-full h-px bg-gradient-to-r from-[var(--accent)]/40 to-transparent -translate-y-1/2 ml-2" />
-                    )}
                   </div>
                   <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center mb-3">
                     <Icon size={16} className="text-[var(--accent)]" />
@@ -232,6 +208,7 @@ export default function HomePage() {
                 </div>
               )
             })}
+            </div>
           </div>
         </div>
       </section>
@@ -258,21 +235,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── CTA Venue ── */}
-      <MeshBackground className="px-6 py-28 text-center border-t border-white/[0.06]">
-        <div className="relative z-10">
-          <div className="w-14 h-14 rounded-2xl bg-[var(--accent)]/20 border border-[var(--accent)]/30 flex items-center justify-center mx-auto mb-6">
-            <Building2 size={28} className="text-[var(--accent)]" />
-          </div>
-          <h2 className="text-4xl font-black mb-4">¿Tienes una sala de ensayo?</h2>
-          <p className="text-gray-400 mb-8 max-w-xl mx-auto text-lg">
-            Registra tu local, gestiona reservas y llega a miles de músicos en tu ciudad.
-          </p>
-          <Link href="/auth/register?role=VENUE" className="btn-primary-glow px-8 py-4 rounded-xl font-semibold text-lg inline-block">
-            Registrar mi sala gratis
-          </Link>
-        </div>
-      </MeshBackground>
 
     </div>
   )
