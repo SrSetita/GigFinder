@@ -31,7 +31,8 @@ const ROLE_COLORS: Record<string, string> = {
 function SearchResults() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [results, setResults] = useState<any[]>([])
+  const [profiles, setProfiles] = useState<any[]>([])
+  const [musicianBands, setMusicianBands] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   const activeQ     = searchParams.get('q') || ''
@@ -59,10 +60,12 @@ function SearchResults() {
       if (activeCity)  params.set('city', activeCity)
       if (activeGenre) params.set('genre', activeGenre)
       try {
-        const data = await api.get<any[]>(`/api/search?${params}`)
-        setResults(data)
+        const data = await api.get<any>(`/api/search?${params}`)
+        setProfiles(data.profiles ?? [])
+        setMusicianBands(data.musicianBands ?? [])
       } catch {
-        setResults([])
+        setProfiles([])
+        setMusicianBands([])
       } finally {
         setLoading(false)
       }
@@ -179,7 +182,7 @@ function SearchResults() {
               {activeCity  && <span className="text-gray-400 font-normal"> en {activeCity}</span>}
               {activeGenre && <span className="text-gray-400 font-normal"> · {activeGenre}</span>}
             </h1>
-            {!loading && <span className="text-sm text-gray-500">{results.length} resultados</span>}
+            {!loading && <span className="text-sm text-gray-500">{profiles.length + musicianBands.length} resultados</span>}
           </div>
 
           {loading ? (
@@ -188,7 +191,7 @@ function SearchResults() {
                 <div key={i} className="glass rounded-2xl h-52 animate-pulse" />
               ))}
             </div>
-          ) : results.length === 0 ? (
+          ) : profiles.length === 0 && musicianBands.length === 0 ? (
             <div className="text-center py-20 text-gray-400">
               <div className="w-16 h-16 rounded-2xl bg-white/[0.04] border border-white/[0.07] flex items-center justify-center mx-auto mb-4">
                 <Search size={24} className="text-gray-500" />
@@ -198,7 +201,7 @@ function SearchResults() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {results.map((profile) => (
+              {profiles.map((profile) => (
                 <Link key={profile.id} href={`/profiles/${profile.id}`}>
                   <GlassCard hover glow className="overflow-hidden group cursor-pointer">
                     <div className="h-36 bg-gradient-to-br from-[var(--accent)]/20 to-white/[0.03] relative">
@@ -241,6 +244,47 @@ function SearchResults() {
                           <Euro size={11} />
                           {parseFloat(profile.venue.hourlyRate).toFixed(0)}/h
                         </p>
+                      )}
+                    </div>
+                  </GlassCard>
+                </Link>
+              ))}
+
+              {/* Musician-owned bands */}
+              {musicianBands.map((band) => (
+                <Link key={band.id} href={`/bands/${band.id}`}>
+                  <GlassCard hover glow className="overflow-hidden group cursor-pointer">
+                    <div className="h-36 bg-gradient-to-br from-pink-500/20 to-white/[0.03] relative">
+                      {band.media?.[0] && (
+                        <img src={band.media[0].url} alt="" className="w-full h-full object-cover" />
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-start justify-between mb-1">
+                        <h3 className="font-semibold group-hover:text-[var(--accent)] transition-colors truncate">
+                          {band.displayName}
+                        </h3>
+                        <span className="text-xs px-2 py-0.5 rounded-full border shrink-0 ml-2 bg-pink-500/10 text-pink-300 border-pink-500/20">
+                          Banda
+                        </span>
+                      </div>
+                      {band.city && (
+                        <p className="flex items-center gap-1 text-xs text-gray-500 mb-2">
+                          <MapPin size={11} />
+                          {band.city}
+                        </p>
+                      )}
+                      {band.genres?.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          {band.genres.slice(0, 3).map((g: string) => (
+                            <span key={g} className="text-xs bg-[var(--accent)]/10 text-[var(--accent)] px-2 py-0.5 rounded-full">
+                              {g}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {band.memberCount > 0 && (
+                        <p className="text-xs text-gray-500 mt-2">{band.memberCount} miembro{band.memberCount !== 1 ? 's' : ''}</p>
                       )}
                     </div>
                   </GlassCard>
