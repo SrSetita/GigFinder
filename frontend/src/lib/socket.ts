@@ -6,7 +6,8 @@ export function getSocket(): Socket | null {
   if (typeof window === 'undefined') return null
   if (!socket) {
     const token = localStorage.getItem('gf_token')
-    socket = io(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000', {
+    socket = io(window.location.origin, {
+      path: '/socket.io',
       auth: { token },
       autoConnect: false,
       reconnection: true,

@@ -46,7 +46,7 @@ export default function VerificationBanner() {
     setSending(true)
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/auth/resend-verification`,
+        `${process.env.NEXT_PUBLIC_API_URL ?? ''}/api/auth/resend-verification`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

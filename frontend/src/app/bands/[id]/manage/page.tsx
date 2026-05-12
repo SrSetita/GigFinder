@@ -102,7 +102,7 @@ export default function BandManagePage() {
     form.append('file', file)
     const token = localStorage.getItem('gf_token')
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}${endpoint}`,
+      `${process.env.NEXT_PUBLIC_API_URL ?? ''}${endpoint}`,
       { method: 'POST', headers: token ? { Authorization: `Bearer ${token}` } : {}, body: form }
     )
     if (!res.ok) throw new Error('Upload failed')

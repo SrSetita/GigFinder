@@ -86,7 +86,7 @@ export default function ProfilePage() {
       const form = new FormData()
       form.append('file', file)
       const token = localStorage.getItem('gf_token')
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/upload/media`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ''}/api/upload/media`, {
         method: 'POST',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: form,

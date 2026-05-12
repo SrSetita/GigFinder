@@ -17,7 +17,7 @@ function VerifyContent() {
     const token = searchParams.get('token')
     if (!token) { setStatus('error'); return }
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/auth/verify?token=${token}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ''}/api/auth/verify?token=${token}`)
       .then(async (res) => {
         if (!res.ok) throw new Error()
         try {
