@@ -64,6 +64,7 @@ export default async function bandRoutes(server: FastifyInstance) {
           where: { status: 'ACTIVE' },
           include: { user: { include: { profile: true } } },
         },
+        media: { orderBy: { sortOrder: 'asc' } },
       },
     })
     if (!band) return reply.status(404).send({ error: 'not found' })
@@ -73,7 +74,7 @@ export default async function bandRoutes(server: FastifyInstance) {
   server.patch('/api/bands/:id', { preHandler: authenticate }, async (req, reply) => {
     const { userId } = req.user
     const { id } = req.params as any
-    const { name, description, genres, city, avatarUrl, lookingForMembers, wantedRoles } = req.body as any
+    const { name, description, genres, city, avatarUrl, bannerUrl, socialLinks, isPublic, lookingForMembers, wantedRoles } = req.body as any
 
     const membership = await server.prisma.bandMember.findUnique({
       where: { bandId_userId: { bandId: id, userId } },
@@ -82,8 +83,11 @@ export default async function bandRoutes(server: FastifyInstance) {
 
     const band = await server.prisma.band.update({
       where: { id },
-      data: { name, description, genres, city, avatarUrl, lookingForMembers, wantedRoles },
-      include: { members: { where: { status: 'ACTIVE' }, include: { user: { include: { profile: true } } } } },
+      data: { name, description, genres, city, avatarUrl, bannerUrl, socialLinks, isPublic, lookingForMembers, wantedRoles },
+      include: {
+        members: { where: { status: 'ACTIVE' }, include: { user: { include: { profile: true } } } },
+        media: { orderBy: { sortOrder: 'asc' } },
+      },
     })
     return reply.send(band)
   })

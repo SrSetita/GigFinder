@@ -100,6 +100,76 @@ export default async function uploadRoutes(server: FastifyInstance) {
     return reply.code(201).send(media)
   })
 
+  // Upload band avatar
+  server.post('/band/:bandId/avatar', { preHandler: authenticate }, async (request, reply) => {
+    const { bandId } = request.params as { bandId: string }
+    const m = await server.prisma.bandMember.findUnique({ where: { bandId_userId: { bandId, userId: request.user.userId } } })
+    if (!m || m.role !== 'ADMIN') return reply.code(403).send({ error: 'forbidden' })
+
+    const data = await request.file()
+    if (!data) return reply.code(400).send({ error: 'No file' })
+    if (!data.mimetype.startsWith('image/')) return reply.code(400).send({ error: 'Only images' })
+
+    const buffer = await data.toBuffer()
+    const { url } = await storeFile(buffer, data.mimetype, data.filename)
+    const band = await server.prisma.band.update({ where: { id: bandId }, data: { avatarUrl: url } })
+    return { url, band }
+  })
+
+  // Upload band banner
+  server.post('/band/:bandId/banner', { preHandler: authenticate }, async (request, reply) => {
+    const { bandId } = request.params as { bandId: string }
+    const m = await server.prisma.bandMember.findUnique({ where: { bandId_userId: { bandId, userId: request.user.userId } } })
+    if (!m || m.role !== 'ADMIN') return reply.code(403).send({ error: 'forbidden' })
+
+    const data = await request.file()
+    if (!data) return reply.code(400).send({ error: 'No file' })
+    if (!data.mimetype.startsWith('image/')) return reply.code(400).send({ error: 'Only images' })
+
+    const buffer = await data.toBuffer()
+    const { url } = await storeFile(buffer, data.mimetype, data.filename)
+    const band = await server.prisma.band.update({ where: { id: bandId }, data: { bannerUrl: url } })
+    return { url, band }
+  })
+
+  // Upload band media
+  server.post('/band/:bandId/media', { preHandler: authenticate }, async (request, reply) => {
+    const { bandId } = request.params as { bandId: string }
+    const m = await server.prisma.bandMember.findUnique({ where: { bandId_userId: { bandId, userId: request.user.userId } } })
+    if (!m || m.role !== 'ADMIN') return reply.code(403).send({ error: 'forbidden' })
+
+    const data = await request.file()
+    if (!data) return reply.code(400).send({ error: 'No file' })
+    const isVideo = data.mimetype.startsWith('video/')
+    const isImage = data.mimetype.startsWith('image/')
+    if (!isVideo && !isImage) return reply.code(400).send({ error: 'Only images and videos' })
+
+    const buffer = await data.toBuffer()
+    const { url, publicId } = await storeFile(buffer, data.mimetype, data.filename)
+    const count = await server.prisma.bandMedia.count({ where: { bandId } })
+    const media = await server.prisma.bandMedia.create({
+      data: { bandId, type: isVideo ? 'VIDEO' : 'IMAGE', url, publicId, sortOrder: count },
+    })
+    return reply.code(201).send(media)
+  })
+
+  // Delete band media
+  server.delete('/band/:bandId/media/:id', { preHandler: authenticate }, async (request, reply) => {
+    const { bandId, id } = request.params as { bandId: string; id: string }
+    const m = await server.prisma.bandMember.findUnique({ where: { bandId_userId: { bandId, userId: request.user.userId } } })
+    if (!m || m.role !== 'ADMIN') return reply.code(403).send({ error: 'forbidden' })
+
+    const media = await server.prisma.bandMedia.findUnique({ where: { id } })
+    if (!media || media.bandId !== bandId) return reply.code(403).send({ error: 'Not your media' })
+
+    if (!USE_CLOUDINARY) {
+      const filepath = path.join(UPLOADS_DIR, media.publicId)
+      if (fs.existsSync(filepath)) fs.unlinkSync(filepath)
+    }
+    await server.prisma.bandMedia.delete({ where: { id } })
+    return reply.code(204).send()
+  })
+
   // Delete media
   server.delete('/media/:id', { preHandler: authenticate }, async (request, reply) => {
     const { id } = request.params as { id: string }

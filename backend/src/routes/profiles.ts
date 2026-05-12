@@ -8,6 +8,7 @@ const updateProfileSchema = z.object({
   city:        z.string().min(2).optional(),
   genres:      z.array(z.string()).optional(),
   socialLinks: z.record(z.string(), z.string()).optional(),
+  isPublic:    z.boolean().optional(),
 })
 
 const updateMusicianSchema = z.object({

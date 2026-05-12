@@ -74,6 +74,7 @@ model Profile {
   genres      String[]
   socialLinks Json?    @map("social_links")
   isPremium   Boolean  @default(false) @map("is_premium")
+  isPublic    Boolean  @default(true)  @map("is_public")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
@@ -110,6 +111,9 @@ model Band {
   genres            String[]
   city              String?
   avatarUrl         String?   @map("avatar_url")
+  bannerUrl         String?   @map("banner_url")
+  socialLinks       Json?     @map("social_links")
+  isPublic          Boolean   @default(true) @map("is_public")
   lookingForMembers Boolean   @default(false) @map("looking_for_members")
   wantedRoles       String[]  @map("wanted_roles")
   formedAt          DateTime? @map("formed_at")
@@ -117,6 +121,7 @@ model Band {
   profile  Profile?     @relation(fields: [profileId], references: [id], onDelete: Cascade)
   owner    User?        @relation("OwnedBands", fields: [ownerUserId], references: [id])
   members  BandMember[]
+  media    BandMedia[]
   bookings Booking[]    @relation("BandBookings")
 
   @@map("bands")
@@ -136,6 +141,21 @@ model BandMember {
 
   @@unique([bandId, userId])
   @@map("band_members")
+}
+
+model BandMedia {
+  id        String    @id @default(cuid())
+  bandId    String    @map("band_id")
+  type      MediaType
+  url       String
+  publicId  String    @map("public_id")
+  title     String?
+  sortOrder Int       @default(0) @map("sort_order")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  band Band @relation(fields: [bandId], references: [id], onDelete: Cascade)
+
+  @@map("band_media")
 }
 
 model Venue {

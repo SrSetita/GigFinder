@@ -87,6 +87,8 @@ export default function EditProfilePage() {
   const [eventTypes, setEventTypes] = useState<string[]>([])
   const [website, setWebsite] = useState('')
 
+  const [isPublic, setIsPublic] = useState(true)
+
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [bannerPreview, setBannerPreview] = useState<string | null>(null)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
@@ -104,6 +106,7 @@ export default function EditProfilePage() {
         setCity(p.city || '')
         setGenres(p.genres || [])
         setSocialLinks(p.socialLinks || {})
+        setIsPublic(p.isPublic ?? true)
         setAvatarPreview(p.avatarUrl || null)
         setBannerPreview(p.bannerUrl || null)
         if (p.musician) {
@@ -173,7 +176,7 @@ export default function EditProfilePage() {
     setSaving(true)
     setSaveError(null)
     try {
-      await api.patch('/api/profiles/me', { displayName, bio, city, genres, socialLinks })
+      await api.patch('/api/profiles/me', { displayName, bio, city, genres, socialLinks, isPublic })
 
       const role = profile?.user?.role
       if (role === 'MUSICIAN') {
@@ -274,6 +277,18 @@ export default function EditProfilePage() {
               <p className="text-xs text-gray-500 pb-1">Clic en avatar o banner para cambiarlos</p>
             </div>
           </div>
+        </GlassCard>
+
+        {/* Visibilidad */}
+        <GlassCard className="p-6 flex flex-col gap-3">
+          <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Visibilidad</h2>
+          <label className="flex items-center justify-between cursor-pointer">
+            <span className="text-sm">{isPublic ? 'Perfil público — visible para todos' : 'Perfil privado — no aparece en búsquedas'}</span>
+            <button type="button" onClick={() => setIsPublic(v => !v)}
+              className={`w-11 h-6 rounded-full transition-colors relative ${isPublic ? 'bg-[var(--accent)]' : 'bg-[var(--muted)]'}`}>
+              <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${isPublic ? 'left-6' : 'left-1'}`} />
+            </button>
+          </label>
         </GlassCard>
 
         {/* Basic info */}
