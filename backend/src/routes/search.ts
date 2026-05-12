@@ -8,7 +8,6 @@ export default async function searchRoutes(server: FastifyInstance) {
 
     const textFilter = q ? { contains: q, mode: 'insensitive' as const } : undefined
 
-    // Profile-based search (MUSICIAN, VENUE, PROMOTER, BAND accounts)
     const profileWhere = {
       isPublic: true,
       ...(textFilter && {
@@ -23,7 +22,7 @@ export default async function searchRoutes(server: FastifyInstance) {
       ...(type && { user: { role: type.toUpperCase() as Role } }),
     }
 
-    const profiles = await server.prisma.profile.findMany({
+    const profileRows = await server.prisma.profile.findMany({
       where: profileWhere,
       include: {
         user: { select: { role: true } },
@@ -35,12 +34,15 @@ export default async function searchRoutes(server: FastifyInstance) {
       },
       orderBy: [{ isPremium: 'desc' }, { updatedAt: 'desc' }],
       skip,
-      take: 20,
+      take: 21,
     })
 
-    // Musician-owned bands — no Profile, stored directly in Band table
-    // Only included when type=band or no type filter
+    const hasMoreProfiles = profileRows.length === 21
+    const profiles = hasMoreProfiles ? profileRows.slice(0, 20) : profileRows
+
     let musicianBands: any[] = []
+    let hasMoreBands = false
+
     if (!type || type === 'band') {
       const bandWhere: any = {
         isPublic: true,
@@ -57,6 +59,9 @@ export default async function searchRoutes(server: FastifyInstance) {
         ...(genre && { genres: { has: genre } }),
       }
 
+      const bandTake = type ? 21 : 11
+      const pageSize = type ? 20 : 10
+
       const bands = await server.prisma.band.findMany({
         where: bandWhere,
         include: {
@@ -65,18 +70,19 @@ export default async function searchRoutes(server: FastifyInstance) {
         },
         orderBy: { members: { _count: 'desc' } },
         skip: type ? skip : 0,
-        take: type ? 20 : 10,
+        take: bandTake,
       })
 
-      // Normalize to a shape compatible with profile results
-      musicianBands = bands.map(b => ({
+      hasMoreBands = bands.length === bandTake
+      const slicedBands = hasMoreBands ? bands.slice(0, pageSize) : bands
+
+      musicianBands = slicedBands.map(b => ({
         _type: 'musician_band',
         id: b.id,
         displayName: b.name,
         bio: b.description,
         city: b.city,
         avatarUrl: b.avatarUrl,
-        bannerUrl: b.bannerUrl,
         genres: b.genres,
         media: b.media,
         memberCount: b.members.length,
@@ -84,6 +90,6 @@ export default async function searchRoutes(server: FastifyInstance) {
       }))
     }
 
-    return { profiles, musicianBands }
+    return { profiles, musicianBands, hasMoreProfiles, hasMoreBands }
   })
 }

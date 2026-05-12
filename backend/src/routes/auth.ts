@@ -51,6 +51,19 @@ export default async function authRoutes(server: FastifyInstance) {
       include: { profile: true },
     })
 
+    if (role === 'BAND' && user.profile) {
+      await server.prisma.band.create({
+        data: {
+          profileId: user.profile.id,
+          name: displayName,
+          city,
+          members: {
+            create: { userId: user.id, role: 'ADMIN', status: 'ACTIVE', joinedAt: new Date() },
+          },
+        },
+      })
+    }
+
     // Send verification email (non-blocking — don't fail registration if email fails)
     sendVerificationEmail(email, verificationToken).catch(() => {})
 

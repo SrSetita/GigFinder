@@ -6,7 +6,7 @@ import {
   MapPin, GraduationCap, CheckCircle2, Handshake, Users, Film,
   Plus, X, MessageCircle, Edit3, Building2,
   Camera, Play, Globe, Music2, Radio, AtSign, Link2,
-  CalendarDays, Megaphone, CheckCircle, Star,
+  CalendarDays, Megaphone, CheckCircle, Star, UserPlus, Settings, UserMinus,
 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/AuthContext'
@@ -52,6 +52,8 @@ export default function ProfilePage() {
   const [myRating, setMyRating] = useState(0)
   const [myReviewBody, setMyReviewBody] = useState('')
   const [submittingReview, setSubmittingReview] = useState(false)
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviting, setInviting] = useState(false)
   const mediaInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -117,6 +119,35 @@ export default function ProfilePage() {
       router.push('/messages')
     } catch {
       setMessaging(false)
+    }
+  }
+
+  const handleInvite = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!inviteEmail.trim() || !profile?.band?.id) return
+    setInviting(true)
+    try {
+      await api.post(`/api/bands/${profile.band.id}/invite`, { email: inviteEmail })
+      setInviteEmail('')
+      toast('Invitación enviada', 'success')
+    } catch (err: any) {
+      toast(err?.error || 'Error al invitar', 'error')
+    } finally {
+      setInviting(false)
+    }
+  }
+
+  const handleKick = async (targetUserId: string) => {
+    if (!profile?.band?.id) return
+    try {
+      await api.delete(`/api/bands/${profile.band.id}/members/${targetUserId}`)
+      setProfile((prev: any) => ({
+        ...prev,
+        band: { ...prev.band, members: prev.band.members.filter((m: any) => m.userId !== targetUserId) },
+      }))
+      toast('Miembro expulsado', 'success')
+    } catch {
+      toast('Error al expulsar miembro', 'error')
     }
   }
 
@@ -193,13 +224,24 @@ export default function ProfilePage() {
             </div>
             <div className="flex gap-2">
               {isOwnProfile ? (
-                <button
-                  onClick={() => router.push('/settings/profile')}
-                  className="flex items-center gap-1.5 glass hover:border-[var(--accent)]/40 hover:text-[var(--accent)] hover:bg-[var(--accent)]/5 active:scale-95 text-sm px-4 py-2 rounded-lg transition-all"
-                >
-                  <Edit3 size={14} />
-                  Editar perfil
-                </button>
+                <div className="flex gap-2">
+                  {role === 'BAND' && profile.band?.id && (
+                    <button
+                      onClick={() => router.push(`/bands/${profile.band.id}/manage`)}
+                      className="flex items-center gap-1.5 glass hover:border-[var(--accent)]/40 hover:text-[var(--accent)] hover:bg-[var(--accent)]/5 active:scale-95 text-sm px-4 py-2 rounded-lg transition-all"
+                    >
+                      <Settings size={14} />
+                      Gestionar
+                    </button>
+                  )}
+                  <button
+                    onClick={() => router.push('/settings/profile')}
+                    className="flex items-center gap-1.5 glass hover:border-[var(--accent)]/40 hover:text-[var(--accent)] hover:bg-[var(--accent)]/5 active:scale-95 text-sm px-4 py-2 rounded-lg transition-all"
+                  >
+                    <Edit3 size={14} />
+                    Editar perfil
+                  </button>
+                </div>
               ) : (
                 <button
                   onClick={handleContact}
@@ -329,15 +371,44 @@ export default function ProfilePage() {
                   <div className="flex flex-col gap-2">
                     {profile.band.members.map((m: any) => (
                       <div key={m.id} className="flex items-center gap-2 text-sm">
-                        <div className="w-7 h-7 rounded-full bg-[var(--accent)] flex items-center justify-center text-xs text-white font-medium">
-                          {m.musician?.profile?.displayName?.[0]?.toUpperCase() || '?'}
+                        <div className="w-7 h-7 rounded-full bg-[var(--accent)] flex items-center justify-center text-xs text-white font-medium overflow-hidden shrink-0">
+                          {m.user?.profile?.avatarUrl
+                            ? <img src={m.user.profile.avatarUrl} alt="" className="w-full h-full object-cover" />
+                            : m.user?.profile?.displayName?.[0]?.toUpperCase() || '?'}
                         </div>
-                        <span>{m.musician?.profile?.displayName}</span>
-                        <span className="text-gray-500">· {m.role}</span>
+                        <span className="flex-1">{m.user?.profile?.displayName}</span>
+                        <span className="text-gray-500">{m.role === 'ADMIN' ? 'Admin' : 'Miembro'}</span>
+                        {isOwnProfile && m.role !== 'ADMIN' && (
+                          <button
+                            onClick={() => handleKick(m.userId)}
+                            className="text-red-400/60 hover:text-red-400 transition-colors ml-1"
+                            title="Expulsar"
+                          >
+                            <UserMinus size={13} />
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>
                 </>
+              )}
+              {isOwnProfile && role === 'BAND' && (
+                <form onSubmit={handleInvite} className="mt-3 flex gap-2">
+                  <input
+                    type="email"
+                    value={inviteEmail}
+                    onChange={e => setInviteEmail(e.target.value)}
+                    placeholder="Email del músico..."
+                    className="flex-1 bg-white/[0.05] border border-white/[0.08] rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+                  />
+                  <button
+                    type="submit"
+                    disabled={inviting || !inviteEmail.trim()}
+                    className="flex items-center gap-1 bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-40 text-white px-3 py-1.5 rounded-lg text-sm transition-colors"
+                  >
+                    <UserPlus size={13} />
+                  </button>
+                </form>
               )}
             </GlassCard>
           )}
