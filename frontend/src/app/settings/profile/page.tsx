@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { ArrowLeft, Camera, Play, Globe, Music2, Radio, AtSign, Link2 } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { ArrowLeft, Camera, Play, Globe, Music2, Radio, AtSign, Link2, Sparkles } from 'lucide-react'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/AuthContext'
 import GlassCard from '@/components/ui/GlassCard'
@@ -62,8 +62,10 @@ function ChipSelector({ options, selected, onChange }: {
   )
 }
 
-export default function EditProfilePage() {
+function EditProfilePage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const isWelcome = searchParams.get('welcome') === '1'
   const { user } = useAuth()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -192,7 +194,7 @@ export default function EditProfilePage() {
         await api.patch('/api/profiles/me/promoter', { eventTypes, website })
       }
 
-      router.push(`/profiles/${profile.id}?saved=1`)
+      router.push(isWelcome ? `/profiles/${profile.id}` : `/profiles/${profile.id}?saved=1`)
     } catch (err: any) {
       if (err instanceof TypeError && err.message === 'Failed to fetch') {
         setSaveError('No se pudo conectar con el servidor.')
@@ -228,15 +230,24 @@ export default function EditProfilePage() {
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-10">
+      {isWelcome && (
+        <div className="mb-6 flex items-center gap-3 bg-[var(--accent)]/10 border border-[var(--accent)]/20 rounded-2xl px-5 py-4">
+          <Sparkles size={18} className="text-[var(--accent)] shrink-0" />
+          <div>
+            <p className="font-semibold text-sm">¡Bienvenido a GigFinder!</p>
+            <p className="text-xs text-gray-400 mt-0.5">Completa tu perfil para que otros puedan encontrarte. Cuanto más completo, mejor visibilidad.</p>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center gap-4 mb-8">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-1.5 text-gray-400 hover:text-white text-sm transition-colors"
-        >
-          <ArrowLeft size={16} />
-          Volver
-        </button>
-        <h1 className="text-2xl font-bold">Editar perfil</h1>
+        {!isWelcome && (
+          <button onClick={() => router.back()} className="flex items-center gap-1.5 text-gray-400 hover:text-white text-sm transition-colors">
+            <ArrowLeft size={16} />
+            Volver
+          </button>
+        )}
+        <h1 className="text-2xl font-bold">{isWelcome ? 'Completa tu perfil' : 'Editar perfil'}</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
@@ -463,4 +474,9 @@ export default function EditProfilePage() {
       </form>
     </div>
   )
+}
+
+import { Suspense } from 'react'
+export default function EditProfilePageWrapper() {
+  return <Suspense><EditProfilePage /></Suspense>
 }

@@ -39,7 +39,7 @@ function RegisterForm() {
       const res = await api.post<{ token: string; user: any }>('/api/auth/register', form)
       setSession(res.token, res.user)
       setUser(res.user)
-      window.location.href = '/'
+      window.location.href = '/settings/profile?welcome=1'
     } catch (err: any) {
       const msg = err instanceof TypeError
         ? 'No se pudo conectar con el servidor'

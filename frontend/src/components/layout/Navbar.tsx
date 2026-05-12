@@ -42,10 +42,12 @@ export default function Navbar() {
                 <Mail size={14} />
                 Mensajes
               </Link>
-              <Link href="/dashboard" className="hidden md:flex items-center gap-1.5 text-gray-400 hover:text-white hover:bg-white/[0.06] px-3 py-1.5 rounded-lg transition-all text-sm">
-                <Music2 size={14} />
-                Mis bandas
-              </Link>
+              {(user.role === 'MUSICIAN' || user.role === 'PROMOTER') && (
+                <Link href="/dashboard" className="hidden md:flex items-center gap-1.5 text-gray-400 hover:text-white hover:bg-white/[0.06] px-3 py-1.5 rounded-lg transition-all text-sm">
+                  <Music2 size={14} />
+                  Mis bandas
+                </Link>
+              )}
               {user.role === 'VENUE' ? (
                 <Link href="/venues/manage" className="hidden md:flex items-center gap-1.5 text-gray-400 hover:text-white hover:bg-white/[0.06] px-3 py-1.5 rounded-lg transition-all text-sm">
                   <Building2 size={14} />
@@ -107,9 +109,11 @@ export default function Navbar() {
             <Link href="/messages" className="flex-shrink-0 text-xs text-gray-400 hover:text-white bg-white/[0.05] hover:bg-[var(--accent)]/20 px-3 py-1.5 rounded-full transition-colors">
               Mensajes
             </Link>
-            <Link href="/dashboard" className="flex-shrink-0 text-xs text-gray-400 hover:text-white bg-white/[0.05] hover:bg-[var(--accent)]/20 px-3 py-1.5 rounded-full transition-colors">
-              Mis bandas
-            </Link>
+            {(user.role === 'MUSICIAN' || user.role === 'PROMOTER') && (
+              <Link href="/dashboard" className="flex-shrink-0 text-xs text-gray-400 hover:text-white bg-white/[0.05] hover:bg-[var(--accent)]/20 px-3 py-1.5 rounded-full transition-colors">
+                Mis bandas
+              </Link>
+            )}
             {user.role === 'VENUE' ? (
               <Link href="/venues/manage" className="flex-shrink-0 text-xs text-gray-400 hover:text-white bg-white/[0.05] hover:bg-[var(--accent)]/20 px-3 py-1.5 rounded-full transition-colors">
                 Mi sala
