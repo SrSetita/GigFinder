@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Building2, CalendarDays, Clock, Euro, MessageCircle, X, Search } from 'lucide-react'
+import { Building2, CalendarDays, Clock, Euro, MessageCircle, X, Search, Users } from 'lucide-react'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/AuthContext'
 import GlassCard from '@/components/ui/GlassCard'
@@ -139,6 +139,12 @@ function BookingCard({ b, onCancel, cancelling, router }: any) {
           <div>
             <h3 className="font-semibold truncate">{b.venue?.profile?.displayName || 'Sala'}</h3>
             <p className="text-xs text-gray-500">{b.venue?.profile?.city}</p>
+            {b.band && (
+              <p className="flex items-center gap-1 text-xs text-[var(--accent)] mt-0.5">
+                <Users size={10} />
+                {b.band.name}
+              </p>
+            )}
           </div>
           <span className={`text-xs px-2.5 py-1 rounded-full border shrink-0 ${STATUS_STYLES[b.status]}`}>
             {STATUS_LABELS[b.status]}

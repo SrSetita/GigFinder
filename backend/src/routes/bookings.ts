@@ -38,6 +38,13 @@ export default async function bookingRoutes(server: FastifyInstance) {
 
     if (end <= start) return reply.code(400).send({ error: 'End time must be after start time' })
 
+    if (bandId) {
+      const membership = await server.prisma.bandMember.findFirst({
+        where: { bandId, userId, status: 'ACTIVE' },
+      })
+      if (!membership) return reply.code(403).send({ error: 'No eres miembro activo de esa banda' })
+    }
+
     const conflict = await server.prisma.booking.findFirst({
       where: {
         venueId,
@@ -80,6 +87,7 @@ export default async function bookingRoutes(server: FastifyInstance) {
       include: {
         venue: { include: { profile: { select: { displayName: true, avatarUrl: true, city: true } } } },
         room: true,
+        band: { select: { id: true, name: true, avatarUrl: true } },
       },
       orderBy: { startTime: 'asc' },
     })

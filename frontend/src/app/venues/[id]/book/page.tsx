@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, MapPin, Euro, CalendarDays, Clock, AlertCircle, CheckCircle2, Search } from 'lucide-react'
+import { ArrowLeft, MapPin, Euro, CalendarDays, Clock, AlertCircle, CheckCircle2, Search, Users } from 'lucide-react'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/AuthContext'
 import Calendar from '@/components/booking/Calendar'
@@ -23,6 +23,8 @@ export default function BookVenuePage() {
   const [selectedStart, setSelectedStart] = useState<number | null>(null)
   const [duration, setDuration]         = useState(2)
   const [notes, setNotes]               = useState('')
+  const [myBands, setMyBands]           = useState<any[]>([])
+  const [selectedBandId, setSelectedBandId] = useState<string>('')
   const [loading, setLoading]           = useState(true)
   const [submitting, setSubmitting]     = useState(false)
   const [error, setError]               = useState('')
@@ -32,7 +34,15 @@ export default function BookVenuePage() {
     api.get<any>(`/api/venues/${id}`)
       .then(setVenue)
       .finally(() => setLoading(false))
-  }, [id])
+    api.get<any[]>('/api/bands/mine')
+      .then(bands => {
+        setMyBands(bands)
+        if (user?.role === 'BAND' && bands.length > 0) {
+          setSelectedBandId(bands[0].id)
+        }
+      })
+      .catch(() => {})
+  }, [id, user?.role])
 
   useEffect(() => {
     if (!selectedDate) return
@@ -75,6 +85,7 @@ export default function BookVenuePage() {
         venueId: id,
         startTime,
         endTime,
+        bandId: selectedBandId || undefined,
         notes: notes || undefined,
       })
       setDone(true)
@@ -94,6 +105,11 @@ export default function BookVenuePage() {
         <h1 className="text-2xl font-bold mb-2">¡Solicitud enviada!</h1>
         <p className="text-gray-400 mb-2">
           {venue?.profile?.displayName} recibirá tu solicitud y la aceptará o rechazará.
+          {selectedBandId && myBands.find(b => b.id === selectedBandId) && (
+            <span className="block text-sm text-gray-500 mt-1">
+              Reservado como banda: {myBands.find(b => b.id === selectedBandId)?.name}
+            </span>
+          )}
         </p>
         <p className="text-gray-500 text-sm mb-8">
           {selectedDate} · {pad(selectedStart!)}:00 – {pad(selectedStart! + duration)}:00
@@ -245,6 +261,47 @@ export default function BookVenuePage() {
                 <span className="text-[var(--accent)]">{total.toFixed(2)}€</span>
               </div>
             </div>
+
+            {myBands.length > 0 && (
+              <div className="mb-4">
+                <label className="text-xs text-gray-400 block mb-1.5 flex items-center gap-1.5">
+                  <Users size={11} />
+                  Reservar como
+                </label>
+                <div className="flex flex-col gap-1.5">
+                  {user?.role !== 'BAND' && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedBandId('')}
+                      className={`text-left px-3 py-2 rounded-lg text-sm border transition-colors ${
+                        selectedBandId === ''
+                          ? 'border-[var(--accent)]/60 bg-[var(--accent)]/10 text-white'
+                          : 'border-white/[0.07] bg-white/[0.03] text-gray-400 hover:border-white/[0.15]'
+                      }`}
+                    >
+                      Yo mismo
+                    </button>
+                  )}
+                  {myBands.map(band => (
+                    <button
+                      key={band.id}
+                      type="button"
+                      onClick={() => setSelectedBandId(band.id)}
+                      className={`text-left px-3 py-2 rounded-lg text-sm border transition-colors flex items-center gap-2 ${
+                        selectedBandId === band.id
+                          ? 'border-[var(--accent)]/60 bg-[var(--accent)]/10 text-white'
+                          : 'border-white/[0.07] bg-white/[0.03] text-gray-400 hover:border-white/[0.15]'
+                      }`}
+                    >
+                      <div className="w-5 h-5 rounded-full bg-[var(--accent)]/30 flex items-center justify-center text-[10px] font-bold shrink-0">
+                        {band.name?.[0]?.toUpperCase()}
+                      </div>
+                      {band.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="mb-4">
               <label className="text-xs text-gray-400 block mb-1.5">Notas (opcional)</label>
