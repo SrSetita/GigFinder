@@ -168,7 +168,7 @@ export default function MessagesPage() {
                         {other?.user?.profile?.displayName || 'Usuario'}
                       </span>
                       {lastMsg && (
-                        <span className="text-xs text-gray-500 shrink-0 ml-2">
+                        <span className="text-xs text-gray-500 shrink-0 ml-2" suppressHydrationWarning>
                           {formatTime(lastMsg.createdAt)}
                         </span>
                       )}
@@ -221,7 +221,7 @@ export default function MessagesPage() {
                         : 'glass rounded-bl-sm'
                     }`}>
                       <p className="leading-relaxed">{msg.content}</p>
-                      <p className={`text-xs mt-1 ${isMe ? 'text-purple-200' : 'text-gray-500'}`}>
+                      <p className={`text-xs mt-1 ${isMe ? 'text-purple-200' : 'text-gray-500'}`} suppressHydrationWarning>
                         {formatTime(msg.createdAt)}
                         {msg.readAt && isMe && ' · Leído'}
                       </p>

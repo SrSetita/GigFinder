@@ -46,9 +46,10 @@ class ApiClient {
   }
 
   async delete(path: string): Promise<void> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('gf_token') : null
     const res = await fetch(`${API_URL}${path}`, {
       method: 'DELETE',
-      headers: this.getHeaders(),
+      headers: { ...(token && { Authorization: `Bearer ${token}` }) },
     })
     if (!res.ok && res.status !== 204) throw await res.json()
   }

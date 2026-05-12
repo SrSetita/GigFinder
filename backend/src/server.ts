@@ -57,7 +57,7 @@ server.register(multipart, {
 })
 
 server.register(staticFiles, {
-  root: path.join(__dirname, '../../public'),
+  root: path.join(__dirname, '../public'),
   prefix: '/',
 })
 

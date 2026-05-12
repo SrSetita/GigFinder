@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface CalendarProps {
   selectedDate: string | null
@@ -16,8 +16,14 @@ function toDateStr(y: number, m: number, d: number) {
 }
 
 export default function Calendar({ selectedDate, onSelectDate, bookedDates = [] }: CalendarProps) {
-  const today = new Date()
-  const [view, setView] = useState({ year: today.getFullYear(), month: today.getMonth() })
+  const [today, setToday] = useState(() => new Date(0))
+  const [view, setView] = useState({ year: 2025, month: 0 })
+
+  useEffect(() => {
+    const now = new Date()
+    setToday(now)
+    setView({ year: now.getFullYear(), month: now.getMonth() })
+  }, [])
 
   const firstDay = new Date(view.year, view.month, 1)
   // Monday-first: getDay() returns 0=Sun, adjust to 0=Mon

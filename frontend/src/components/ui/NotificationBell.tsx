@@ -103,7 +103,7 @@ export default function NotificationBell() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{n.title}</p>
                     <p className="text-xs text-gray-400 mt-0.5 line-clamp-2">{n.body}</p>
-                    <p className="text-xs text-gray-600 mt-1">{timeAgo(n.createdAt)}</p>
+                    <p className="text-xs text-gray-600 mt-1" suppressHydrationWarning>{timeAgo(n.createdAt)}</p>
                   </div>
                 </div>
               ))

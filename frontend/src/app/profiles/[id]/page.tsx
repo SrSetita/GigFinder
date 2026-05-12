@@ -42,7 +42,7 @@ export default function ProfilePage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const { toast } = useToast()
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -54,6 +54,7 @@ export default function ProfilePage() {
   const [submittingReview, setSubmittingReview] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviting, setInviting] = useState(false)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
   const mediaInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -102,10 +103,15 @@ export default function ProfilePage() {
   }
 
   const handleDeleteMedia = async (mediaId: string) => {
+    if (confirmDeleteId !== mediaId) { setConfirmDeleteId(mediaId); return }
+    setConfirmDeleteId(null)
     try {
       await api.delete(`/api/upload/media/${mediaId}`)
       setProfile((prev: any) => ({ ...prev, media: prev.media.filter((m: any) => m.id !== mediaId) }))
-    } catch {}
+      toast('Eliminado', 'success')
+    } catch (e: any) {
+      toast(e?.error || e?.message || 'Error al eliminar', 'error')
+    }
   }
 
   const handleContact = async () => {
@@ -191,7 +197,7 @@ export default function ProfilePage() {
     )
   }
 
-  const isOwnProfile = user?.profile?.id === id
+  const isOwnProfile = !authLoading && user?.profile?.id === id
   const role = profile.user?.role
 
   const avgRating = reviews.length > 0
@@ -520,7 +526,8 @@ export default function ProfilePage() {
                     {isOwnProfile && (
                       <button
                         onClick={() => handleDeleteMedia(m.id)}
-                        className="absolute top-2 right-2 w-7 h-7 bg-black/70 hover:bg-red-600 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                        className={`absolute top-2 right-2 w-7 h-7 text-white rounded-full text-xs opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all flex items-center justify-center ${confirmDeleteId === m.id ? 'bg-red-600 scale-110' : 'bg-black/70 hover:bg-red-600'}`}
+                        title={confirmDeleteId === m.id ? 'Tap again to confirm' : 'Delete'}
                       >
                         <X size={12} />
                       </button>

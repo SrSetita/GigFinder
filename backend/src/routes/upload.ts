@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto'
 import path from 'path'
 import fs from 'fs'
 import { v2 as cloudinary } from 'cloudinary'
+import sharp from 'sharp'
 
 const UPLOADS_DIR = path.join(__dirname, '../../public/uploads')
 const USE_CLOUDINARY = !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY)
@@ -16,7 +17,17 @@ if (USE_CLOUDINARY) {
   })
 }
 
+async function normalizeImage(buffer: Buffer, mimetype: string): Promise<{ buffer: Buffer; mimetype: string }> {
+  if (!mimetype.startsWith('image/') || mimetype === 'image/gif') return { buffer, mimetype }
+  const converted = await sharp(buffer).jpeg({ quality: 85 }).toBuffer()
+  return { buffer: converted, mimetype: 'image/jpeg' }
+}
+
 async function storeFile(buffer: Buffer, mimetype: string, originalName: string): Promise<{ url: string; publicId: string }> {
+  if (mimetype.startsWith('image/')) {
+    ;({ buffer, mimetype } = await normalizeImage(buffer, mimetype))
+  }
+
   if (USE_CLOUDINARY) {
     return new Promise((resolve, reject) => {
       const isVideo = mimetype.startsWith('video/')
@@ -31,11 +42,10 @@ async function storeFile(buffer: Buffer, mimetype: string, originalName: string)
   }
 
   // Local fallback
-  const ext  = path.extname(originalName) || (mimetype.startsWith('video/') ? '.mp4' : '.jpg')
+  const ext  = mimetype === 'image/jpeg' ? '.jpg' : mimetype.startsWith('video/') ? '.mp4' : (path.extname(originalName) || '.jpg')
   const name = `${randomUUID()}${ext}`
   fs.writeFileSync(path.join(UPLOADS_DIR, name), buffer)
-  const host = process.env.API_URL || 'http://localhost:4000'
-  return { url: `${host}/uploads/${name}`, publicId: name }
+  return { url: `/uploads/${name}`, publicId: name }
 }
 
 export default async function uploadRoutes(server: FastifyInstance) {
