@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/AuthContext'
 import { useToast } from '@/lib/ToastContext'
 import GlassCard from '@/components/ui/GlassCard'
 import DropZone from '@/components/ui/DropZone'
+import ImageCropModal from '@/components/ui/ImageCropModal'
 
 const GENRE_OPTIONS = ['Rock', 'Metal', 'Pop', 'Jazz', 'Blues', 'Funk', 'Soul', 'R&B', 'Hip-Hop', 'Electrónica', 'Indie', 'Punk', 'Folk', 'Clásica', 'Reggae', 'Latin', 'Flamenco', 'Country', 'Experimental', 'Ambient']
 const WANTED_ROLES = ['Guitarra', 'Bajo', 'Batería', 'Teclado', 'Voz', 'Saxofón', 'Trompeta', 'Trombón', 'Otro']
@@ -68,6 +69,11 @@ export default function BandManagePage() {
   const [bannerPreview, setBannerPreview] = useState<string | null>(null)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const [uploadingBanner, setUploadingBanner] = useState(false)
+  const [cropState, setCropState] = useState<{
+    image: string
+    aspect: number
+    onConfirm: (blob: Blob) => void
+  } | null>(null)
   const [uploadingMedia, setUploadingMedia] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviting, setInviting] = useState(false)
@@ -110,11 +116,20 @@ export default function BandManagePage() {
     return res.json()
   }
 
-  const handleAvatarFile = async (file: File) => {
-    setAvatarPreview(URL.createObjectURL(file))
+  const uploadAvatarBlob = async (blob: Blob) => {
+    setAvatarPreview(URL.createObjectURL(blob))
     setUploadingAvatar(true)
     try {
-      const data = await uploadFile(file, `/api/upload/band/${id}/avatar`)
+      const form = new FormData()
+      form.append('file', blob, 'avatar.jpg')
+      const token = localStorage.getItem('gf_token')
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ''}/api/upload/band/${id}/avatar`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: form,
+      })
+      if (!res.ok) throw new Error('Upload failed')
+      const data = await res.json()
       setAvatarPreview(data.url)
       toast('Avatar actualizado', 'success')
     } catch {
@@ -124,16 +139,29 @@ export default function BandManagePage() {
     finally { setUploadingAvatar(false) }
   }
 
+  const handleAvatarFile = (file: File) => {
+    setCropState({ image: URL.createObjectURL(file), aspect: 1, onConfirm: uploadAvatarBlob })
+  }
+
   const handleAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]; if (!file) return
     await handleAvatarFile(file)
   }
 
-  const handleBannerFile = async (file: File) => {
-    setBannerPreview(URL.createObjectURL(file))
+  const uploadBannerBlob = async (blob: Blob) => {
+    setBannerPreview(URL.createObjectURL(blob))
     setUploadingBanner(true)
     try {
-      const data = await uploadFile(file, `/api/upload/band/${id}/banner`)
+      const form = new FormData()
+      form.append('file', blob, 'banner.jpg')
+      const token = localStorage.getItem('gf_token')
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ''}/api/upload/band/${id}/banner`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: form,
+      })
+      if (!res.ok) throw new Error('Upload failed')
+      const data = await res.json()
       setBannerPreview(data.url)
       toast('Banner actualizado', 'success')
     } catch {
@@ -141,6 +169,10 @@ export default function BandManagePage() {
       toast('Error al subir imagen', 'error')
     }
     finally { setUploadingBanner(false) }
+  }
+
+  const handleBannerFile = (file: File) => {
+    setCropState({ image: URL.createObjectURL(file), aspect: 3.2, onConfirm: uploadBannerBlob })
   }
 
   const handleBanner = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -422,6 +454,14 @@ export default function BandManagePage() {
           </form>
         </GlassCard>
       </div>
+      {cropState && (
+        <ImageCropModal
+          image={cropState.image}
+          aspect={cropState.aspect}
+          onConfirm={(blob) => { setCropState(null); cropState.onConfirm(blob) }}
+          onCancel={() => setCropState(null)}
+        />
+      )}
     </div>
   )
 }
