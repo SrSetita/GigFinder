@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/AuthContext'
 import { getToken, setSession } from '@/lib/auth'
 import GlassCard from '@/components/ui/GlassCard'
 import DropZone from '@/components/ui/DropZone'
+import ImageCropModal from '@/components/ui/ImageCropModal'
 
 const GENRE_OPTIONS = [
   'Rock', 'Metal', 'Pop', 'Jazz', 'Blues', 'Funk', 'Soul', 'R&B',
@@ -97,6 +98,11 @@ function EditProfilePage() {
   const [bannerPreview, setBannerPreview] = useState<string | null>(null)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const [uploadingBanner, setUploadingBanner] = useState(false)
+  const [cropState, setCropState] = useState<{
+    image: string
+    aspect: number
+    onConfirm: (blob: Blob) => void
+  } | null>(null)
   const avatarInputRef = useRef<HTMLInputElement>(null)
   const bannerInputRef = useRef<HTMLInputElement>(null)
 
@@ -145,17 +151,27 @@ function EditProfilePage() {
     return data.url
   }
 
-  const handleAvatarFile = async (file: File) => {
-    setAvatarPreview(URL.createObjectURL(file))
+  const uploadAvatarBlob = async (blob: Blob) => {
+    setAvatarPreview(URL.createObjectURL(blob))
     setUploadingAvatar(true)
     try {
-      const url = await uploadFile(file, '/api/upload/avatar')
+      const form = new FormData()
+      form.append('file', blob, 'avatar.jpg')
+      const token = localStorage.getItem('gf_token')
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ''}/api/upload/avatar`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: form,
+      })
+      if (!res.ok) throw new Error('Upload failed')
+      const data = await res.json()
+      const url: string = data.url
       setAvatarPreview(url)
       if (user) {
         const updated = { ...user, profile: { ...user.profile, avatarUrl: url } }
         setUser(updated)
-        const token = getToken()
-        if (token) setSession(token, updated)
+        const tok = getToken()
+        if (tok) setSession(tok, updated)
       }
     } catch {
       setAvatarPreview(profile?.avatarUrl || null)
@@ -164,23 +180,40 @@ function EditProfilePage() {
     }
   }
 
+  const handleAvatarFile = (file: File) => {
+    setCropState({ image: URL.createObjectURL(file), aspect: 1, onConfirm: uploadAvatarBlob })
+  }
+
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
     await handleAvatarFile(file)
   }
 
-  const handleBannerFile = async (file: File) => {
-    setBannerPreview(URL.createObjectURL(file))
+  const uploadBannerBlob = async (blob: Blob) => {
+    setBannerPreview(URL.createObjectURL(blob))
     setUploadingBanner(true)
     try {
-      const url = await uploadFile(file, '/api/upload/banner')
-      setBannerPreview(url)
+      const form = new FormData()
+      form.append('file', blob, 'banner.jpg')
+      const token = localStorage.getItem('gf_token')
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ''}/api/upload/banner`, {
+        method: 'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: form,
+      })
+      if (!res.ok) throw new Error('Upload failed')
+      const data = await res.json()
+      setBannerPreview(data.url)
     } catch {
       setBannerPreview(profile?.bannerUrl || null)
     } finally {
       setUploadingBanner(false)
     }
+  }
+
+  const handleBannerFile = (file: File) => {
+    setCropState({ image: URL.createObjectURL(file), aspect: 3.2, onConfirm: uploadBannerBlob })
   }
 
   const handleBannerChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -492,6 +525,15 @@ function EditProfilePage() {
           </button>
         </div>
       </form>
+
+      {cropState && (
+        <ImageCropModal
+          image={cropState.image}
+          aspect={cropState.aspect}
+          onConfirm={(blob) => { setCropState(null); cropState.onConfirm(blob) }}
+          onCancel={() => setCropState(null)}
+        />
+      )}
     </div>
   )
 }
