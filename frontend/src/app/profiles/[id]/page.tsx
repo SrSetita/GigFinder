@@ -57,10 +57,12 @@ export default function ProfilePage() {
   const [inviting, setInviting] = useState(false)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
   const mediaInputRef = useRef<HTMLInputElement>(null)
+  const savedToastShown = useRef(false)
 
   const savedParam = searchParams.get('saved')
   useEffect(() => {
-    if (savedParam === '1') {
+    if (savedParam === '1' && !savedToastShown.current) {
+      savedToastShown.current = true
       toast('Cambios guardados correctamente', 'success')
     }
   }, [savedParam])
