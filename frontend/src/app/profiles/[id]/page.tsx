@@ -11,6 +11,7 @@ import {
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/AuthContext'
 import GlassCard from '@/components/ui/GlassCard'
+import DropZone from '@/components/ui/DropZone'
 import { useToast } from '@/lib/ToastContext'
 import { SkeletonProfile } from '@/components/ui/Skeleton'
 
@@ -79,9 +80,7 @@ export default function ProfilePage() {
       .catch(() => {})
   }, [id])
 
-  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+  const uploadMediaFile = async (file: File) => {
     setUploading(true)
     try {
       const form = new FormData()
@@ -100,6 +99,12 @@ export default function ProfilePage() {
       setUploading(false)
       if (mediaInputRef.current) mediaInputRef.current.value = ''
     }
+  }
+
+  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    await uploadMediaFile(file)
   }
 
   const handleDeleteMedia = async (mediaId: string) => {
@@ -497,63 +502,69 @@ export default function ProfilePage() {
             className="hidden"
             onChange={handleMediaUpload}
           />
-          {profile.media?.length > 0 ? (
-            <GlassCard className="p-5">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Film size={16} className="text-[var(--accent)]" />
-                  <h2 className="font-semibold">Fotos y vídeos</h2>
+          <DropZone
+            onFile={uploadMediaFile}
+            accept="image/*,video/*"
+            disabled={uploading || !isOwnProfile}
+          >
+            {profile.media?.length > 0 ? (
+              <GlassCard className="p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Film size={16} className="text-[var(--accent)]" />
+                    <h2 className="font-semibold">Fotos y vídeos</h2>
+                  </div>
+                  {isOwnProfile && (
+                    <button
+                      onClick={() => mediaInputRef.current?.click()}
+                      disabled={uploading}
+                      className="flex items-center gap-1.5 text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-white px-3 py-1.5 rounded-lg transition-colors"
+                    >
+                      <Plus size={14} />
+                      {uploading ? 'Subiendo...' : 'Subir media'}
+                    </button>
+                  )}
                 </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {profile.media.map((m: any) => (
+                    <div key={m.id} className="aspect-square rounded-xl overflow-hidden bg-white/[0.04] relative group">
+                      {m.type === 'IMAGE' ? (
+                        <img src={m.url} alt={m.title || ''} className="w-full h-full object-cover" />
+                      ) : m.type === 'VIDEO' ? (
+                        <video src={m.url} className="w-full h-full object-cover" controls />
+                      ) : null}
+                      {isOwnProfile && (
+                        <button
+                          onClick={() => handleDeleteMedia(m.id)}
+                          className={`absolute top-2 right-2 w-7 h-7 text-white rounded-full text-xs opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all flex items-center justify-center ${confirmDeleteId === m.id ? 'bg-red-600 scale-110' : 'bg-black/70 hover:bg-red-600'}`}
+                          title={confirmDeleteId === m.id ? 'Tap again to confirm' : 'Delete'}
+                        >
+                          <X size={12} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </GlassCard>
+            ) : (
+              <GlassCard className="p-10 text-center text-gray-500">
+                <div className="w-14 h-14 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-4">
+                  <Film size={22} className="text-gray-600" />
+                </div>
+                <p className="text-sm font-medium">Sin fotos ni vídeos todavía</p>
                 {isOwnProfile && (
                   <button
                     onClick={() => mediaInputRef.current?.click()}
                     disabled={uploading}
-                    className="flex items-center gap-1.5 text-sm bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-white px-3 py-1.5 rounded-lg transition-colors"
+                    className="mt-3 flex items-center gap-1.5 text-[var(--accent)] text-sm hover:underline disabled:opacity-50 mx-auto"
                   >
                     <Plus size={14} />
                     {uploading ? 'Subiendo...' : 'Subir media'}
                   </button>
                 )}
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {profile.media.map((m: any) => (
-                  <div key={m.id} className="aspect-square rounded-xl overflow-hidden bg-white/[0.04] relative group">
-                    {m.type === 'IMAGE' ? (
-                      <img src={m.url} alt={m.title || ''} className="w-full h-full object-cover" />
-                    ) : m.type === 'VIDEO' ? (
-                      <video src={m.url} className="w-full h-full object-cover" controls />
-                    ) : null}
-                    {isOwnProfile && (
-                      <button
-                        onClick={() => handleDeleteMedia(m.id)}
-                        className={`absolute top-2 right-2 w-7 h-7 text-white rounded-full text-xs opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all flex items-center justify-center ${confirmDeleteId === m.id ? 'bg-red-600 scale-110' : 'bg-black/70 hover:bg-red-600'}`}
-                        title={confirmDeleteId === m.id ? 'Tap again to confirm' : 'Delete'}
-                      >
-                        <X size={12} />
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </GlassCard>
-          ) : (
-            <GlassCard className="p-10 text-center text-gray-500">
-              <div className="w-14 h-14 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-4">
-                <Film size={22} className="text-gray-600" />
-              </div>
-              <p className="text-sm font-medium">Sin fotos ni vídeos todavía</p>
-              {isOwnProfile && (
-                <button
-                  onClick={() => mediaInputRef.current?.click()}
-                  disabled={uploading}
-                  className="mt-3 flex items-center gap-1.5 text-[var(--accent)] text-sm hover:underline disabled:opacity-50 mx-auto"
-                >
-                  <Plus size={14} />
-                  {uploading ? 'Subiendo...' : 'Subir media'}
-                </button>
-              )}
-            </GlassCard>
-          )}
+              </GlassCard>
+            )}
+          </DropZone>
         </div>
       </div>
 
