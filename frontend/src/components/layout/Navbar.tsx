@@ -61,8 +61,10 @@ export default function Navbar() {
               )}
               <NotificationBell />
               <Link href={`/profiles/${user.profile?.id}`} className="flex items-center hover:opacity-80 transition-opacity">
-                <div className="w-8 h-8 rounded-full bg-[var(--accent)] flex items-center justify-center text-white font-medium text-xs">
-                  {user.profile?.displayName?.[0]?.toUpperCase() || <User size={14} />}
+                <div className="w-8 h-8 rounded-full bg-[var(--accent)] flex items-center justify-center text-white font-medium text-xs overflow-hidden">
+                  {user.profile?.avatarUrl
+                    ? <img src={user.profile.avatarUrl} alt="" className="w-full h-full object-cover" />
+                    : user.profile?.displayName?.[0]?.toUpperCase() || <User size={14} />}
                 </div>
               </Link>
               <button

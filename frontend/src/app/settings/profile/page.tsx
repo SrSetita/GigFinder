@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, Camera, Play, Globe, Music2, Radio, AtSign, Link2, Sparkles } from 'lucide-react'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/AuthContext'
+import { getToken, setSession } from '@/lib/auth'
 import GlassCard from '@/components/ui/GlassCard'
 import DropZone from '@/components/ui/DropZone'
 
@@ -67,7 +68,7 @@ function EditProfilePage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const isWelcome = searchParams.get('welcome') === '1'
-  const { user } = useAuth()
+  const { user, setUser } = useAuth()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -150,6 +151,12 @@ function EditProfilePage() {
     try {
       const url = await uploadFile(file, '/api/upload/avatar')
       setAvatarPreview(url)
+      if (user) {
+        const updated = { ...user, profile: { ...user.profile, avatarUrl: url } }
+        setUser(updated)
+        const token = getToken()
+        if (token) setSession(token, updated)
+      }
     } catch {
       setAvatarPreview(profile?.avatarUrl || null)
     } finally {
