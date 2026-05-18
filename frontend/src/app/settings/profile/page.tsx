@@ -6,6 +6,7 @@ import { ArrowLeft, Camera, Play, Globe, Music2, Radio, AtSign, Link2, Sparkles 
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/AuthContext'
 import GlassCard from '@/components/ui/GlassCard'
+import DropZone from '@/components/ui/DropZone'
 
 const GENRE_OPTIONS = [
   'Rock', 'Metal', 'Pop', 'Jazz', 'Blues', 'Funk', 'Soul', 'R&B',
@@ -143,9 +144,7 @@ function EditProfilePage() {
     return data.url
   }
 
-  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+  const handleAvatarFile = async (file: File) => {
     setAvatarPreview(URL.createObjectURL(file))
     setUploadingAvatar(true)
     try {
@@ -158,9 +157,13 @@ function EditProfilePage() {
     }
   }
 
-  const handleBannerChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    await handleAvatarFile(file)
+  }
+
+  const handleBannerFile = async (file: File) => {
     setBannerPreview(URL.createObjectURL(file))
     setUploadingBanner(true)
     try {
@@ -171,6 +174,12 @@ function EditProfilePage() {
     } finally {
       setUploadingBanner(false)
     }
+  }
+
+  const handleBannerChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    await handleBannerFile(file)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -253,38 +262,42 @@ function EditProfilePage() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         {/* Banner + Avatar */}
         <GlassCard className="overflow-hidden">
-          <div
-            className="h-36 bg-gradient-to-br from-[var(--accent)]/25 to-white/[0.02] relative cursor-pointer group"
-            onClick={() => bannerInputRef.current?.click()}
-          >
-            {bannerPreview && (
-              <img src={bannerPreview} alt="" className="w-full h-full object-cover" />
-            )}
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <span className="flex items-center gap-2 text-white text-sm font-medium">
-                <Camera size={16} />
-                {uploadingBanner ? 'Subiendo...' : 'Cambiar banner'}
-              </span>
+          <DropZone onFile={handleBannerFile} accept="image/*" disabled={uploadingBanner} className="block">
+            <div
+              className="h-36 bg-gradient-to-br from-[var(--accent)]/25 to-white/[0.02] relative cursor-pointer group"
+              onClick={() => bannerInputRef.current?.click()}
+            >
+              {bannerPreview && (
+                <img src={bannerPreview} alt="" className="w-full h-full object-cover" />
+              )}
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="flex items-center gap-2 text-white text-sm font-medium">
+                  <Camera size={16} />
+                  {uploadingBanner ? 'Subiendo...' : 'Cambiar banner'}
+                </span>
+              </div>
+              <input ref={bannerInputRef} type="file" accept="image/*" className="hidden" onChange={handleBannerChange} />
             </div>
-            <input ref={bannerInputRef} type="file" accept="image/*" className="hidden" onChange={handleBannerChange} />
-          </div>
+          </DropZone>
 
           <div className="px-6 pb-6">
             <div className="flex items-end gap-4 -mt-10 mb-4 relative z-10">
-              <div
-                className="w-20 h-20 rounded-full border-4 border-[#12121f] bg-[var(--accent)] flex items-center justify-center text-2xl font-bold text-white overflow-hidden cursor-pointer relative group flex-shrink-0"
-                onClick={() => avatarInputRef.current?.click()}
-              >
-                {avatarPreview ? (
-                  <img src={avatarPreview} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  displayName?.[0]?.toUpperCase()
-                )}
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
-                  <Camera size={16} className="text-white" />
+              <DropZone onFile={handleAvatarFile} accept="image/*" disabled={uploadingAvatar}>
+                <div
+                  className="w-20 h-20 rounded-full border-4 border-[#12121f] bg-[var(--accent)] flex items-center justify-center text-2xl font-bold text-white overflow-hidden cursor-pointer relative group flex-shrink-0"
+                  onClick={() => avatarInputRef.current?.click()}
+                >
+                  {avatarPreview ? (
+                    <img src={avatarPreview} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    displayName?.[0]?.toUpperCase()
+                  )}
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
+                    <Camera size={16} className="text-white" />
+                  </div>
+                  <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
                 </div>
-                <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
-              </div>
+              </DropZone>
               <p className="text-xs text-gray-500 pb-1">Clic en avatar o banner para cambiarlos</p>
             </div>
           </div>
