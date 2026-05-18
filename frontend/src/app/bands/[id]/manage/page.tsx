@@ -8,6 +8,7 @@ import { api } from '@/lib/api'
 import { useAuth } from '@/lib/AuthContext'
 import { useToast } from '@/lib/ToastContext'
 import GlassCard from '@/components/ui/GlassCard'
+import DropZone from '@/components/ui/DropZone'
 
 const GENRE_OPTIONS = ['Rock', 'Metal', 'Pop', 'Jazz', 'Blues', 'Funk', 'Soul', 'R&B', 'Hip-Hop', 'Electrónica', 'Indie', 'Punk', 'Folk', 'Clásica', 'Reggae', 'Latin', 'Flamenco', 'Country', 'Experimental', 'Ambient']
 const WANTED_ROLES = ['Guitarra', 'Bajo', 'Batería', 'Teclado', 'Voz', 'Saxofón', 'Trompeta', 'Trombón', 'Otro']
@@ -109,32 +110,45 @@ export default function BandManagePage() {
     return res.json()
   }
 
-  const handleAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]; if (!file) return
+  const handleAvatarFile = async (file: File) => {
     setAvatarPreview(URL.createObjectURL(file))
     setUploadingAvatar(true)
     try {
       const data = await uploadFile(file, `/api/upload/band/${id}/avatar`)
       setAvatarPreview(data.url)
       toast('Avatar actualizado', 'success')
-    } catch { setAvatarPreview(band?.avatarUrl ?? null); toast('Error al subir imagen', 'error') }
+    } catch {
+      setAvatarPreview(band?.avatarUrl ?? null)
+      toast('Error al subir imagen', 'error')
+    }
     finally { setUploadingAvatar(false) }
   }
 
-  const handleBanner = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]; if (!file) return
+    await handleAvatarFile(file)
+  }
+
+  const handleBannerFile = async (file: File) => {
     setBannerPreview(URL.createObjectURL(file))
     setUploadingBanner(true)
     try {
       const data = await uploadFile(file, `/api/upload/band/${id}/banner`)
       setBannerPreview(data.url)
       toast('Banner actualizado', 'success')
-    } catch { setBannerPreview(band?.bannerUrl ?? null); toast('Error al subir imagen', 'error') }
+    } catch {
+      setBannerPreview(band?.bannerUrl ?? null)
+      toast('Error al subir imagen', 'error')
+    }
     finally { setUploadingBanner(false) }
   }
 
-  const handleMedia = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBanner = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]; if (!file) return
+    await handleBannerFile(file)
+  }
+
+  const handleMediaFile = async (file: File) => {
     setUploadingMedia(true)
     try {
       const media = await uploadFile(file, `/api/upload/band/${id}/media`)
@@ -142,6 +156,11 @@ export default function BandManagePage() {
       toast('Archivo subido', 'success')
     } catch { toast('Error al subir archivo', 'error') }
     finally { setUploadingMedia(false); if (mediaRef.current) mediaRef.current.value = '' }
+  }
+
+  const handleMedia = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; if (!file) return
+    await handleMediaFile(file)
   }
 
   const deleteMedia = async (mediaId: string) => {
@@ -212,29 +231,33 @@ export default function BandManagePage() {
       <form onSubmit={handleSave} className="flex flex-col gap-6">
         {/* Banner + Avatar */}
         <GlassCard className="overflow-hidden">
-          <div className="h-36 bg-gradient-to-br from-[var(--accent)]/25 to-white/[0.02] relative cursor-pointer group"
-            onClick={() => bannerRef.current?.click()}>
-            {bannerPreview && <img src={bannerPreview} className="w-full h-full object-cover" />}
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <span className="flex items-center gap-2 text-white text-sm font-medium">
-                <Camera size={16} />
-                {uploadingBanner ? 'Subiendo...' : 'Cambiar banner'}
-              </span>
+          <DropZone onFile={handleBannerFile} accept="image/*" disabled={uploadingBanner} className="block">
+            <div className="h-36 bg-gradient-to-br from-[var(--accent)]/25 to-white/[0.02] relative cursor-pointer group"
+              onClick={() => bannerRef.current?.click()}>
+              {bannerPreview && <img src={bannerPreview} className="w-full h-full object-cover" />}
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="flex items-center gap-2 text-white text-sm font-medium">
+                  <Camera size={16} />
+                  {uploadingBanner ? 'Subiendo...' : 'Cambiar banner'}
+                </span>
+              </div>
+              <input ref={bannerRef} type="file" accept="image/*" className="hidden" onChange={handleBanner} />
             </div>
-            <input ref={bannerRef} type="file" accept="image/*" className="hidden" onChange={handleBanner} />
-          </div>
+          </DropZone>
           <div className="px-6 pb-6">
             <div className="flex items-end gap-4 -mt-10 mb-4 relative z-10">
-              <div className="w-20 h-20 rounded-2xl border-4 border-[#12121f] bg-[var(--accent)]/20 flex items-center justify-center text-2xl font-bold text-white overflow-hidden cursor-pointer relative group flex-shrink-0"
-                onClick={() => avatarRef.current?.click()}>
-                {avatarPreview
-                  ? <img src={avatarPreview} className="w-full h-full object-cover" />
-                  : <Music2 size={28} className="text-[var(--accent)]" />}
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl">
-                  <Camera size={16} className="text-white" />
+              <DropZone onFile={handleAvatarFile} accept="image/*" disabled={uploadingAvatar}>
+                <div className="w-20 h-20 rounded-2xl border-4 border-[#12121f] bg-[var(--accent)]/20 flex items-center justify-center text-2xl font-bold text-white overflow-hidden cursor-pointer relative group flex-shrink-0"
+                  onClick={() => avatarRef.current?.click()}>
+                  {avatarPreview
+                    ? <img src={avatarPreview} className="w-full h-full object-cover" />
+                    : <Music2 size={28} className="text-[var(--accent)]" />}
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl">
+                    <Camera size={16} className="text-white" />
+                  </div>
+                  <input ref={avatarRef} type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
                 </div>
-                <input ref={avatarRef} type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
-              </div>
+              </DropZone>
               <p className="text-xs text-gray-500 pb-1">Clic para cambiar avatar o banner</p>
             </div>
           </div>
@@ -302,37 +325,39 @@ export default function BandManagePage() {
         </GlassCard>
 
         {/* Media */}
-        <GlassCard className="p-6 flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Fotos, vídeos y demos</h2>
-            <label className={`flex items-center gap-1.5 text-xs font-medium text-[var(--accent)] hover:text-white cursor-pointer transition-colors ${uploadingMedia ? 'opacity-50 pointer-events-none' : ''}`}>
-              <Upload size={12} />
-              {uploadingMedia ? 'Subiendo...' : 'Subir archivo'}
-              <input ref={mediaRef} type="file" accept="image/*,video/*,audio/*" className="hidden" onChange={handleMedia} />
-            </label>
-          </div>
-          {(!band?.media || band.media.length === 0) ? (
-            <p className="text-sm text-gray-500 text-center py-4">Sin archivos todavía. Sube fotos, vídeos o demos.</p>
-          ) : (
-            <div className="grid grid-cols-3 gap-2">
-              {band.media.map((m: any) => (
-                <div key={m.id} className="relative group aspect-square rounded-xl overflow-hidden bg-white/[0.05]">
-                  {m.type === 'IMAGE'
-                    ? <img src={m.url} className="w-full h-full object-cover" />
-                    : <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        <Play size={24} />
-                        <span className="text-xs absolute bottom-1 left-1 right-1 text-center truncate">{m.title ?? 'Video'}</span>
-                      </div>
-                  }
-                  <button type="button" onClick={() => deleteMedia(m.id)}
-                    className="absolute top-1 right-1 w-6 h-6 bg-black/70 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/80">
-                    <Trash2 size={11} className="text-white" />
-                  </button>
-                </div>
-              ))}
+        <DropZone onFile={handleMediaFile} accept="image/*,video/*,audio/*" disabled={uploadingMedia}>
+          <GlassCard className="p-6 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Fotos, vídeos y demos</h2>
+              <label className={`flex items-center gap-1.5 text-xs font-medium text-[var(--accent)] hover:text-white cursor-pointer transition-colors ${uploadingMedia ? 'opacity-50 pointer-events-none' : ''}`}>
+                <Upload size={12} />
+                {uploadingMedia ? 'Subiendo...' : 'Subir archivo'}
+                <input ref={mediaRef} type="file" accept="image/*,video/*,audio/*" className="hidden" onChange={handleMedia} />
+              </label>
             </div>
-          )}
-        </GlassCard>
+            {(!band?.media || band.media.length === 0) ? (
+              <p className="text-sm text-gray-500 text-center py-4">Sin archivos todavía. Sube fotos, vídeos o demos.</p>
+            ) : (
+              <div className="grid grid-cols-3 gap-2">
+                {band.media.map((m: any) => (
+                  <div key={m.id} className="relative group aspect-square rounded-xl overflow-hidden bg-white/[0.05]">
+                    {m.type === 'IMAGE'
+                      ? <img src={m.url} className="w-full h-full object-cover" />
+                      : <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          <Play size={24} />
+                          <span className="text-xs absolute bottom-1 left-1 right-1 text-center truncate">{m.title ?? 'Video'}</span>
+                        </div>
+                    }
+                    <button type="button" onClick={() => deleteMedia(m.id)}
+                      className="absolute top-1 right-1 w-6 h-6 bg-black/70 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/80">
+                      <Trash2 size={11} className="text-white" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </GlassCard>
+        </DropZone>
 
         {/* Guardar */}
         <div className="flex items-center justify-end gap-3">
