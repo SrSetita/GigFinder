@@ -58,11 +58,12 @@ export default function ProfilePage() {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
   const mediaInputRef = useRef<HTMLInputElement>(null)
 
+  const savedParam = searchParams.get('saved')
   useEffect(() => {
-    if (searchParams.get('saved') === '1') {
+    if (savedParam === '1') {
       toast('Cambios guardados correctamente', 'success')
     }
-  }, [searchParams])
+  }, [savedParam])
 
   useEffect(() => {
     api.get<any>(`/api/profiles/${id}`)
