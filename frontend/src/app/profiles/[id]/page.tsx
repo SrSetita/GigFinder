@@ -189,13 +189,18 @@ export default function ProfilePage() {
   }
 
   if (!profile) {
+    const isOwnStale = !authLoading && user?.profile?.id === id
+    if (isOwnStale) {
+      router.replace('/settings/profile')
+      return null
+    }
     return (
       <div className="max-w-4xl mx-auto px-6 py-32 text-center">
         <div className="w-16 h-16 rounded-2xl bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center mx-auto mb-4">
-          <Users size={24} className="text-gray-500" />
+          <Users size={24} className="text-[var(--text-muted)]" />
         </div>
         <h1 className="text-2xl font-bold mb-2">Perfil no encontrado</h1>
-        <p className="text-gray-400">Este perfil no existe o ha sido eliminado.</p>
+        <p className="text-[var(--text-muted)]">Este perfil no existe o ha sido eliminado.</p>
       </div>
     )
   }
