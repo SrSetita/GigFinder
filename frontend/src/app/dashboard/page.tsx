@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useAuth } from '@/lib/AuthContext'
 import { useToast } from '@/lib/ToastContext'
 import { api } from '@/lib/api'
-import { Music2, Plus, MapPin, Users, Check, X, Crown } from 'lucide-react'
+import { Music2, Plus, MapPin, Users, Check, X, Crown, ArrowRight } from 'lucide-react'
 
 interface Member {
   userId: string
@@ -86,33 +86,19 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      {/* Pending invitations */}
+      {/* ── Invitaciones pendientes ── */}
       {invitations.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-sm font-semibold text-gray-400 mb-3">Invitaciones pendientes</h2>
-          <div className="space-y-3">
+        <div className="mb-6 border border-[var(--accent)]/30 bg-[var(--accent-subtle)] rounded-xl p-4">
+          <p className="text-[13px] font-semibold text-[var(--accent)] mb-3">
+            {invitations.length} invitación{invitations.length > 1 ? 'es' : ''} pendiente{invitations.length > 1 ? 's' : ''}
+          </p>
+          <div className="flex flex-col gap-2">
             {invitations.map(inv => (
-              <div key={inv.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[var(--accent)]/20 bg-[var(--accent)]/5">
-                <div className="w-10 h-10 rounded-xl bg-[var(--accent)]/20 flex items-center justify-center flex-shrink-0">
-                  <Music2 size={18} className="text-[var(--accent)]" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-sm">{inv.band.name}</p>
-                  <p className="text-xs text-gray-500">{inv.band.members.length} miembro{inv.band.members.length !== 1 ? 's' : ''}</p>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => acceptInvite(inv)}
-                    className="flex items-center gap-1 bg-green-500/15 hover:bg-green-500/25 text-green-400 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-                  >
-                    <Check size={12} />
-                    Unirme
-                  </button>
-                  <button
-                    onClick={() => declineInvite(inv)}
-                    className="flex items-center gap-1 bg-white/[0.05] hover:bg-white/[0.1] text-gray-400 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-                  >
-                    <X size={12} />
+              <div key={inv.id} className="flex items-center justify-between gap-3">
+                <span className="text-[13px] text-[var(--text-primary)]">{inv.band.name}</span>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => acceptInvite(inv)} className="btn-primary px-3 py-1.5 text-[12px]">
+                    Aceptar
                   </button>
                 </div>
               </div>
@@ -121,7 +107,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Bands list */}
+      {/* ── Mis bandas ── */}
       {bands.length === 0 ? (
         <div className="text-center py-16 border border-dashed border-white/[0.1] rounded-2xl">
           <Music2 size={32} className="text-gray-600 mx-auto mb-3" />
@@ -131,40 +117,28 @@ export default function DashboardPage() {
           </Link>
         </div>
       ) : (
-        <div className="space-y-3">
-          {bands.map(band => {
-            const myRole = band.members.find(m => m.userId === user?.id)?.role
-            return (
-              <Link
-                key={band.id}
-                href={`/bands/${band.id}`}
-                className="flex items-center gap-4 p-4 rounded-2xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.05] hover:border-[var(--accent)]/20 transition-all"
-              >
-                <div className="w-12 h-12 rounded-xl bg-[var(--accent)]/15 flex items-center justify-center flex-shrink-0">
-                  {band.avatarUrl
-                    ? <img src={band.avatarUrl} className="w-full h-full rounded-xl object-cover" />
-                    : <Music2 size={22} className="text-[var(--accent)]" />}
+        <div className="divide-y divide-[var(--border)] border border-[var(--border)] rounded-xl overflow-hidden">
+          {bands.map(band => (
+            <Link
+              key={band.id}
+              href={`/bands/${band.id}`}
+              className="flex items-center gap-4 px-4 py-3.5 bg-[var(--surface)] hover:bg-[var(--surface-raised)] transition-colors duration-150"
+            >
+              <div className="w-10 h-10 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center flex-shrink-0 overflow-hidden">
+                {band.avatarUrl
+                  ? <img src={band.avatarUrl} className="w-full h-full object-cover" />
+                  : <Music2 size={16} className="text-[var(--text-muted)]" />
+                }
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-[14px] truncate">{band.name}</div>
+                <div className="text-[12px] text-[var(--text-muted)] truncate">
+                  {band.city && `${band.city} · `}{band.members.length} miembro{band.members.length !== 1 ? 's' : ''}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-sm">{band.name}</span>
-                    {myRole === 'ADMIN' && <Crown size={12} className="text-yellow-400" />}
-                  </div>
-                  <div className="flex items-center gap-3 mt-0.5">
-                    {band.city && <span className="text-xs text-gray-500 flex items-center gap-1"><MapPin size={10} />{band.city}</span>}
-                    <span className="text-xs text-gray-500 flex items-center gap-1"><Users size={10} />{band.members.length}</span>
-                  </div>
-                  {band.genres.length > 0 && (
-                    <div className="flex gap-1 mt-1.5">
-                      {band.genres.slice(0, 3).map(g => (
-                        <span key={g} className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--accent)]/10 text-[var(--accent)]">{g}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </Link>
-            )
-          })}
+              </div>
+              <ArrowRight size={15} className="text-[var(--text-muted)] flex-shrink-0" />
+            </Link>
+          ))}
         </div>
       )}
     </div>
