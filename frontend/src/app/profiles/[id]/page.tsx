@@ -263,6 +263,35 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {/* ── Bio / géneros / redes ── */}
+      {(profile.bio || profile.genres?.length > 0 || (profile.socialLinks && Object.keys(profile.socialLinks).length > 0)) && (
+        <Card className="p-5 mb-6">
+          {profile.bio && (
+            <p className="text-[14px] text-[var(--text-secondary)] leading-relaxed mb-4">{profile.bio}</p>
+          )}
+          {profile.genres?.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {profile.genres.map((g: string) => (
+                <span key={g} className="genre-pill px-3 py-1 rounded-full text-[12px]">{g}</span>
+              ))}
+            </div>
+          )}
+          {profile.socialLinks && Object.keys(profile.socialLinks).length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(profile.socialLinks).map(([platform, handle]) => {
+                const Icon = SOCIAL_ICONS[platform] || Link2
+                return (
+                  <span key={platform} className="flex items-center gap-1.5 text-[12px] text-[var(--text-muted)] bg-[var(--surface-raised)] border border-[var(--border)] px-3 py-1.5 rounded-lg">
+                    <Icon size={12} />
+                    {handle as string}
+                  </span>
+                )
+              })}
+            </div>
+          )}
+        </Card>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Left: role-specific info */}
         <div className="md:col-span-1 flex flex-col gap-4">
