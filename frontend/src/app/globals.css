@@ -1,173 +1,176 @@
+/* frontend/src/app/globals.css */
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0f;
-  --foreground: #f0f0f5;
+  /* Superficie */
+  --background: #0d0d0d;
+  --surface: #141414;
+  --surface-raised: #1a1a1a;
+
+  /* Bordes */
+  --border: #262626;
+  --border-hover: #404040;
+
+  /* Acento */
   --accent: #7c3aed;
-  --accent-hover: #6d28d9;
-  --muted: #1e1e2e;
-  --border: #2a2a3e;
-  --card: #12121f;
-  --glass-bg: rgba(255, 255, 255, 0.04);
-  --glass-border: rgba(255, 255, 255, 0.07);
-  --glass-blur: 16px;
+  --accent-hover: #8b5cf6;
+  --accent-subtle: rgba(124, 58, 237, 0.08);
+  --accent-subtle-hover: rgba(124, 58, 237, 0.14);
+
+  /* Texto */
+  --text-primary: #ededed;
+  --text-secondary: #8c8c8c;
+  --text-muted: #525252;
+
+  /* Easing único para toda la UI */
+  --ease-ui: cubic-bezier(0.25, 0, 0, 1);
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: var(--text-primary);
   font-family: 'Inter', system-ui, sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04";
+  -webkit-font-smoothing: antialiased;
 }
 
 * {
   border-color: var(--border);
 }
 
-/* ─── Mesh gradient — transform-only animation (GPU composited) ─── */
-.mesh-bg {
+/* ─── Tipografía responsive ─── */
+.text-hero {
+  font-size: clamp(2.75rem, 7vw, 5.5rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.text-display {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+/* ─── Botón primario ─── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: background 150ms var(--ease-ui), transform 120ms var(--ease-ui);
+}
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+/* ─── Botón ghost ─── */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--text-primary);
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  transition: border-color 150ms var(--ease-ui), background 150ms var(--ease-ui), transform 120ms var(--ease-ui);
+}
+.btn-ghost:hover {
+  border-color: var(--border-hover);
+  background: var(--surface);
+}
+.btn-ghost:active {
+  transform: scale(0.97);
+}
+
+/* ─── Genre pill ─── */
+.genre-pill {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  transition: border-color 150ms var(--ease-ui), color 150ms var(--ease-ui), background 150ms var(--ease-ui);
+}
+@media (hover: hover) and (pointer: fine) {
+  .genre-pill:hover {
+    border-color: var(--accent);
+    color: var(--text-primary);
+    background: var(--accent-subtle);
+  }
+}
+.genre-pill:active {
+  transform: scale(0.97);
+}
+
+/* ─── DotGrid background ─── */
+.dot-grid {
   position: relative;
-  background: #0a0a0f;
-  overflow: hidden;
+  background-color: var(--background);
+  background-image: radial-gradient(circle, #2a2a2a 1px, transparent 1px);
+  background-size: 28px 28px;
 }
-
-.mesh-bg::before {
-  content: '';
-  position: absolute;
-  inset: -40%;
-  background:
-    radial-gradient(circle 700px at 25% 25%, rgba(124, 58, 237, 0.26) 0%, transparent 70%),
-    radial-gradient(circle 550px at 80% 80%, rgba(79, 70, 229, 0.20) 0%, transparent 70%),
-    radial-gradient(circle 400px at 60% 70%, rgba(236, 72, 153, 0.08) 0%, transparent 70%);
-  animation: mesh-drift 24s ease-in-out infinite alternate;
-  will-change: transform;
-  pointer-events: none;
-}
-
-@keyframes mesh-drift {
-  0%   { transform: translate(0%,  0%)  rotate(0deg); }
-  33%  { transform: translate(4%,  -6%) rotate(2deg); }
-  66%  { transform: translate(-5%, 4%)  rotate(-1deg); }
-  100% { transform: translate(3%,  7%)  rotate(3deg); }
-}
-
-/* ─── Noise — lightweight grain via CSS (no SVG filter) ─── */
-.noise::after {
+.dot-grid::after {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEWFhYWDg4N3d3dtbW17e3t1dXVpaWllZWVZWVlPT09HR0dFRUU9PT0zMzMxMTEpKSknJycjIyMhISEZGRkXFxcVFRUPDw8NDQ0LCwsHBwcFBQUDAwMBAbKmAAAAG3RSTlNAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQKABG0oAAABTSURBVDjL7c4xDsAgCEVRQEVF3H8Lu5aJj97GfymQsH4iqrEGAMCKqxMAAMCkqrIKAADwVVUFAAC4VFUBAADwVVUBAAC4VFUFAADgqaoKAACA1wMGlwVHOQAAAABJRU5ErkJggg==");
-  opacity: 0.03;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
   pointer-events: none;
-  border-radius: inherit;
 }
 
-/* ─── Glass utility ─── */
-.glass {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-}
-
-/* Only use backdrop-blur where it visually matters (over dynamic bg) */
-.glass-blur {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-/* ─── Audio wave bars (CSS — no JS animation overhead) ─── */
+/* ─── Audio wave bars (solo en perfiles músico/banda) ─── */
 .audio-bar {
   animation: audio-wave 1.8s ease-in-out infinite;
   will-change: transform;
   transform-origin: center 50%;
 }
+.audio-bar:nth-child(1) { animation-delay: 0.0s; }
+.audio-bar:nth-child(2) { animation-delay: 0.2s; }
+.audio-bar:nth-child(3) { animation-delay: 0.4s; }
+.audio-bar:nth-child(4) { animation-delay: 0.6s; }
+.audio-bar:nth-child(5) { animation-delay: 0.8s; }
+
 @keyframes audio-wave {
-  0%, 100% { transform: scaleY(0.25); }
+  0%, 100% { transform: scaleY(0.4); }
   50%       { transform: scaleY(1); }
 }
 
-/* ─── Hero entrance ─── */
-.hero-badge    { animation: fade-up 0.5s ease both; animation-delay: 0.15s; }
-.hero-title    { animation: fade-up 0.6s ease both; animation-delay: 0.30s; }
-.hero-subtitle { animation: fade-up 0.6s ease both; animation-delay: 0.50s; }
-.hero-cta      { animation: fade-up 0.6s ease both; animation-delay: 0.65s; }
-
+/* ─── Fade-up para entrada de secciones ─── */
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(22px); }
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── Glow text ─── */
-.glow-text {
-  text-shadow: 0 0 40px rgba(124, 58, 237, 0.55);
+.animate-fade-up {
+  animation: fade-up 0.3s var(--ease-ui) both;
 }
 
-/* ─── Primary button glow ─── */
-.btn-primary-glow {
-  background: var(--accent);
-  color: white;
-  transition: background 0.25s, box-shadow 0.25s, transform 0.2s;
-}
-.btn-primary-glow:hover {
-  background: var(--accent-hover);
-  box-shadow: 0 0 28px rgba(124, 58, 237, 0.45);
-  transform: translateY(-2px);
+/* ─── Stagger helpers (hasta 8 items) ─── */
+.stagger-1 { animation-delay: 30ms; }
+.stagger-2 { animation-delay: 60ms; }
+.stagger-3 { animation-delay: 90ms; }
+.stagger-4 { animation-delay: 120ms; }
+.stagger-5 { animation-delay: 150ms; }
+.stagger-6 { animation-delay: 180ms; }
+.stagger-7 { animation-delay: 210ms; }
+.stagger-8 { animation-delay: 240ms; }
+
+/* ─── Hover gates: solo en dispositivos con hover real ─── */
+@media (hover: hover) and (pointer: fine) {
+  .hover-lift:hover {
+    border-color: var(--border-hover) !important;
+    background: var(--surface-raised) !important;
+  }
 }
 
-/* ─── Genre pill pop-in ─── */
-.genre-pill {
-  animation: pop-in 0.35s ease both;
-}
-@keyframes pop-in {
-  from { opacity: 0; transform: scale(0.85); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-/* ─── Scrollbar hide ─── */
-.scrollbar-none::-webkit-scrollbar { display: none; }
-.scrollbar-none { scrollbar-width: none; }
-
-/* ─── Scan line accent ─── */
-.scan-line {
-  position: absolute;
-  left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(to right, transparent, rgba(124, 58, 237, 0.6), transparent);
-  animation: scan 3s ease-in-out infinite;
-}
-@keyframes scan {
-  0%, 100% { opacity: 0.3; transform: translateY(0); }
-  50%      { opacity: 1;   transform: translateY(4px); }
-}
-
-/* ─── Steps connector travelling dot ─── */
-@keyframes connector-travel {
-  0%   { left: 0%;   opacity: 0; }
-  10%  { opacity: 1; }
-  90%  { opacity: 1; }
-  100% { left: 100%; opacity: 0; }
-}
-
-/* ─── Floating music notes ─── */
+/* ─── Note float (kept por compatibilidad) ─── */
 @keyframes note-float {
-  0%   { transform: translateY(0)     rotate(0deg);  opacity: 0; }
-  12%  { opacity: 1; }
-  70%  { opacity: 0.7; }
-  100% { transform: translateY(-160px) rotate(15deg); opacity: 0; }
-}
-
-/* ─── Page fade-in (CSS, no FM dependency) ─── */
-@keyframes page-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-.page-fade {
-  animation: page-fade-in 0.15s ease-out;
-}
-
-/* ─── Toast slide-in ─── */
-@keyframes toast-in {
-  from { opacity: 0; transform: translateX(20px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-.animate-toast-in {
-  animation: toast-in 0.2s ease-out;
+  0%   { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-80px); opacity: 0; }
 }
