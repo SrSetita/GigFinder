@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import {
   MapPin, GraduationCap, CheckCircle2, Handshake, Users, Film,
@@ -10,7 +11,7 @@ import {
 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/AuthContext'
-import GlassCard from '@/components/ui/GlassCard'
+import Card from '@/components/ui/Card'
 import DropZone from '@/components/ui/DropZone'
 import { useToast } from '@/lib/ToastContext'
 import { SkeletonProfile } from '@/components/ui/Skeleton'
@@ -22,12 +23,6 @@ const ROLE_LABELS: Record<string, string> = {
   PROMOTER: 'Promotor',
 }
 
-const ROLE_BANNER: Record<string, string> = {
-  MUSICIAN: 'from-blue-900/40 via-[var(--accent)]/20 to-indigo-900/30',
-  BAND:     'from-pink-900/40 via-purple-900/30 to-[var(--accent)]/20',
-  VENUE:    'from-[var(--accent)]/30 via-purple-900/20 to-indigo-900/30',
-  PROMOTER: 'from-orange-900/30 via-red-900/20 to-pink-900/30',
-}
 
 const SOCIAL_ICONS: Record<string, React.ElementType> = {
   instagram:  Camera,
@@ -186,9 +181,9 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-10">
-        <GlassCard className="overflow-hidden mb-6">
+        <Card className="overflow-hidden mb-6">
           <SkeletonProfile />
-        </GlassCard>
+        </Card>
       </div>
     )
   }
@@ -214,121 +209,65 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
-      {/* Header */}
-      <GlassCard className="overflow-hidden mb-6">
-        <div className={`h-40 bg-gradient-to-br ${ROLE_BANNER[role] || 'from-[var(--accent)]/25 to-white/[0.02]'} relative`}>
-          {profile.bannerUrl && (
-            <img src={profile.bannerUrl} alt="" className="w-full h-full object-cover" />
-          )}
-          {profile.isPremium && (
-            <span className="absolute top-4 right-4 bg-yellow-500 text-black text-xs px-3 py-1 rounded-full font-semibold">
-              Premium
-            </span>
-          )}
+      {/* ── Header ── */}
+      <div className="mb-8">
+        {/* Banner */}
+        <div className="w-full h-48 rounded-xl bg-[var(--surface)] border border-[var(--border)] overflow-hidden relative">
+          {profile.bannerUrl
+            ? <img src={profile.bannerUrl} alt="" className="w-full h-full object-cover" />
+            : <div className="w-full h-full bg-[var(--surface-raised)]" />
+          }
         </div>
 
-        <div className="px-6 pb-6">
-          <div className="flex items-end justify-between -mt-12 mb-4 relative z-10">
-            <div className="w-24 h-24 rounded-full border-4 border-[#12121f] bg-[var(--accent)] flex items-center justify-center text-3xl font-bold text-white overflow-hidden">
-              {profile.avatarUrl ? (
-                <img src={profile.avatarUrl} alt="" className="w-full h-full object-cover" />
-              ) : (
-                profile.displayName?.[0]?.toUpperCase()
-              )}
-            </div>
-            <div className="flex gap-2">
-              {isOwnProfile ? (
-                <div className="flex gap-2">
-                  {role === 'BAND' && profile.band?.id && (
-                    <button
-                      onClick={() => router.push(`/bands/${profile.band.id}/manage`)}
-                      className="flex items-center gap-1.5 glass hover:border-[var(--accent)]/40 hover:text-[var(--accent)] hover:bg-[var(--accent)]/5 active:scale-95 text-sm px-4 py-2 rounded-lg transition-all"
-                    >
-                      <Settings size={14} />
-                      Gestionar
-                    </button>
-                  )}
-                  <button
-                    onClick={() => router.push('/settings/profile')}
-                    className="flex items-center gap-1.5 glass hover:border-[var(--accent)]/40 hover:text-[var(--accent)] hover:bg-[var(--accent)]/5 active:scale-95 text-sm px-4 py-2 rounded-lg transition-all"
-                  >
-                    <Edit3 size={14} />
-                    Editar perfil
-                  </button>
+        {/* Avatar + acción */}
+        <div className="flex items-end justify-between gap-4 -mt-10 px-1">
+          <div className="w-20 h-20 rounded-xl bg-[var(--surface)] border-2 border-[var(--background)] overflow-hidden flex-shrink-0">
+            {profile.avatarUrl
+              ? <img src={profile.avatarUrl} alt={profile.displayName} className="w-full h-full object-cover" />
+              : <div className="w-full h-full flex items-center justify-center text-2xl font-black text-[var(--text-muted)]">
+                  {profile.displayName?.[0]?.toUpperCase()}
                 </div>
-              ) : (
-                <button
-                  onClick={handleContact}
-                  disabled={messaging}
-                  className="flex items-center gap-1.5 bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-white text-sm px-5 py-2 rounded-lg font-medium transition-colors"
-                >
-                  <MessageCircle size={14} />
-                  {messaging ? 'Enviando...' : 'Contactar'}
-                </button>
-              )}
-            </div>
+            }
           </div>
-
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl font-bold">{profile.displayName}</h1>
-              <span className="text-xs glass px-2 py-0.5 rounded-full text-gray-400">
-                {ROLE_LABELS[role] || role}
-              </span>
-              {avgRating > 0 && (
-                <span className="flex items-center gap-1 text-yellow-400 text-xs font-medium">
-                  <Star size={12} className="fill-yellow-400" />
-                  {avgRating.toFixed(1)}
-                  <span className="text-gray-500">({reviews.length})</span>
-                </span>
-              )}
-            </div>
-            {profile.city && (
-              <p className="flex items-center gap-1 text-gray-400 text-sm">
-                <MapPin size={13} />
-                {profile.city}{profile.country !== 'ES' ? `, ${profile.country}` : ''}
-              </p>
+          <div className="pb-1">
+            {isOwnProfile ? (
+              <Link href="/settings/profile" className="btn-ghost px-4 py-2 text-[13px]">
+                Editar perfil
+              </Link>
+            ) : (
+              <button onClick={handleContact} disabled={messaging} className="btn-primary px-4 py-2 text-[13px]">
+                {messaging ? 'Enviando...' : 'Contactar'}
+              </button>
             )}
           </div>
-
-          {profile.genres?.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-4">
-              {profile.genres.map((g: string) => (
-                <span key={g} className="bg-[var(--accent)]/10 text-[var(--accent)] border border-[var(--accent)]/20 px-3 py-1 rounded-full text-sm">
-                  {g}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {profile.bio && (
-            <p className="text-gray-300 mt-4 leading-relaxed">{profile.bio}</p>
-          )}
-
-          {profile.socialLinks && Object.keys(profile.socialLinks).length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-4">
-              {Object.entries(profile.socialLinks).map(([platform, handle]) => {
-                const Icon = SOCIAL_ICONS[platform] || Link2
-                return (
-                  <span
-                    key={platform}
-                    className="flex items-center gap-1.5 text-sm text-gray-400 glass px-3 py-1.5 rounded-lg"
-                  >
-                    <Icon size={13} />
-                    <span>{String(handle)}</span>
-                  </span>
-                )
-              })}
-            </div>
-          )}
         </div>
-      </GlassCard>
+
+        {/* Nombre + rol + ciudad */}
+        <div className="mt-3 px-1">
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="text-[1.5rem] font-bold">{profile.displayName}</h1>
+            {profile.verified && <CheckCircle2 size={16} className="text-[var(--accent)]" />}
+          </div>
+          <div className="flex items-center gap-3 text-[13px] text-[var(--text-muted)]">
+            <span>{ROLE_LABELS[profile.role]}</span>
+            {profile.city && (
+              <>
+                <span>·</span>
+                <span className="flex items-center gap-1">
+                  <MapPin size={12} />
+                  {profile.city}
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Left: role-specific info */}
         <div className="md:col-span-1 flex flex-col gap-4">
           {role === 'MUSICIAN' && profile.musician && (
-            <GlassCard className="p-5">
+            <Card className="p-5">
               <h2 className="font-semibold mb-3">Instrumentos</h2>
               {profile.musician.instruments?.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
@@ -355,11 +294,11 @@ export default function ProfilePage() {
                   Abierto a colaboraciones
                 </p>
               )}
-            </GlassCard>
+            </Card>
           )}
 
           {role === 'BAND' && profile.band && (
-            <GlassCard className="p-5">
+            <Card className="p-5">
               <h2 className="font-semibold mb-3">Banda</h2>
               {profile.band.lookingForMembers && (
                 <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3 mb-3">
@@ -424,11 +363,11 @@ export default function ProfilePage() {
                   </button>
                 </form>
               )}
-            </GlassCard>
+            </Card>
           )}
 
           {role === 'VENUE' && profile.venue && (
-            <GlassCard className="p-5">
+            <Card className="p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Building2 size={16} className="text-[var(--accent)]" />
                 <h2 className="font-semibold">Sala</h2>
@@ -470,11 +409,11 @@ export default function ProfilePage() {
                   Reservar sala
                 </button>
               )}
-            </GlassCard>
+            </Card>
           )}
 
           {role === 'PROMOTER' && profile.promoter && (
-            <GlassCard className="p-5">
+            <Card className="p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Megaphone size={16} className="text-[var(--accent)]" />
                 <h2 className="font-semibold">Promotor</h2>
@@ -492,7 +431,7 @@ export default function ProfilePage() {
                   {profile.promoter.website}
                 </p>
               )}
-            </GlassCard>
+            </Card>
           )}
         </div>
 
@@ -511,7 +450,7 @@ export default function ProfilePage() {
             disabled={uploading || !isOwnProfile}
           >
             {profile.media?.length > 0 ? (
-              <GlassCard className="p-5">
+              <Card className="p-5">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <Film size={16} className="text-[var(--accent)]" />
@@ -548,9 +487,9 @@ export default function ProfilePage() {
                     </div>
                   ))}
                 </div>
-              </GlassCard>
+              </Card>
             ) : (
-              <GlassCard className="p-10 text-center text-gray-500">
+              <Card className="p-10 text-center text-gray-500">
                 <div className="w-14 h-14 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-4">
                   <Film size={22} className="text-gray-600" />
                 </div>
@@ -565,14 +504,14 @@ export default function ProfilePage() {
                     {uploading ? 'Subiendo...' : 'Subir media'}
                   </button>
                 )}
-              </GlassCard>
+              </Card>
             )}
           </DropZone>
         </div>
       </div>
 
       {/* Reviews */}
-      <GlassCard className="p-6 mt-6">
+      <Card className="p-6 mt-6">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
             <Star size={16} className="text-yellow-400" />
@@ -610,7 +549,7 @@ export default function ProfilePage() {
             <button
               type="submit"
               disabled={!myRating || submittingReview}
-              className="btn-primary-glow px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-40 disabled:transform-none"
+              className="btn-primary px-5 py-2 rounded-lg text-sm font-medium disabled:opacity-40 disabled:transform-none"
             >
               {submittingReview ? 'Guardando...' : 'Enviar reseña'}
             </button>
@@ -646,7 +585,7 @@ export default function ProfilePage() {
             ))}
           </div>
         )}
-      </GlassCard>
+      </Card>
     </div>
   )
 }
