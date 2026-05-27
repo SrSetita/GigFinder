@@ -82,7 +82,7 @@ export default function HomePage() {
         <div className="relative z-10 flex flex-col items-center max-w-[1120px] mx-auto w-full">
 
           <div className="inline-flex items-center gap-2 bg-[var(--surface)] border border-[var(--border)] rounded-full px-4 py-1.5 text-[12px] text-[var(--text-muted)] mb-8 animate-fade-up">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" aria-hidden="true" />
             Plataforma para músicos, bandas y salas en España
           </div>
 
@@ -122,9 +122,6 @@ export default function HomePage() {
                     <h3 className="font-semibold text-[15px] mb-1">{f.title}</h3>
                     <p className="text-[var(--text-secondary)] text-[13px] leading-relaxed">{f.desc}</p>
                   </div>
-                  <span className="mt-auto text-[12px] text-[var(--accent)] flex items-center gap-1">
-                    Ver más <ArrowRight size={11} />
-                  </span>
                 </Card>
               </Link>
             )

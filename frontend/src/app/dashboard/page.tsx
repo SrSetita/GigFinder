@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useAuth } from '@/lib/AuthContext'
 import { useToast } from '@/lib/ToastContext'
 import { api } from '@/lib/api'
-import { Music2, Plus, MapPin, Users, Check, X, Crown, ArrowRight } from 'lucide-react'
+import { Music2, Plus, ArrowRight } from 'lucide-react'
 
 interface Member {
   userId: string
@@ -126,7 +126,7 @@ export default function DashboardPage() {
             >
               <div className="w-10 h-10 rounded-lg bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center flex-shrink-0 overflow-hidden">
                 {band.avatarUrl
-                  ? <img src={band.avatarUrl} className="w-full h-full object-cover" />
+                  ? <img src={band.avatarUrl} alt={band.name ?? ''} className="w-full h-full object-cover" />
                   : <Music2 size={16} className="text-[var(--text-muted)]" />
                 }
               </div>

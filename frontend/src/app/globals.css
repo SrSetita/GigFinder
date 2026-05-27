@@ -118,6 +118,10 @@ body {
     background: var(--accent-subtle);
   }
 }
+.genre-pill:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 .genre-pill:active {
   transform: scale(0.97);
 }

@@ -176,7 +176,7 @@ function SearchResults() {
               onClick={() => router.push('/search')}
               className="flex items-center gap-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs transition-colors px-2"
             >
-              <X size={14} />
+              <X size={14} aria-hidden="true" />
               Limpiar
             </button>
           )}
@@ -187,7 +187,15 @@ function SearchResults() {
           {(['venue', 'band', 'musician', 'promoter'] as const).map(type => (
             <button
               key={type}
-              onClick={() => setForm(f => ({ ...f, type: f.type === type ? '' : type }))}
+              onClick={() => {
+                const next = form.type === type ? '' : type
+                const params = new URLSearchParams()
+                if (form.q) params.set('q', form.q)
+                if (next) params.set('type', next)
+                if (form.city) params.set('city', form.city)
+                if (form.genre) params.set('genre', form.genre)
+                router.push(`/search?${params}`)
+              }}
               className={`px-4 py-1.5 rounded-full text-[13px] font-medium border transition-colors duration-150
                 ${form.type === type
                   ? 'bg-[var(--accent-subtle)] border-[var(--accent)] text-[var(--accent)]'

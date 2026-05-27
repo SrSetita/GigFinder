@@ -92,7 +92,7 @@ export default function BandPage() {
       <div className="flex items-start gap-4 mb-8 pb-8 border-b border-[var(--border)]">
         <div className="w-16 h-16 rounded-xl bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center flex-shrink-0 overflow-hidden">
           {band.avatarUrl
-            ? <img src={band.avatarUrl} className="w-full h-full object-cover" />
+            ? <img src={band.avatarUrl} alt={band.name ?? ''} className="w-full h-full object-cover" />
             : <Music2 size={24} className="text-[var(--text-muted)]" />
           }
         </div>

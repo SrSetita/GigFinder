@@ -5,9 +5,9 @@ import Link from 'next/link'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import {
   MapPin, GraduationCap, CheckCircle2, Handshake, Users, Film,
-  Plus, X, MessageCircle, Edit3, Building2,
+  Plus, X, Building2,
   Camera, Play, Globe, Music2, Radio, AtSign, Link2,
-  CalendarDays, Megaphone, CheckCircle, Star, UserPlus, Settings, UserMinus,
+  CalendarDays, Megaphone, Star, UserPlus, UserMinus,
 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/AuthContext'
@@ -191,7 +191,7 @@ export default function ProfilePage() {
   if (!profile) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-32 text-center">
-        <div className="w-16 h-16 rounded-2xl glass flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 rounded-2xl bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center mx-auto mb-4">
           <Users size={24} className="text-gray-500" />
         </div>
         <h1 className="text-2xl font-bold mb-2">Perfil no encontrado</h1>
