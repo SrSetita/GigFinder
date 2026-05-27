@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/layout/Navbar'
+import BottomNav from '@/components/layout/BottomNav'
 import VerificationBanner from '@/components/layout/VerificationBanner'
-import PageTransition from '@/components/ui/PageTransition'
 import { AuthProvider } from '@/lib/AuthContext'
 import { ToastProvider } from '@/lib/ToastContext'
 import OnboardingModal from '@/components/ui/OnboardingModal'
@@ -24,9 +24,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Navbar />
             <VerificationBanner />
             <OnboardingModal />
-            <main className="flex-1">
-              <PageTransition>{children}</PageTransition>
+            <main className="flex-1 pb-16 md:pb-0">
+              {children}
             </main>
+            <BottomNav />
           </ToastProvider>
         </AuthProvider>
       </body>
