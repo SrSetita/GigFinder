@@ -1,45 +1,28 @@
-'use client'
+import { ElementType, HTMLAttributes } from 'react'
 
-import { motion } from 'framer-motion'
-
-interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
+interface GlassCardProps extends HTMLAttributes<HTMLElement> {
   hover?: boolean
-  glow?: boolean
-  as?: 'div' | 'section' | 'aside' | 'article'
+  glow?: boolean // kept for compat, no longer applies glow
+  as?: ElementType
 }
 
 export default function GlassCard({
   children,
   className = '',
   hover = false,
-  glow = false,
+  glow: _glow,
   as: Tag = 'div',
   ...props
 }: GlassCardProps) {
-  const base =
-    'bg-white/[0.04] border border-white/[0.07] rounded-2xl'
-
-  if (hover) {
-    return (
-      <motion.div
-        whileHover={{
-          y: -2,
-          borderColor: 'rgba(124,58,237,0.4)',
-          boxShadow: glow
-            ? '0 0 32px rgba(124,58,237,0.2), 0 8px 32px rgba(0,0,0,0.4)'
-            : '0 8px 32px rgba(0,0,0,0.35)',
-        }}
-        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-        className={`${base} ${className}`}
-        {...(props as any)}
-      >
-        {children}
-      </motion.div>
-    )
-  }
-
   return (
-    <Tag className={`${base} ${className}`} {...props}>
+    <Tag
+      className={`
+        bg-[var(--surface)] border border-[var(--border)] rounded-xl
+        ${hover ? 'transition-colors duration-150 hover-lift cursor-pointer' : ''}
+        ${className}
+      `}
+      {...props}
+    >
       {children}
     </Tag>
   )
