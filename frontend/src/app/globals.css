@@ -17,6 +17,18 @@
   --accent-subtle: rgba(124, 58, 237, 0.08);
   --accent-subtle-hover: rgba(124, 58, 237, 0.14);
 
+  /* Segunda tonalidad — fuchsia */
+  --accent-2: #e879f9;
+  --accent-2-hover: #f0abfc;
+  --accent-2-subtle: rgba(232, 121, 249, 0.08);
+
+  /* Gradiente de marca */
+  --gradient-brand: linear-gradient(135deg, #7c3aed 0%, #e879f9 100%);
+
+  /* Glows */
+  --glow-sm: 0 0 20px rgba(124, 58, 237, 0.25);
+  --glow-md: 0 0 40px rgba(124, 58, 237, 0.35), 0 0 60px rgba(232, 121, 249, 0.15);
+
   /* Texto */
   --text-primary: #ededed;
   --text-secondary: #8c8c8c;
@@ -59,15 +71,15 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--accent);
+  background: var(--gradient-brand);
   color: #fff;
   font-weight: 600;
   border-radius: 10px;
-  transition: background 150ms var(--ease-ui), transform 120ms var(--ease-ui);
+  transition: box-shadow 200ms var(--ease-ui), transform 120ms var(--ease-ui);
 }
 @media (hover: hover) and (pointer: fine) {
   .btn-primary:hover {
-    background: var(--accent-hover);
+    box-shadow: var(--glow-sm);
   }
 }
 .btn-primary:focus-visible {
@@ -113,9 +125,10 @@ body {
 }
 @media (hover: hover) and (pointer: fine) {
   .genre-pill:hover {
-    border-color: var(--accent);
+    border-color: var(--accent-2);
     color: var(--text-primary);
-    background: var(--accent-subtle);
+    background: var(--accent-2-subtle);
+    box-shadow: 0 0 12px rgba(232, 121, 249, 0.2);
   }
 }
 .genre-pill:focus-visible {
@@ -181,8 +194,8 @@ body {
 /* ─── Hover gates: solo en dispositivos con hover real ─── */
 @media (hover: hover) and (pointer: fine) {
   .hover-lift:hover {
-    /* !important needed to win specificity over Tailwind bg-[] utilities used alongside this class */
-    border-color: var(--border-hover) !important;
+    border-color: rgba(124, 58, 237, 0.5) !important;
+    box-shadow: var(--glow-sm);
     background: var(--surface-raised) !important;
   }
 }
@@ -196,3 +209,50 @@ body {
 /* ─── Utility: hide scrollbar (used by Navbar mobile) ─── */
 .scrollbar-none { scrollbar-width: none; }
 .scrollbar-none::-webkit-scrollbar { display: none; }
+
+/* ─── Gradient text — uso: <span className="gradient-text">texto</span> ─── */
+.gradient-text {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Orbes de fondo animados (hero) ─── */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  will-change: transform;
+  z-index: 0;
+}
+.orb-a {
+  width: 600px;
+  height: 600px;
+  background: rgba(124, 58, 237, 0.18);
+  top: -200px;
+  left: -100px;
+  animation: orb-drift-a 12s ease-in-out infinite;
+}
+.orb-b {
+  width: 500px;
+  height: 500px;
+  background: rgba(232, 121, 249, 0.14);
+  bottom: -150px;
+  right: -100px;
+  animation: orb-drift-b 14s ease-in-out infinite;
+}
+
+@keyframes orb-drift-a {
+  0%, 100% { transform: translate(0, 0); }
+  50%       { transform: translate(40px, -30px); }
+}
+@keyframes orb-drift-b {
+  0%, 100% { transform: translate(0, 0); }
+  50%       { transform: translate(-30px, 20px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb { animation: none; }
+}
