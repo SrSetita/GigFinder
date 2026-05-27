@@ -28,6 +28,7 @@ export default function BottomNav() {
     <nav
       className="md:hidden fixed bottom-0 inset-x-0 z-[200] bg-[var(--surface)] border-t border-[var(--border)]"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      aria-label="Navegación móvil"
     >
       <div className="grid grid-cols-4">
         {allItems.map(({ href, label, icon: Icon }) => {
@@ -36,6 +37,7 @@ export default function BottomNav() {
             <Link
               key={href}
               href={href}
+              aria-current={active ? 'page' : undefined}
               className={`
                 flex flex-col items-center justify-center gap-1 py-3 text-[10px] font-medium
                 transition-colors duration-150

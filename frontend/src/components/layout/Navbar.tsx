@@ -11,13 +11,13 @@ const NAV_LINKS = [
   { href: '/search?type=musician', label: 'Músicos' },
   { href: '/search?type=promoter', label: 'Promotores' },
   { href: '/gigs',                 label: 'Tablón' },
-]
+] as const
 
 export default function Navbar() {
   const { user, loading, logout } = useAuth()
 
   return (
-    <nav className="sticky top-0 z-[200] border-b border-[var(--border)] bg-[var(--background)]/90 backdrop-blur-sm">
+    <nav className="sticky top-0 z-[200] border-b border-[var(--border)] bg-[var(--background)]/90 backdrop-blur-sm" aria-label="Navegación principal">
       <div className="max-w-[1120px] mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
 
         {/* Logo */}
@@ -50,12 +50,22 @@ export default function Navbar() {
               >
                 Mensajes
               </Link>
-              <Link
-                href={user.role === 'VENUE' ? '/venues/manage' : '/dashboard'}
-                className="text-[var(--text-muted)] hover:text-[var(--text-primary)] px-3 py-1.5 rounded-lg transition-colors duration-150 text-[13px]"
-              >
-                {user.role === 'VENUE' ? 'Mi sala' : 'Mis bandas'}
-              </Link>
+              {(user.role === 'MUSICIAN' || user.role === 'PROMOTER') && (
+                <Link
+                  href="/dashboard"
+                  className="text-[var(--text-muted)] hover:text-[var(--text-primary)] px-3 py-1.5 rounded-lg transition-colors duration-150 text-[13px]"
+                >
+                  Mis bandas
+                </Link>
+              )}
+              {user.role === 'VENUE' && (
+                <Link
+                  href="/venues/manage"
+                  className="text-[var(--text-muted)] hover:text-[var(--text-primary)] px-3 py-1.5 rounded-lg transition-colors duration-150 text-[13px]"
+                >
+                  Mi sala
+                </Link>
+              )}
               <Link
                 href="/bookings"
                 className="text-[var(--text-muted)] hover:text-[var(--text-primary)] px-3 py-1.5 rounded-lg transition-colors duration-150 text-[13px]"
@@ -64,7 +74,7 @@ export default function Navbar() {
               </Link>
               <NotificationBell />
               <Link
-                href={`/profiles/${user.profile?.id}`}
+                href={user.profile?.id ? `/profiles/${user.profile.id}` : '/settings/profile'}
                 className="w-7 h-7 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center overflow-hidden hover:border-[var(--border-hover)] transition-colors"
               >
                 {user.profile?.avatarUrl
@@ -104,7 +114,7 @@ export default function Navbar() {
             <>
               <NotificationBell />
               <Link
-                href={`/profiles/${user.profile?.id}`}
+                href={user.profile?.id ? `/profiles/${user.profile.id}` : '/settings/profile'}
                 className="w-7 h-7 rounded-full bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center overflow-hidden"
               >
                 {user.profile?.avatarUrl
