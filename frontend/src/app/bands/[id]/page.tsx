@@ -88,43 +88,46 @@ export default function BandPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
-      {/* Header */}
-      <div className="flex items-start gap-5 mb-8">
-        <div className="w-20 h-20 rounded-2xl bg-[var(--accent)]/15 flex items-center justify-center flex-shrink-0">
+      {/* ── Header ── */}
+      <div className="flex items-start gap-4 mb-8 pb-8 border-b border-[var(--border)]">
+        <div className="w-16 h-16 rounded-xl bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center flex-shrink-0 overflow-hidden">
           {band.avatarUrl
-            ? <img src={band.avatarUrl} className="w-full h-full rounded-2xl object-cover" />
-            : <Music2 size={32} className="text-[var(--accent)]" />}
+            ? <img src={band.avatarUrl} className="w-full h-full object-cover" />
+            : <Music2 size={24} className="text-[var(--text-muted)]" />
+          }
         </div>
         <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-bold mb-1">{band.name}</h1>
-          {band.city && (
-            <p className="text-gray-400 text-sm flex items-center gap-1 mb-2">
-              <MapPin size={12} /> {band.city}
-            </p>
-          )}
-          {band.genres.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {band.genres.map(g => (
-                <span key={g} className="px-2 py-0.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-xs">{g}</span>
-              ))}
-            </div>
-          )}
+          <h1 className="text-[1.5rem] font-bold mb-1">{band.name}</h1>
+          <div className="flex items-center gap-3 text-[13px] text-[var(--text-muted)]">
+            {band.city && (
+              <span className="flex items-center gap-1">
+                <MapPin size={12} />
+                {band.city}
+              </span>
+            )}
+            {band.genres.length > 0 && (
+              <>
+                <span>·</span>
+                <span>{band.genres.join(', ')}</span>
+              </>
+            )}
+          </div>
         </div>
-        <div className="flex gap-2">
-          {isAdmin && (
-            <Link href={`/bands/${id}/manage`} className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-white bg-white/[0.05] hover:bg-white/[0.1] px-3 py-1.5 rounded-lg transition-all">
-              <Settings size={14} />
-              Gestionar
-            </Link>
-          )}
-          {myMembership && (
-            <button onClick={leave} className="flex items-center gap-1.5 text-sm text-red-400 hover:text-red-300 bg-white/[0.05] px-3 py-1.5 rounded-lg transition-all">
-              <LogOut size={14} />
-              Salir
-            </button>
-          )}
-        </div>
+        {isAdmin && (
+          <Link href={`/bands/${band.id}/manage`} className="btn-ghost px-4 py-2 text-[13px] flex-shrink-0 flex items-center gap-1.5">
+            <Settings size={14} />
+            Gestionar
+          </Link>
+        )}
       </div>
+      {myMembership && (
+        <div className="flex justify-end mb-4">
+          <button onClick={leave} className="flex items-center gap-1.5 text-sm text-red-400 hover:text-red-300 bg-white/[0.05] px-3 py-1.5 rounded-lg transition-all">
+            <LogOut size={14} />
+            Salir
+          </button>
+        </div>
+      )}
 
       {band.description && (
         <p className="text-gray-400 text-sm leading-relaxed mb-8">{band.description}</p>
