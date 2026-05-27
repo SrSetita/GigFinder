@@ -122,7 +122,7 @@ export default function BandPage() {
       </div>
       {myMembership && (
         <div className="flex justify-end mb-4">
-          <button onClick={leave} className="flex items-center gap-1.5 text-sm text-red-400 hover:text-red-300 bg-white/[0.05] px-3 py-1.5 rounded-lg transition-all">
+          <button onClick={leave} className="flex items-center gap-1.5 text-sm text-red-400 hover:text-red-300 bg-[var(--surface-raised)] px-3 py-1.5 rounded-lg transition-all">
             <LogOut size={14} />
             Salir
           </button>
@@ -141,7 +141,7 @@ export default function BandPage() {
             const name = m.user.profile?.displayName ?? '—'
             const profileId = m.user.profile?.id
             return (
-              <div key={m.userId} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+              <div key={m.userId} className="flex items-center gap-3 p-3 rounded-xl bg-[var(--surface)] border border-[var(--border)]">
                 <div className="w-8 h-8 rounded-full bg-[var(--accent)] flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
                   {name[0]?.toUpperCase()}
                 </div>
@@ -165,7 +165,7 @@ export default function BandPage() {
 
       {/* Invite */}
       {isAdmin && (
-        <div className="border border-white/[0.08] rounded-2xl p-5">
+        <div className="border border-[var(--border)] rounded-2xl p-5">
           <h2 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
             <UserPlus size={14} className="text-[var(--accent)]" />
             Invitar músico por email
@@ -176,7 +176,7 @@ export default function BandPage() {
               onChange={e => setInviteEmail(e.target.value)}
               type="email"
               placeholder="email@ejemplo.com"
-              className="flex-1 bg-white/[0.05] border border-white/[0.1] rounded-xl px-4 py-2 text-sm outline-none focus:border-[var(--accent)]/50"
+              className="flex-1 bg-[var(--surface-raised)] border border-[var(--border)] rounded-xl px-4 py-2 text-sm outline-none focus:border-[var(--accent)]/50"
             />
             <button
               type="submit"

@@ -227,7 +227,7 @@ function SearchResults() {
           </div>
         ) : profiles.length === 0 && musicianBands.length === 0 ? (
           <div className="text-center py-20 text-gray-400">
-            <div className="w-16 h-16 rounded-2xl bg-white/[0.04] border border-white/[0.07] flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 rounded-2xl bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center mx-auto mb-4">
               <Search size={24} className="text-gray-500" />
             </div>
             <p className="font-medium">No se encontraron resultados</p>
@@ -239,7 +239,7 @@ function SearchResults() {
               {profiles.map((profile) => (
                 <Link key={profile.id} href={`/profiles/${profile.id}`}>
                   <Card hover className="overflow-hidden group cursor-pointer">
-                    <div className="h-36 bg-gradient-to-br from-[var(--accent)]/20 to-white/[0.03] relative">
+                    <div className="h-36 bg-gradient-to-br from-[var(--accent)]/20 to-[var(--surface)] relative">
                       {profile.media?.[0] && (
                         <img src={profile.media[0].url} alt="" className="w-full h-full object-cover" />
                       )}
@@ -255,7 +255,7 @@ function SearchResults() {
                         <h3 className="font-semibold group-hover:text-[var(--accent)] transition-colors truncate">
                           {profile.displayName}
                         </h3>
-                        <span className={`text-xs px-2 py-0.5 rounded-full border shrink-0 ml-2 ${ROLE_COLORS[profile.user?.role] || 'bg-white/[0.05] text-gray-400 border-white/[0.07]'}`}>
+                        <span className={`text-xs px-2 py-0.5 rounded-full border shrink-0 ml-2 ${ROLE_COLORS[profile.user?.role] || 'bg-[var(--surface-raised)] text-gray-400 border-[var(--border)]'}`}>
                           {ROLE_BADGES[profile.user?.role]}
                         </span>
                       </div>
@@ -308,7 +308,7 @@ function SearchResults() {
                   {musicianBands.map((band) => (
                     <Link key={band.id} href={`/bands/${band.id}`}>
                       <Card hover className="overflow-hidden group cursor-pointer">
-                        <div className="h-36 bg-gradient-to-br from-pink-500/20 to-white/[0.03] relative">
+                        <div className="h-36 bg-gradient-to-br from-pink-500/20 to-[var(--surface)] relative">
                           {band.media?.[0] && (
                             <img src={band.media[0].url} alt="" className="w-full h-full object-cover" />
                           )}

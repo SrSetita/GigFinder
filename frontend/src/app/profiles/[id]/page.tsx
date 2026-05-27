@@ -301,7 +301,7 @@ export default function ProfilePage() {
               {profile.musician.instruments?.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {profile.musician.instruments.map((i: string) => (
-                    <span key={i} className="bg-white/[0.05] px-3 py-1 rounded-full text-sm">{i}</span>
+                    <span key={i} className="bg-[var(--surface-raised)] px-3 py-1 rounded-full text-sm">{i}</span>
                   ))}
                 </div>
               ) : <p className="text-gray-400 text-sm">Sin especificar</p>}
@@ -381,7 +381,7 @@ export default function ProfilePage() {
                     value={inviteEmail}
                     onChange={e => setInviteEmail(e.target.value)}
                     placeholder="Email del músico..."
-                    className="flex-1 bg-white/[0.05] border border-white/[0.08] rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+                    className="flex-1 bg-[var(--surface-raised)] border border-[var(--border)] rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
                   />
                   <button
                     type="submit"
@@ -424,7 +424,7 @@ export default function ProfilePage() {
                   <p className="text-gray-400 text-xs mb-2">Equipamiento</p>
                   <div className="flex flex-wrap gap-1">
                     {profile.venue.amenities.map((a: string) => (
-                      <span key={a} className="bg-white/[0.05] text-xs px-2 py-1 rounded-full">{a}</span>
+                      <span key={a} className="bg-[var(--surface-raised)] text-xs px-2 py-1 rounded-full">{a}</span>
                     ))}
                   </div>
                 </div>
@@ -450,7 +450,7 @@ export default function ProfilePage() {
               {profile.promoter.eventTypes?.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {profile.promoter.eventTypes.map((t: string) => (
-                    <span key={t} className="bg-white/[0.05] px-3 py-1 rounded-full text-sm">{t}</span>
+                    <span key={t} className="bg-[var(--surface-raised)] px-3 py-1 rounded-full text-sm">{t}</span>
                   ))}
                 </div>
               )}
@@ -498,7 +498,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {profile.media.map((m: any) => (
-                    <div key={m.id} className="aspect-square rounded-xl overflow-hidden bg-white/[0.04] relative group">
+                    <div key={m.id} className="aspect-square rounded-xl overflow-hidden bg-[var(--surface)] relative group">
                       {m.type === 'IMAGE' ? (
                         <img src={m.url} alt={m.title || ''} className="w-full h-full object-cover" />
                       ) : m.type === 'VIDEO' ? (
@@ -519,7 +519,7 @@ export default function ProfilePage() {
               </Card>
             ) : (
               <Card className="p-10 text-center text-gray-500">
-                <div className="w-14 h-14 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto mb-4">
+                <div className="w-14 h-14 rounded-2xl bg-[var(--surface)] flex items-center justify-center mx-auto mb-4">
                   <Film size={22} className="text-gray-600" />
                 </div>
                 <p className="text-sm font-medium">Sin fotos ni vídeos todavía</p>
@@ -554,7 +554,7 @@ export default function ProfilePage() {
         </div>
 
         {user && !isOwnProfile && (
-          <form onSubmit={submitReview} className="mb-6 p-4 bg-white/[0.03] rounded-xl border border-white/[0.06]">
+          <form onSubmit={submitReview} className="mb-6 p-4 bg-[var(--surface)] rounded-xl border border-[var(--border)]">
             <p className="text-sm text-gray-400 mb-3">Tu valoración</p>
             <div className="flex gap-1 mb-3">
               {[1, 2, 3, 4, 5].map(star => (
@@ -573,7 +573,7 @@ export default function ProfilePage() {
               onChange={e => setMyReviewBody(e.target.value)}
               placeholder="Comparte tu experiencia (opcional)..."
               rows={2}
-              className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600 resize-none mb-3"
+              className="w-full bg-[var(--surface-raised)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600 resize-none mb-3"
             />
             <button
               type="submit"
