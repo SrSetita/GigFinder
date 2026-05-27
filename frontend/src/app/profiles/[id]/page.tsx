@@ -41,6 +41,7 @@ export default function ProfilePage() {
   const { user, loading: authLoading } = useAuth()
   const { toast } = useToast()
   const [profile, setProfile] = useState<any>(null)
+  const [profileNotFound, setProfileNotFound] = useState(false)
   const [loading, setLoading] = useState(true)
   const [messaging, setMessaging] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -65,7 +66,12 @@ export default function ProfilePage() {
   useEffect(() => {
     api.get<any>(`/api/profiles/${id}`)
       .then(setProfile)
-      .catch(() => setProfile(null))
+      .catch((err: any) => {
+        setProfile(null)
+        if (err?.status === 404 || err?.statusCode === 404) {
+          setProfileNotFound(true)
+        }
+      })
       .finally(() => setLoading(false))
     api.get<any[]>(`/api/reviews/profile/${id}`)
       .then(data => {
@@ -189,10 +195,12 @@ export default function ProfilePage() {
   }
 
   if (!profile) {
-    const isOwnStale = !authLoading && user?.profile?.id === id
-    if (isOwnStale) {
-      router.replace('/settings/profile')
-      return null
+    if (!profileNotFound) {
+      const isOwnStale = !authLoading && String(user?.profile?.id) === id
+      if (isOwnStale) {
+        router.replace('/settings/profile')
+        return null
+      }
     }
     return (
       <div className="max-w-4xl mx-auto px-6 py-32 text-center">
@@ -205,7 +213,7 @@ export default function ProfilePage() {
     )
   }
 
-  const isOwnProfile = !authLoading && user?.profile?.id === id
+  const isOwnProfile = !authLoading && String(user?.profile?.id) === id
   const role = profile.user?.role
 
   const avgRating = reviews.length > 0
