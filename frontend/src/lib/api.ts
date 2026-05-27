@@ -11,7 +11,10 @@ class ApiClient {
 
   async get<T>(path: string): Promise<T> {
     const res = await fetch(`${API_URL}${path}`, { headers: this.getHeaders() })
-    if (!res.ok) throw await res.json()
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}))
+      throw { ...body, status: res.status }
+    }
     return res.json()
   }
 
@@ -21,7 +24,10 @@ class ApiClient {
       headers: this.getHeaders(),
       body: JSON.stringify(body),
     })
-    if (!res.ok) throw await res.json()
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({}))
+      throw { ...errBody, status: res.status }
+    }
     return res.json()
   }
 
@@ -31,7 +37,10 @@ class ApiClient {
       headers: this.getHeaders(),
       body: JSON.stringify(body),
     })
-    if (!res.ok) throw await res.json()
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({}))
+      throw { ...errBody, status: res.status }
+    }
     return res.json()
   }
 
@@ -41,7 +50,10 @@ class ApiClient {
       headers: this.getHeaders(),
       body: JSON.stringify(body),
     })
-    if (!res.ok) throw await res.json()
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({}))
+      throw { ...errBody, status: res.status }
+    }
     return res.json()
   }
 
@@ -51,7 +63,10 @@ class ApiClient {
       method: 'DELETE',
       headers: { ...(token && { Authorization: `Bearer ${token}` }) },
     })
-    if (!res.ok && res.status !== 204) throw await res.json()
+    if (!res.ok && res.status !== 204) {
+      const errBody = await res.json().catch(() => ({}))
+      throw { ...errBody, status: res.status }
+    }
   }
 }
 
