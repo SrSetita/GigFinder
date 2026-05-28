@@ -212,7 +212,9 @@ function SearchResults() {
       <div>
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-xl font-bold">
-            {activeType ? TYPE_LABELS[activeType] : 'Todos'}
+            {activeType
+              ? <span className="gradient-text">{TYPE_LABELS[activeType]}</span>
+              : 'Todos'}
             {activeCity  && <span className="text-gray-400 font-normal"> en {activeCity}</span>}
             {activeGenre && <span className="text-gray-400 font-normal"> · {activeGenre}</span>}
           </h1>

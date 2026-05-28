@@ -97,7 +97,9 @@ export default function BandPage() {
           }
         </div>
         <div className="flex-1 min-w-0">
-          <h1 className="text-[1.5rem] font-bold mb-1">{band.name}</h1>
+          <h1 className="text-[1.5rem] font-bold mb-1">
+            <span className="gradient-text">{band.name}</span>
+          </h1>
           <div className="flex items-center gap-3 text-[13px] text-[var(--text-muted)]">
             {band.city && (
               <span className="flex items-center gap-1">

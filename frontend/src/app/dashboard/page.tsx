@@ -76,7 +76,7 @@ export default function DashboardPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold">Mis bandas</h1>
+        <h1 className="text-2xl font-bold">Mis <span className="gradient-text">bandas</span></h1>
         <Link
           href="/bands/create"
           className="flex items-center gap-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors"

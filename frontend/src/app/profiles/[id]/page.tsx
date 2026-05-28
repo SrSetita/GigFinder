@@ -228,7 +228,7 @@ export default function ProfilePage() {
         <div className="w-full h-48 rounded-xl bg-[var(--surface)] border border-[var(--border)] overflow-hidden relative">
           {profile.bannerUrl
             ? <img src={profile.bannerUrl} alt="" className="w-full h-full object-cover" />
-            : <div className="w-full h-full bg-[var(--surface-raised)]" />
+            : <div className="w-full h-full" style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(232,121,249,0.1) 100%)' }} />
           }
         </div>
 
@@ -258,7 +258,9 @@ export default function ProfilePage() {
         {/* Nombre + rol + ciudad */}
         <div className="mt-3 px-1">
           <div className="flex items-center gap-2 mb-1">
-            <h1 className="text-[1.5rem] font-bold">{profile.displayName}</h1>
+            <h1 className="text-[1.5rem] font-bold">
+              <span className="gradient-text">{profile.displayName}</span>
+            </h1>
             {profile.verified && <CheckCircle2 size={16} className="text-[var(--accent)]" />}
           </div>
           <div className="flex items-center gap-3 text-[13px] text-[var(--text-muted)]">
