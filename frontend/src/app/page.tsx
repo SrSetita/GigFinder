@@ -79,14 +79,8 @@ export default function HomePage() {
 
       {/* ── Hero ── */}
       <DotGrid className="flex flex-col items-center justify-center px-6 py-32 text-center min-h-[86vh] relative overflow-hidden">
-        <div className="orb orb-a" aria-hidden="true" />
-        <div className="orb orb-b" aria-hidden="true" />
+        <div className="hero-ambient" aria-hidden="true" />
         <div className="relative z-10 flex flex-col items-center max-w-[1120px] mx-auto w-full">
-
-          <div className="inline-flex items-center gap-2 bg-[var(--surface)] border border-[var(--border)] rounded-full px-4 py-1.5 text-[12px] text-[var(--text-muted)] mb-8 animate-fade-up">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" aria-hidden="true" />
-            Plataforma para músicos, bandas y salas en España
-          </div>
 
           <h1 className="text-hero mb-6 animate-fade-up stagger-1">
             Encuentra tu banda.<br />

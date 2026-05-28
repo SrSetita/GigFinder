@@ -167,7 +167,9 @@ select:focus {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124, 58, 237, 0.12) 0%, transparent 70%);
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(124, 58, 237, 0.10) 0%, transparent 65%),
+    linear-gradient(to bottom, transparent 55%, var(--background) 100%);
   pointer-events: none;
 }
 
@@ -238,43 +240,49 @@ select:focus {
   background-clip: text;
 }
 
-/* ─── Orbes de fondo animados (hero) ─── */
-.orb {
+/* ─── Hero ambient glows ─── */
+.hero-ambient {
   position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
+  inset: 0;
   pointer-events: none;
-  will-change: transform;
   z-index: 0;
+  overflow: hidden;
 }
-.orb-a {
-  width: 600px;
-  height: 600px;
-  background: rgba(124, 58, 237, 0.18);
-  top: -200px;
-  left: -100px;
-  animation: orb-drift-a 12s ease-in-out infinite;
+.hero-ambient::before {
+  content: '';
+  position: absolute;
+  width: 55%;
+  height: 60%;
+  top: -5%;
+  left: 5%;
+  background: radial-gradient(ellipse at center, rgba(124, 58, 237, 0.18) 0%, transparent 65%);
+  filter: blur(50px);
+  animation: ambient-a 12s ease-in-out infinite;
 }
-.orb-b {
-  width: 500px;
-  height: 500px;
-  background: rgba(232, 121, 249, 0.14);
-  bottom: -150px;
-  right: -100px;
-  animation: orb-drift-b 14s ease-in-out infinite;
+.hero-ambient::after {
+  content: '';
+  position: absolute;
+  width: 45%;
+  height: 50%;
+  top: 15%;
+  right: 5%;
+  background: radial-gradient(ellipse at center, rgba(232, 121, 249, 0.12) 0%, transparent 65%);
+  filter: blur(50px);
+  animation: ambient-b 16s ease-in-out infinite;
 }
 
-@keyframes orb-drift-a {
+@keyframes ambient-a {
   0%, 100% { transform: translate(0, 0); }
-  50%       { transform: translate(40px, -30px); }
+  50%       { transform: translate(4%, 5%); }
 }
-@keyframes orb-drift-b {
+@keyframes ambient-b {
   0%, 100% { transform: translate(0, 0); }
-  50%       { transform: translate(-30px, 20px); }
+  50%       { transform: translate(-4%, -5%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .orb { animation: none; }
+  .hero-ambient::before,
+  .hero-ambient::after { animation: none; }
 }
 
 /* ─── Skeleton shimmer ─── */
