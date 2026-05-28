@@ -38,30 +38,40 @@ export default async function authRoutes(server: FastifyInstance) {
     const passwordHash = await bcrypt.hash(password, 12)
     const verificationToken = generateToken()
 
-    const user = await server.prisma.user.create({
-      data: {
-        email,
-        passwordHash,
-        role,
-        verificationToken,
-        profile: {
-          create: { displayName, city },
-        },
-      },
-      include: { profile: true },
-    })
-
-    if (role === 'BAND' && user.profile) {
-      await server.prisma.band.create({
+    let user: any
+    try {
+      user = await server.prisma.user.create({
         data: {
-          profileId: user.profile.id,
-          name: displayName,
-          city,
-          members: {
-            create: { userId: user.id, role: 'ADMIN', status: 'ACTIVE', joinedAt: new Date() },
+          email,
+          passwordHash,
+          role,
+          verificationToken,
+          profile: {
+            create: { displayName, city },
           },
         },
+        include: { profile: true },
       })
+    } catch (err: any) {
+      server.log.error({ err }, 'Registration user.create failed')
+      return reply.code(500).send({ error: err?.message ?? 'Error al crear el usuario' })
+    }
+
+    if (role === 'BAND' && user.profile) {
+      try {
+        await server.prisma.band.create({
+          data: {
+            profileId: user.profile.id,
+            name: displayName,
+            city,
+            members: {
+              create: { userId: user.id, role: 'ADMIN', status: 'ACTIVE', joinedAt: new Date() },
+            },
+          },
+        })
+      } catch (err: any) {
+        server.log.error({ err }, 'Registration band.create failed')
+      }
     }
 
     // Send verification email (non-blocking — don't fail registration if email fails)
