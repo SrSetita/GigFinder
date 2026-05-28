@@ -23,7 +23,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex-shrink-0">
           <span className="text-[15px] font-black tracking-tight">
-            Gig<span className="text-[var(--accent)]">Finder</span>
+            Gig<span className="gradient-text">Finder</span>
           </span>
         </Link>
 
