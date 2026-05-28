@@ -72,7 +72,7 @@ function RegisterForm() {
                   className={`text-left p-3 rounded-xl border transition-all ${
                     form.role === r.value
                       ? 'border-[var(--accent)]/60 bg-[var(--accent)]/10'
-                      : 'border-white/[0.07] hover:border-[var(--accent)]/30 bg-white/[0.02]'
+                      : 'border-[var(--border)] hover:border-[var(--accent)]/30 bg-[var(--surface)]'
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-0.5">
@@ -95,7 +95,7 @@ function RegisterForm() {
             required
             value={form.displayName}
             onChange={(e) => setForm({ ...form, displayName: e.target.value })}
-            className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
             placeholder="Nombre público"
           />
         </div>
@@ -107,7 +107,7 @@ function RegisterForm() {
             required
             value={form.city}
             onChange={(e) => setForm({ ...form, city: e.target.value })}
-            className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
             placeholder="Madrid, Barcelona, Valencia..."
           />
         </div>
@@ -119,7 +119,7 @@ function RegisterForm() {
             required
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
             placeholder="tu@email.com"
           />
         </div>
@@ -132,7 +132,7 @@ function RegisterForm() {
             minLength={8}
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
-            className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
             placeholder="Mínimo 8 caracteres"
           />
         </div>

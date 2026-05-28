@@ -67,6 +67,7 @@ body {
 }
 
 /* ─── Botón primario ─── */
+.btn-primary-glow,
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -78,15 +79,18 @@ body {
   transition: box-shadow 200ms var(--ease-ui), transform 120ms var(--ease-ui);
 }
 @media (hover: hover) and (pointer: fine) {
-  .btn-primary:hover {
+  .btn-primary:hover,
+  .btn-primary-glow:hover {
     box-shadow: var(--glow-sm);
   }
 }
-.btn-primary:focus-visible {
+.btn-primary:focus-visible,
+.btn-primary-glow:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
-.btn-primary:active {
+.btn-primary:active,
+.btn-primary-glow:active {
   transform: scale(0.97);
 }
 
