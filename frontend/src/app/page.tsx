@@ -195,6 +195,10 @@ export default function HomePage() {
               </Link>
             ))}
           </div>
+          <p className={`text-center text-[13px] text-[var(--text-muted)] mt-6 ${genres.inView ? 'animate-fade-up' : 'opacity-0'}`}
+             style={{ animationDelay: genres.inView ? `${GENRES.length * 30 + 60}ms` : '0ms' }}>
+            y muchos más
+          </p>
         </div>
       </section>
 
