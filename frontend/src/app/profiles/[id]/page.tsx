@@ -68,7 +68,7 @@ export default function ProfilePage() {
       .then(setProfile)
       .catch((err: any) => {
         setProfile(null)
-        if (err?.status === 404) {
+        if (err?.status && err.status !== 404) {
           setProfileNotFound(true)
         }
       })
