@@ -6,11 +6,8 @@ export default function AudioWave({ className = '' }: { className?: string }) {
       {DELAYS.map((delay, i) => (
         <div
           key={i}
-          className="audio-bar w-[3px] rounded-full h-full"
-          style={{
-            background: 'linear-gradient(to top, rgba(124,58,237,0.85), rgba(124,58,237,0.35))',
-            animationDelay: delay,
-          }}
+          className="audio-bar w-[3px] rounded-full h-full bg-gradient-to-t from-[var(--accent)] to-[var(--accent-2)] opacity-70"
+          style={{ animationDelay: delay }}
         />
       ))}
     </div>

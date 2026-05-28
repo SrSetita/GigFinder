@@ -6,8 +6,13 @@ import Link from 'next/link'
 import { Building2, Mic2, Drum, Megaphone, ArrowRight } from 'lucide-react'
 import DotGrid from '@/components/ui/DotGrid'
 import Card from '@/components/ui/Card'
+import AudioWave from '@/components/ui/AudioWave'
 
-const GENRES = ['Rock', 'Metal', 'Jazz', 'Pop', 'Hip-Hop', 'Electrónica', 'Flamenco', 'Indie', 'Folk', 'R&B']
+const GENRES = [
+  'Rock', 'Metal', 'Jazz', 'Pop', 'Hip-Hop', 'Electrónica', 'Flamenco', 'Indie',
+  'Folk', 'R&B', 'Punk', 'Reggae', 'Soul', 'Funk', 'Blues', 'Reggaeton',
+  'Trap', 'Salsa', 'Ska', 'Techno', 'House', 'Latin',
+]
 
 const FEATURES = [
   {
@@ -37,21 +42,9 @@ const FEATURES = [
 ]
 
 const STEPS = [
-  {
-    n: '01',
-    title: 'Crea tu perfil',
-    desc: 'Regístrate gratis como músico, banda, sala o promotor. Añade fotos, demos y redes.',
-  },
-  {
-    n: '02',
-    title: 'Descubre y conecta',
-    desc: 'Busca salas por tu ciudad, encuentra músicos o contacta con promotores.',
-  },
-  {
-    n: '03',
-    title: 'Toca y crece',
-    desc: 'Reserva, ensaya y haz crecer tu carrera musical con toda la comunidad.',
-  },
+  { n: '01', title: 'Crea tu perfil',    desc: 'Regístrate gratis como músico, banda, sala o promotor. Añade fotos, demos y redes.' },
+  { n: '02', title: 'Descubre y conecta', desc: 'Busca salas por tu ciudad, encuentra músicos o contacta con promotores.' },
+  { n: '03', title: 'Toca y crece',       desc: 'Reserva, ensaya y haz crecer tu carrera musical con toda la comunidad.' },
 ]
 
 function useInView(threshold = 0.05) {
@@ -70,17 +63,71 @@ function useInView(threshold = 0.05) {
   return { ref, inView }
 }
 
+function useTypingSequence(parts: string[], speed = 70, holdAfter = 250) {
+  const [step, setStep] = useState(0)
+  const [chars, setChars] = useState(0)
+  useEffect(() => {
+    if (step >= parts.length) return
+    const current = parts[step]
+    if (chars < current.length) {
+      const t = setTimeout(() => setChars(chars + 1), speed)
+      return () => clearTimeout(t)
+    }
+    const t = setTimeout(() => {
+      setStep(step + 1)
+      setChars(0)
+    }, holdAfter)
+    return () => clearTimeout(t)
+  }, [step, chars, parts, speed, holdAfter])
+  return { step, chars }
+}
+
 export default function HomePage() {
-  const genres = useInView()
   const steps = useInView()
+
+  const heroRef = useRef<HTMLDivElement>(null)
+  const glowRef = useRef<HTMLDivElement>(null)
+
+  const typing = useTypingSequence(['Encuentra tu banda.', 'Llena tu sala.'])
+  const part1Done = typing.step > 0
+  const part2Done = typing.step > 1
+
+  useEffect(() => {
+    const hero = heroRef.current
+    const glow = glowRef.current
+    if (!hero || !glow) return
+    let raf = 0
+    const onMove = (e: MouseEvent) => {
+      const rect = hero.getBoundingClientRect()
+      const x = e.clientX - rect.left
+      const y = e.clientY - rect.top
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        glow.style.setProperty('--mx', `${x}px`)
+        glow.style.setProperty('--my', `${y}px`)
+      })
+    }
+    const onEnter = () => glow.classList.add('active')
+    const onLeave = () => glow.classList.remove('active')
+    hero.addEventListener('mousemove', onMove)
+    hero.addEventListener('mouseenter', onEnter)
+    hero.addEventListener('mouseleave', onLeave)
+    return () => {
+      cancelAnimationFrame(raf)
+      hero.removeEventListener('mousemove', onMove)
+      hero.removeEventListener('mouseenter', onEnter)
+      hero.removeEventListener('mouseleave', onLeave)
+    }
+  }, [])
 
   return (
     <div className="flex flex-col">
 
       {/* ── Hero ── */}
-      <DotGrid className="flex flex-col items-center justify-center px-6 py-32 text-center min-h-[86vh] relative overflow-hidden">
+      <DotGrid ref={heroRef} className="flex flex-col items-center justify-center px-6 py-32 text-center min-h-[86vh] relative overflow-hidden">
         <div className="hero-ambient" aria-hidden="true" />
-        {/* Floating music notes */}
+        <div ref={glowRef} className="mouse-glow" aria-hidden="true" />
+
         {([
           { char: '♪', left: '8%',  bottom: '-12%', delay: '0s',   dur: '8.0s',  size: 22, color: 'var(--accent)' },
           { char: '♫', left: '22%', bottom: '-10%', delay: '1.8s', dur: '9.2s',  size: 18, color: 'var(--accent-2)' },
@@ -100,11 +147,18 @@ export default function HomePage() {
             {n.char}
           </span>
         ))}
+
         <div className="relative z-10 flex flex-col items-center max-w-[1120px] mx-auto w-full">
 
-          <h1 className="text-hero mb-6 animate-fade-up stagger-1">
-            Encuentra tu banda.<br />
-            <span className="gradient-text">Llena tu sala.</span>
+          <h1 className="text-hero mb-6 min-h-[2.1em]">
+            <span className="block">
+              {typing.step === 0 ? 'Encuentra tu banda.'.slice(0, typing.chars) : 'Encuentra tu banda.'}
+              {!part1Done && <span className="caret" aria-hidden="true">&nbsp;</span>}
+            </span>
+            <span className="block gradient-text">
+              {typing.step === 1 ? 'Llena tu sala.'.slice(0, typing.chars) : (part2Done ? 'Llena tu sala.' : ' ')}
+              {part1Done && !part2Done && <span className="caret" aria-hidden="true">&nbsp;</span>}
+            </span>
           </h1>
 
           <p className="text-[1.125rem] text-[var(--text-secondary)] max-w-xl mb-10 leading-relaxed animate-fade-up stagger-2">
@@ -120,6 +174,10 @@ export default function HomePage() {
               <ArrowRight size={16} />
             </Link>
           </div>
+
+          <div className="mt-12 flex justify-center animate-fade-up stagger-4">
+            <AudioWave className="h-10 opacity-70" />
+          </div>
         </div>
       </DotGrid>
 
@@ -129,13 +187,13 @@ export default function HomePage() {
           {FEATURES.map((f) => {
             const Icon = f.icon
             return (
-              <Link key={f.title} href={f.href}>
+              <Link key={f.title} href={f.href} className="group">
                 <Card hover className="p-6 flex flex-col gap-3 h-full">
-                  <div className="w-9 h-9 rounded-lg bg-[var(--accent-subtle)] flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-lg bg-[var(--accent-subtle)] flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6 group-hover:bg-[var(--accent-subtle-hover)]">
                     <Icon size={17} className="text-[var(--accent)]" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-[15px] mb-1">{f.title}</h3>
+                    <h3 className="font-semibold text-[15px] mb-1 transition-colors group-hover:text-[var(--accent)]">{f.title}</h3>
                     <p className="text-[var(--text-secondary)] text-[13px] leading-relaxed">{f.desc}</p>
                   </div>
                 </Card>
@@ -176,29 +234,31 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Géneros ── */}
-      <section className="px-6 py-24">
-        <div className="max-w-[1120px] mx-auto">
-          <h2 className="text-display mb-10 text-center">Todos los <span className="gradient-text">géneros</span></h2>
-          <div
-            ref={genres.ref}
-            className="flex flex-wrap justify-center gap-2"
-          >
-            {GENRES.map((g, i) => (
-              <Link
-                key={g}
-                href={`/search?genre=${encodeURIComponent(g)}`}
-                style={{ animationDelay: genres.inView ? `${i * 30}ms` : '0ms' }}
-                className={`genre-pill px-5 py-2 rounded-full text-[13px] font-medium ${genres.inView ? 'animate-fade-up' : 'opacity-0'}`}
-              >
-                {g}
-              </Link>
-            ))}
+      {/* ── Marquee de géneros ── */}
+      <section className="py-16">
+        <div className="marquee">
+          <div className="marquee-track">
+            {[...GENRES, ...GENRES].map((item, i) => {
+              const variant = i % 3
+              const textClass =
+                variant === 0
+                  ? 'gradient-text'
+                  : variant === 1
+                  ? 'text-[var(--accent-2)]'
+                  : 'text-[var(--text-primary)]'
+              return (
+                <Link
+                  key={i}
+                  href={`/search?genre=${encodeURIComponent(item)}`}
+                  className="marquee-item text-[1.75rem] md:text-[2.5rem] font-black tracking-tight whitespace-nowrap flex items-center gap-12"
+                  style={{ animationDelay: `${(i % GENRES.length) * 0.15}s` }}
+                >
+                  <span className={textClass}>{item}</span>
+                  <span className="text-[var(--accent)] opacity-50 text-[0.55em]" aria-hidden="true">●</span>
+                </Link>
+              )
+            })}
           </div>
-          <p className={`text-center text-[13px] text-[var(--text-muted)] mt-6 ${genres.inView ? 'animate-fade-up' : 'opacity-0'}`}
-             style={{ animationDelay: genres.inView ? `${GENRES.length * 30 + 60}ms` : '0ms' }}>
-            y muchos más
-          </p>
         </div>
       </section>
 

@@ -3,35 +3,35 @@
 
 :root {
   /* Superficie */
-  --background: #0d0d0d;
-  --surface: #141414;
-  --surface-raised: #1a1a1a;
+  --background: #0a0808;
+  --surface: #130d0d;
+  --surface-raised: #1c1212;
 
   /* Bordes */
-  --border: #262626;
-  --border-hover: #404040;
+  --border: #2a1a1a;
+  --border-hover: #3f2020;
 
   /* Acento */
-  --accent: #7c3aed;
-  --accent-hover: #8b5cf6;
-  --accent-subtle: rgba(124, 58, 237, 0.08);
-  --accent-subtle-hover: rgba(124, 58, 237, 0.14);
+  --accent: #dc2626;
+  --accent-hover: #ef4444;
+  --accent-subtle: rgba(220, 38, 38, 0.08);
+  --accent-subtle-hover: rgba(220, 38, 38, 0.14);
 
-  /* Segunda tonalidad — fuchsia */
-  --accent-2: #e879f9;
-  --accent-2-hover: #f0abfc;
-  --accent-2-subtle: rgba(232, 121, 249, 0.08);
+  /* Segunda tonalidad — rojo claro */
+  --accent-2: #f87171;
+  --accent-2-hover: #fca5a5;
+  --accent-2-subtle: rgba(248, 113, 113, 0.08);
 
   /* Gradiente de marca */
-  --gradient-brand: linear-gradient(135deg, #7c3aed 0%, #e879f9 100%);
+  --gradient-brand: linear-gradient(135deg, #dc2626 0%, #f87171 100%);
 
   /* Glows */
-  --glow-sm: 0 0 20px rgba(124, 58, 237, 0.25);
-  --glow-md: 0 0 40px rgba(124, 58, 237, 0.35), 0 0 60px rgba(232, 121, 249, 0.15);
+  --glow-sm: 0 0 20px rgba(220, 38, 38, 0.30);
+  --glow-md: 0 0 40px rgba(220, 38, 38, 0.40), 0 0 60px rgba(248, 113, 113, 0.15);
 
   /* Texto */
-  --text-primary: #ededed;
-  --text-secondary: #8c8c8c;
+  --text-primary: #fafafa;
+  --text-secondary: #a3a3a3;
   --text-muted: #525252;
 
   /* Rating stars */
@@ -59,7 +59,7 @@ body {
 input:focus,
 textarea:focus,
 select:focus {
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
   transition: box-shadow 150ms var(--ease-ui), border-color 150ms var(--ease-ui);
 }
 
@@ -81,6 +81,7 @@ select:focus {
 /* ─── Botón primario ─── */
 .btn-primary-glow,
 .btn-primary {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -88,7 +89,28 @@ select:focus {
   color: #fff;
   font-weight: 600;
   border-radius: 10px;
+  overflow: hidden;
   transition: box-shadow 200ms var(--ease-ui), transform 120ms var(--ease-ui);
+}
+.btn-primary::after,
+.btn-primary-glow::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%);
+  transform: skewX(-20deg);
+  animation: btn-shimmer 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes btn-shimmer {
+  0%, 70%   { left: -120%; }
+  100%      { left: 220%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary::after, .btn-primary-glow::after { animation: none; display: none; }
 }
 @media (hover: hover) and (pointer: fine) {
   .btn-primary:hover,
@@ -145,7 +167,7 @@ select:focus {
     border-color: var(--accent-2);
     color: var(--text-primary);
     background: var(--accent-2-subtle);
-    box-shadow: 0 0 12px rgba(232, 121, 249, 0.2);
+    box-shadow: 0 0 12px rgba(248, 113, 113, 0.2);
   }
 }
 .genre-pill:focus-visible {
@@ -160,7 +182,7 @@ select:focus {
 .dot-grid {
   position: relative;
   background-color: var(--background);
-  background-image: radial-gradient(circle, #2a2a2a 1px, transparent 1px);
+  background-image: radial-gradient(circle, #2a1a1a 1px, transparent 1px);
   background-size: 28px 28px;
 }
 .dot-grid::after {
@@ -168,7 +190,7 @@ select:focus {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(124, 58, 237, 0.10) 0%, transparent 65%),
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(220, 38, 38, 0.10) 0%, transparent 65%),
     linear-gradient(to bottom, transparent 55%, var(--background) 100%);
   pointer-events: none;
 }
@@ -216,7 +238,7 @@ select:focus {
 }
 @media (hover: hover) and (pointer: fine) {
   .hover-lift:hover {
-    border-color: rgba(124, 58, 237, 0.5) !important;
+    border-color: rgba(220, 38, 38, 0.5) !important;
     box-shadow: var(--glow-sm);
     background: var(--surface-raised) !important;
   }
@@ -269,7 +291,7 @@ select:focus {
   height: 65%;
   top: -10%;
   left: 0%;
-  background: radial-gradient(ellipse at center, rgba(124, 58, 237, 0.22) 0%, transparent 65%);
+  background: radial-gradient(ellipse at center, rgba(220, 38, 38, 0.22) 0%, transparent 65%);
   filter: blur(50px);
   animation: ambient-a 7s ease-in-out infinite;
 }
@@ -280,7 +302,7 @@ select:focus {
   height: 55%;
   top: 10%;
   right: 0%;
-  background: radial-gradient(ellipse at center, rgba(232, 121, 249, 0.16) 0%, transparent 65%);
+  background: radial-gradient(ellipse at center, rgba(248, 113, 113, 0.16) 0%, transparent 65%);
   filter: blur(50px);
   animation: ambient-b 9s ease-in-out infinite;
 }
@@ -299,6 +321,78 @@ select:focus {
 @media (prefers-reduced-motion: reduce) {
   .hero-ambient::before,
   .hero-ambient::after { animation: none; }
+}
+
+/* ─── Marquee scroll ─── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+.marquee-track {
+  display: flex;
+  gap: 3rem;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+.marquee-item {
+  transition: filter 250ms var(--ease-ui), opacity 250ms var(--ease-ui);
+  animation: marquee-breathe 3.5s ease-in-out infinite;
+  will-change: transform;
+}
+.marquee-item:hover {
+  filter: brightness(1.15);
+}
+@keyframes marquee-breathe {
+  0%, 100% { transform: translateY(0)   scale(1);    }
+  50%       { transform: translateY(-3px) scale(1.04); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track, .marquee-item { animation: none; }
+}
+
+/* ─── Logo glow (Navbar) ─── */
+.logo-glow {
+  --glow-color: var(--accent);
+  transition: filter 200ms var(--ease-ui);
+}
+.group:hover .logo-glow {
+  filter: drop-shadow(0 0 5px var(--glow-color));
+}
+
+/* ─── Mouse-follow hero glow ─── */
+.mouse-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(circle 280px at var(--mx, 50%) var(--my, 50%), var(--accent-subtle-hover), transparent 70%);
+  transition: opacity 200ms var(--ease-ui);
+  opacity: 0;
+}
+.mouse-glow.active { opacity: 1; }
+@media (hover: none) {
+  .mouse-glow { display: none; }
+}
+
+/* ─── Typing caret ─── */
+@keyframes caret-blink {
+  0%, 60%   { opacity: 1; }
+  61%, 100% { opacity: 0; }
+}
+.caret {
+  display: inline-block;
+  width: 0.05em;
+  height: 0.85em;
+  margin-left: 0.05em;
+  background: var(--text-primary);
+  animation: caret-blink 1s steps(1) infinite;
+  vertical-align: middle;
+  transform: translateY(-0.06em);
 }
 
 /* ─── Skeleton shimmer ─── */

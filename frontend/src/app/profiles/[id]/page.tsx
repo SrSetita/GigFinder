@@ -260,8 +260,8 @@ export default function ProfilePage() {
           {/* Nombre + rol + ciudad */}
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <h1 className="text-[1.5rem] font-bold">
-                <span className="gradient-text">{profile.displayName}</span>
+              <h1 className="text-[1.5rem] font-bold text-[#d4d4d4]">
+                {profile.displayName}
               </h1>
               {profile.verified && <CheckCircle2 size={16} className="text-[var(--accent)]" />}
             </div>
