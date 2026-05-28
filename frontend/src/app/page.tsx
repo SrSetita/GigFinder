@@ -80,6 +80,26 @@ export default function HomePage() {
       {/* ── Hero ── */}
       <DotGrid className="flex flex-col items-center justify-center px-6 py-32 text-center min-h-[86vh] relative overflow-hidden">
         <div className="hero-ambient" aria-hidden="true" />
+        {/* Floating music notes */}
+        {([
+          { char: '♪', left: '8%',  bottom: '-12%', delay: '0s',   dur: '8.0s',  size: 22, color: 'var(--accent)' },
+          { char: '♫', left: '22%', bottom: '-10%', delay: '1.8s', dur: '9.2s',  size: 18, color: 'var(--accent-2)' },
+          { char: '♩', left: '38%', bottom: '-14%', delay: '0.6s', dur: '7.5s',  size: 26, color: 'var(--accent)' },
+          { char: '♬', left: '55%', bottom: '-11%', delay: '2.5s', dur: '10.0s', size: 20, color: 'var(--accent-2)' },
+          { char: '♪', left: '70%', bottom: '-13%', delay: '1.1s', dur: '8.8s',  size: 17, color: 'var(--accent)' },
+          { char: '♫', left: '85%', bottom: '-10%', delay: '3.2s', dur: '9.5s',  size: 21, color: 'var(--accent-2)' },
+          { char: '♩', left: '15%', bottom: '-15%', delay: '2.0s', dur: '10.5s', size: 16, color: 'var(--accent)' },
+          { char: '♬', left: '62%', bottom: '-12%', delay: '0.4s', dur: '8.5s',  size: 19, color: 'var(--accent-2)' },
+        ] as const).map((n, i) => (
+          <span
+            key={i}
+            className="note-float"
+            style={{ left: n.left, bottom: n.bottom, animationDelay: n.delay, animationDuration: n.dur, fontSize: n.size, color: n.color }}
+            aria-hidden="true"
+          >
+            {n.char}
+          </span>
+        ))}
         <div className="relative z-10 flex flex-col items-center max-w-[1120px] mx-auto w-full">
 
           <h1 className="text-hero mb-6 animate-fade-up stagger-1">
