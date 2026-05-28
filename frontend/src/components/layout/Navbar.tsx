@@ -60,9 +60,9 @@ export default function Navbar() {
         {/* Logo */}
         <Link
           href="/"
-          className="flex-shrink-0 flex items-center px-2.5 py-1.5 -mx-2.5 rounded-lg hover:shadow-[0_0_22px_rgba(124,58,237,0.4)] active:scale-[0.96] transition-all duration-200"
+          className="group flex-shrink-0 flex items-center px-2.5 py-1.5 -mx-2.5 active:scale-[0.96] transition-all duration-200"
         >
-          <span className="text-[15px] font-black tracking-tight">
+          <span className="text-[15px] font-black tracking-tight transition-[filter] duration-200 group-hover:drop-shadow-[0_0_10px_rgba(124,58,237,0.8)]">
             Gig<span className="gradient-text">Finder</span>
           </span>
         </Link>
