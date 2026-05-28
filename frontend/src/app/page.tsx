@@ -78,7 +78,9 @@ export default function HomePage() {
     <div className="flex flex-col">
 
       {/* ── Hero ── */}
-      <DotGrid className="flex flex-col items-center justify-center px-6 py-32 text-center min-h-[86vh] relative">
+      <DotGrid className="flex flex-col items-center justify-center px-6 py-32 text-center min-h-[86vh] relative overflow-hidden">
+        <div className="orb orb-a" aria-hidden="true" />
+        <div className="orb orb-b" aria-hidden="true" />
         <div className="relative z-10 flex flex-col items-center max-w-[1120px] mx-auto w-full">
 
           <div className="inline-flex items-center gap-2 bg-[var(--surface)] border border-[var(--border)] rounded-full px-4 py-1.5 text-[12px] text-[var(--text-muted)] mb-8 animate-fade-up">
@@ -88,7 +90,7 @@ export default function HomePage() {
 
           <h1 className="text-hero mb-6 animate-fade-up stagger-1">
             Encuentra tu banda.<br />
-            <span className="text-[var(--accent)]">Llena tu sala.</span>
+            <span className="gradient-text">Llena tu sala.</span>
           </h1>
 
           <p className="text-[1.125rem] text-[var(--text-secondary)] max-w-xl mb-10 leading-relaxed animate-fade-up stagger-2">
@@ -136,7 +138,7 @@ export default function HomePage() {
       >
         <div className="max-w-[1120px] mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-display mb-3">¿Cómo funciona?</h2>
+            <h2 className="text-display mb-3">¿Cómo <span className="gradient-text">funciona</span>?</h2>
             <p className="text-[var(--text-muted)] text-[15px]">Simple. Rápido. Sin complicaciones.</p>
           </div>
 
@@ -163,7 +165,7 @@ export default function HomePage() {
       {/* ── Géneros ── */}
       <section className="px-6 py-24">
         <div className="max-w-[1120px] mx-auto">
-          <h2 className="text-display mb-10 text-center">Todos los géneros</h2>
+          <h2 className="text-display mb-10 text-center">Todos los <span className="gradient-text">géneros</span></h2>
           <div
             ref={genres.ref}
             className="flex flex-wrap justify-center gap-2"
