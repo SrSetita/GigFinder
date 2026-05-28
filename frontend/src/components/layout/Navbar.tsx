@@ -21,7 +21,10 @@ export default function Navbar() {
       <div className="max-w-[1120px] mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
 
         {/* Logo */}
-        <Link href="/" className="flex-shrink-0">
+        <Link
+          href="/"
+          className="flex-shrink-0 flex items-center px-2.5 py-1.5 -mx-2.5 rounded-lg border border-transparent hover:border-[var(--border)] hover:bg-[var(--surface-raised)] active:scale-[0.96] transition-all duration-200"
+        >
           <span className="text-[15px] font-black tracking-tight">
             Gig<span className="gradient-text">Finder</span>
           </span>

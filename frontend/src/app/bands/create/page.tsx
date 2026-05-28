@@ -60,7 +60,7 @@ export default function CreateBandPage() {
           <input
             value={form.name}
             onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-            className="w-full bg-white/[0.05] border border-white/[0.1] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[var(--accent)]/50"
+            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[var(--accent)]/50"
             placeholder="Nombre de la banda"
             maxLength={80}
           />
@@ -71,7 +71,7 @@ export default function CreateBandPage() {
           <textarea
             value={form.description}
             onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-            className="w-full bg-white/[0.05] border border-white/[0.1] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[var(--accent)]/50 resize-none"
+            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[var(--accent)]/50 resize-none"
             rows={3}
             placeholder="Describe la banda, estilo, historia..."
           />
@@ -82,7 +82,7 @@ export default function CreateBandPage() {
           <input
             value={form.city}
             onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
-            className="w-full bg-white/[0.05] border border-white/[0.1] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[var(--accent)]/50"
+            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[var(--accent)]/50"
             placeholder="Madrid, Barcelona..."
           />
         </div>
@@ -98,7 +98,7 @@ export default function CreateBandPage() {
                 className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${
                   form.genres.includes(g)
                     ? 'bg-[var(--accent)] border-[var(--accent)] text-white'
-                    : 'bg-white/[0.04] border-white/[0.1] text-gray-400 hover:border-[var(--accent)]/40'
+                    : 'bg-[var(--surface)] border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--accent)]/40'
                 }`}
               >
                 {g}

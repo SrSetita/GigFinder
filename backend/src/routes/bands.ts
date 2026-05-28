@@ -8,21 +8,27 @@ export default async function bandRoutes(server: FastifyInstance) {
 
     if (!name?.trim()) return reply.status(400).send({ error: 'name required' })
 
-    const band = await server.prisma.band.create({
-      data: {
-        name,
-        description,
-        genres: genres ?? [],
-        city,
-        avatarUrl,
-        ownerUserId: userId,
-        members: {
-          create: { userId, role: 'ADMIN', status: 'ACTIVE', joinedAt: new Date() },
+    try {
+      const band = await server.prisma.band.create({
+        data: {
+          name,
+          description: description || null,
+          genres: genres ?? [],
+          city: city || null,
+          avatarUrl: avatarUrl || null,
+          ownerUserId: userId,
+          members: {
+            create: { userId, role: 'ADMIN', status: 'ACTIVE', joinedAt: new Date() },
+          },
         },
-      },
-      include: { members: { include: { user: { include: { profile: true } } } } },
-    })
-    return reply.status(201).send(band)
+        include: { members: { include: { user: { include: { profile: true } } } } },
+      })
+      return reply.status(201).send(band)
+    } catch (err: any) {
+      server.log.error(err)
+      if (err?.code === 'P2003') return reply.status(400).send({ error: 'Usuario no encontrado. Cierra sesión y vuelve a entrar.' })
+      return reply.status(500).send({ error: 'Error al crear la banda' })
+    }
   })
 
   server.get('/api/bands/mine', { preHandler: authenticate }, async (req, reply) => {
