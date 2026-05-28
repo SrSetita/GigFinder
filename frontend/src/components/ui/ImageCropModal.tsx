@@ -77,7 +77,7 @@ export default function ImageCropModal({ image, aspect, onConfirm, onCancel }: I
       </div>
       <div className="bg-[#12121f] px-6 py-4 flex flex-col gap-3">
         <div className="flex items-center gap-3">
-          <span className="text-xs text-gray-400 shrink-0">Zoom</span>
+          <span className="text-xs text-[var(--text-secondary)] shrink-0">Zoom</span>
           <input
             type="range"
             min={1}
@@ -91,7 +91,7 @@ export default function ImageCropModal({ image, aspect, onConfirm, onCancel }: I
         <div className="flex justify-end gap-3">
           <button
             onClick={onCancel}
-            className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
+            className="px-4 py-2 text-sm text-[var(--text-secondary)] hover:text-white transition-colors"
           >
             Cancelar
           </button>

@@ -11,7 +11,7 @@ const STATUS_STYLES: Record<string, string> = {
   PENDING:   'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
   CONFIRMED: 'bg-green-500/10 text-green-400 border-green-500/20',
   CANCELLED: 'bg-red-500/10 text-red-400 border-red-500/20',
-  COMPLETED: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
+  COMPLETED: 'bg-[var(--surface-raised)] text-[var(--text-secondary)] border-[var(--border)]',
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -83,15 +83,15 @@ export default function BookingsPage() {
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
       <h1 className="text-2xl font-bold mb-1">Mis solicitudes</h1>
-      <p className="text-gray-400 text-sm mb-8">Las salas revisarán tus solicitudes y las aceptarán o rechazarán.</p>
+      <p className="text-[var(--text-secondary)] text-sm mb-8">Las salas revisarán tus solicitudes y las aceptarán o rechazarán.</p>
 
       {bookings.length === 0 ? (
-        <div className="text-center py-24 text-gray-400">
+        <div className="text-center py-24 text-[var(--text-secondary)]">
           <div className="w-16 h-16 rounded-2xl glass flex items-center justify-center mx-auto mb-4">
-            <CalendarDays size={24} className="text-gray-500" />
+            <CalendarDays size={24} className="text-[var(--text-muted)]" />
           </div>
           <p className="text-lg font-medium mb-2">Sin solicitudes todavía</p>
-          <p className="text-sm mb-6 text-gray-500">Busca una sala de ensayo y haz tu primera solicitud</p>
+          <p className="text-sm mb-6 text-[var(--text-muted)]">Busca una sala de ensayo y haz tu primera solicitud</p>
           <button
             onClick={() => router.push('/search?type=venue')}
             className="inline-flex items-center gap-2 btn-primary-glow px-6 py-2.5 rounded-lg font-medium"
@@ -104,7 +104,7 @@ export default function BookingsPage() {
         <div className="flex flex-col gap-8">
           {active.length > 0 && (
             <section>
-              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Activas</h2>
+              <h2 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-3">Activas</h2>
               <div className="flex flex-col gap-4">
                 {active.map(b => <BookingCard key={b.id} b={b} onCancel={cancel} cancelling={cancelling} router={router} />)}
               </div>
@@ -112,7 +112,7 @@ export default function BookingsPage() {
           )}
           {past.length > 0 && (
             <section>
-              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Historial</h2>
+              <h2 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-3">Historial</h2>
               <div className="flex flex-col gap-4">
                 {past.map(b => <BookingCard key={b.id} b={b} onCancel={cancel} cancelling={cancelling} router={router} />)}
               </div>
@@ -138,7 +138,7 @@ function BookingCard({ b, onCancel, cancelling, router }: any) {
         <div className="flex items-start justify-between gap-2 mb-1">
           <div>
             <h3 className="font-semibold truncate">{b.venue?.profile?.displayName || 'Sala'}</h3>
-            <p className="text-xs text-gray-500">{b.venue?.profile?.city}</p>
+            <p className="text-xs text-[var(--text-muted)]">{b.venue?.profile?.city}</p>
             {b.band && (
               <p className="flex items-center gap-1 text-xs text-[var(--accent)] mt-0.5">
                 <Users size={10} />
@@ -151,22 +151,22 @@ function BookingCard({ b, onCancel, cancelling, router }: any) {
           </span>
         </div>
 
-        <p className="text-xs text-gray-500 mb-2">{STATUS_DESC[b.status]}</p>
+        <p className="text-xs text-[var(--text-muted)] mb-2">{STATUS_DESC[b.status]}</p>
 
-        <p className="flex items-center gap-1.5 text-sm text-gray-300 mb-0.5">
-          <CalendarDays size={13} className="text-gray-500" />
+        <p className="flex items-center gap-1.5 text-sm text-[var(--text-primary)] mb-0.5">
+          <CalendarDays size={13} className="text-[var(--text-muted)]" />
           {formatDate(b.startTime)}
         </p>
-        <p className="flex items-center gap-1.5 text-sm text-gray-300 mb-3">
-          <Clock size={13} className="text-gray-500" />
+        <p className="flex items-center gap-1.5 text-sm text-[var(--text-primary)] mb-3">
+          <Clock size={13} className="text-[var(--text-muted)]" />
           {formatTime(b.startTime)} – {formatTime(b.endTime)} · {hours}h
         </p>
 
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-1 text-sm">
-            <Euro size={13} className="text-gray-400" />
+            <Euro size={13} className="text-[var(--text-secondary)]" />
             <span className="font-semibold">{parseFloat(b.totalPrice).toFixed(2)}</span>
-            <span className="text-gray-500 text-xs">(incl. {parseFloat(b.platformFee).toFixed(2)}€ gestión)</span>
+            <span className="text-[var(--text-muted)] text-xs">(incl. {parseFloat(b.platformFee).toFixed(2)}€ gestión)</span>
           </div>
           <div className="flex gap-3">
             <button
@@ -189,7 +189,7 @@ function BookingCard({ b, onCancel, cancelling, router }: any) {
           </div>
         </div>
 
-        {b.notes && <p className="text-xs text-gray-600 mt-2 italic">"{b.notes}"</p>}
+        {b.notes && <p className="text-xs text-[var(--text-muted)] mt-2 italic">"{b.notes}"</p>}
       </div>
     </GlassCard>
   )

@@ -60,7 +60,7 @@ function RegisterForm() {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label className="block text-sm text-gray-400 mb-3">Soy...</label>
+          <label className="block text-sm text-[var(--text-secondary)] mb-3">Soy...</label>
           <div className="grid grid-cols-2 gap-2">
             {ROLES.map((r) => {
               const Icon = r.icon
@@ -76,10 +76,10 @@ function RegisterForm() {
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-0.5">
-                    <Icon size={14} className={form.role === r.value ? 'text-[var(--accent)]' : 'text-gray-400'} />
+                    <Icon size={14} className={form.role === r.value ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)]'} />
                     <span className="font-medium text-sm">{r.label}</span>
                   </div>
-                  <div className="text-xs text-gray-500 mt-0.5">{r.desc}</div>
+                  <div className="text-xs text-[var(--text-muted)] mt-0.5">{r.desc}</div>
                 </button>
               )
             })}
@@ -87,7 +87,7 @@ function RegisterForm() {
         </div>
 
         <div>
-          <label className="block text-sm text-gray-400 mb-2">
+          <label className="block text-sm text-[var(--text-secondary)] mb-2">
             {form.role === 'BAND' ? 'Nombre de la banda' : form.role === 'VENUE' ? 'Nombre del local' : 'Tu nombre artístico'}
           </label>
           <input
@@ -95,44 +95,44 @@ function RegisterForm() {
             required
             value={form.displayName}
             onChange={(e) => setForm({ ...form, displayName: e.target.value })}
-            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-[var(--text-muted)]"
             placeholder="Nombre público"
           />
         </div>
 
         <div>
-          <label className="block text-sm text-gray-400 mb-2">Ciudad</label>
+          <label className="block text-sm text-[var(--text-secondary)] mb-2">Ciudad</label>
           <input
             type="text"
             required
             value={form.city}
             onChange={(e) => setForm({ ...form, city: e.target.value })}
-            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-[var(--text-muted)]"
             placeholder="Madrid, Barcelona, Valencia..."
           />
         </div>
 
         <div>
-          <label className="block text-sm text-gray-400 mb-2">Email</label>
+          <label className="block text-sm text-[var(--text-secondary)] mb-2">Email</label>
           <input
             type="email"
             required
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-[var(--text-muted)]"
             placeholder="tu@email.com"
           />
         </div>
 
         <div>
-          <label className="block text-sm text-gray-400 mb-2">Contraseña</label>
+          <label className="block text-sm text-[var(--text-secondary)] mb-2">Contraseña</label>
           <input
             type="password"
             required
             minLength={8}
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
-            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-[var(--text-muted)]"
             placeholder="Mínimo 8 caracteres"
           />
         </div>
@@ -146,7 +146,7 @@ function RegisterForm() {
         </button>
       </form>
 
-      <p className="text-center text-sm text-gray-400 mt-6">
+      <p className="text-center text-sm text-[var(--text-secondary)] mt-6">
         ¿Ya tienes cuenta?{' '}
         <Link href="/auth/login" className="text-[var(--accent)] hover:underline">
           Entrar
@@ -165,7 +165,7 @@ export default function RegisterPage() {
             <Music4 size={20} className="text-white" />
           </div>
           <h1 className="text-2xl font-bold mb-1">Únete a GigFinder</h1>
-          <p className="text-gray-400 text-sm">Crea tu cuenta y empieza a conectar</p>
+          <p className="text-[var(--text-secondary)] text-sm">Crea tu cuenta y empieza a conectar</p>
         </div>
         <Suspense>
           <RegisterForm />

@@ -43,7 +43,7 @@ export default function LoginPage() {
             <Music4 size={20} className="text-white" />
           </div>
           <h1 className="text-2xl font-bold mb-1">Bienvenido de vuelta</h1>
-          <p className="text-gray-400 text-sm">Entra en tu cuenta de GigFinder</p>
+          <p className="text-[var(--text-secondary)] text-sm">Entra en tu cuenta de GigFinder</p>
         </div>
 
         <GlassCard className="p-8 glass-blur">
@@ -56,24 +56,24 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Email</label>
+              <label className="block text-sm text-[var(--text-secondary)] mb-2">Email</label>
               <input
                 type="email"
                 required
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+                className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-[var(--text-muted)]"
                 placeholder="tu@email.com"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Contraseña</label>
+              <label className="block text-sm text-[var(--text-secondary)] mb-2">Contraseña</label>
               <input
                 type="password"
                 required
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+                className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-[var(--text-muted)]"
                 placeholder="••••••••"
               />
             </div>
@@ -87,13 +87,13 @@ export default function LoginPage() {
           </form>
 
           <div className="flex flex-col items-center gap-2 mt-6">
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-[var(--text-secondary)]">
               ¿No tienes cuenta?{' '}
               <Link href="/auth/register" className="text-[var(--accent)] hover:underline">
                 Regístrate
               </Link>
             </p>
-            <Link href="/auth/forgot-password" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
+            <Link href="/auth/forgot-password" className="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors">
               ¿Olvidaste tu contraseña?
             </Link>
           </div>

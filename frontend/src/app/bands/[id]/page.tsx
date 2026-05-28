@@ -83,8 +83,8 @@ export default function BandPage() {
     }
   }
 
-  if (loading) return <div className="flex justify-center py-20 text-gray-500 text-sm">Cargando...</div>
-  if (!band) return <div className="flex justify-center py-20 text-gray-500 text-sm">Banda no encontrada</div>
+  if (loading) return <div className="flex justify-center py-20 text-[var(--text-muted)] text-sm">Cargando...</div>
+  if (!band) return <div className="flex justify-center py-20 text-[var(--text-muted)] text-sm">Banda no encontrada</div>
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
@@ -132,12 +132,12 @@ export default function BandPage() {
       )}
 
       {band.description && (
-        <p className="text-gray-400 text-sm leading-relaxed mb-8">{band.description}</p>
+        <p className="text-[var(--text-secondary)] text-sm leading-relaxed mb-8">{band.description}</p>
       )}
 
       {/* Members */}
       <div className="mb-6">
-        <h2 className="text-sm font-semibold text-gray-300 mb-3">Miembros ({band.members.length})</h2>
+        <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Miembros ({band.members.length})</h2>
         <div className="space-y-2">
           {band.members.map(m => {
             const name = m.user.profile?.displayName ?? '—'
@@ -151,11 +151,11 @@ export default function BandPage() {
                   {profileId
                     ? <Link href={`/profiles/${profileId}`} className="text-sm font-medium hover:text-[var(--accent)] transition-colors">{name}</Link>
                     : <span className="text-sm font-medium">{name}</span>}
-                  {m.user.profile?.city && <p className="text-xs text-gray-500">{m.user.profile.city}</p>}
+                  {m.user.profile?.city && <p className="text-xs text-[var(--text-muted)]">{m.user.profile.city}</p>}
                 </div>
                 {m.role === 'ADMIN' && <Crown size={14} className="text-yellow-400 flex-shrink-0" />}
                 {isAdmin && m.userId !== user?.id && (
-                  <button onClick={() => kick(m.userId, name)} className="text-gray-600 hover:text-red-400 transition-colors ml-1">
+                  <button onClick={() => kick(m.userId, name)} className="text-[var(--text-muted)] hover:text-red-400 transition-colors ml-1">
                     <UserMinus size={14} />
                   </button>
                 )}
@@ -168,7 +168,7 @@ export default function BandPage() {
       {/* Invite */}
       {isAdmin && (
         <div className="border border-[var(--border)] rounded-2xl p-5">
-          <h2 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
+          <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3 flex items-center gap-2">
             <UserPlus size={14} className="text-[var(--accent)]" />
             Invitar músico por email
           </h2>

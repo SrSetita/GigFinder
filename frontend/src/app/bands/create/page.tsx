@@ -42,7 +42,7 @@ export default function CreateBandPage() {
 
   return (
     <div className="max-w-lg mx-auto px-4 py-12">
-      <Link href="/dashboard" className="flex items-center gap-2 text-gray-400 hover:text-white text-sm mb-8 transition-colors">
+      <Link href="/dashboard" className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-white text-sm mb-8 transition-colors">
         <ArrowLeft size={14} />
         Mis bandas
       </Link>
@@ -56,7 +56,7 @@ export default function CreateBandPage() {
 
       <form onSubmit={submit} className="space-y-5">
         <div>
-          <label className="block text-sm text-gray-400 mb-1.5">Nombre *</label>
+          <label className="block text-sm text-[var(--text-secondary)] mb-1.5">Nombre *</label>
           <input
             value={form.name}
             onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
@@ -67,7 +67,7 @@ export default function CreateBandPage() {
         </div>
 
         <div>
-          <label className="block text-sm text-gray-400 mb-1.5">Descripción</label>
+          <label className="block text-sm text-[var(--text-secondary)] mb-1.5">Descripción</label>
           <textarea
             value={form.description}
             onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
@@ -78,7 +78,7 @@ export default function CreateBandPage() {
         </div>
 
         <div>
-          <label className="block text-sm text-gray-400 mb-1.5">Ciudad</label>
+          <label className="block text-sm text-[var(--text-secondary)] mb-1.5">Ciudad</label>
           <input
             value={form.city}
             onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
@@ -88,7 +88,7 @@ export default function CreateBandPage() {
         </div>
 
         <div>
-          <label className="block text-sm text-gray-400 mb-2">Géneros</label>
+          <label className="block text-sm text-[var(--text-secondary)] mb-2">Géneros</label>
           <div className="flex flex-wrap gap-2">
             {GENRES.map(g => (
               <button

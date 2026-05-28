@@ -44,7 +44,7 @@ function ResetPasswordForm() {
         <div className="w-14 h-14 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-5">
           <AlertTriangle size={24} className="text-red-400" />
         </div>
-        <p className="text-gray-400 mb-4">Enlace inválido o expirado.</p>
+        <p className="text-[var(--text-secondary)] mb-4">Enlace inválido o expirado.</p>
         <Link href="/auth/forgot-password" className="text-[var(--accent)] hover:underline text-sm">
           Solicitar nuevo enlace
         </Link>
@@ -59,7 +59,7 @@ function ResetPasswordForm() {
           <CheckCircle2 size={24} className="text-green-400" />
         </div>
         <h1 className="text-2xl font-bold mb-2">Contraseña actualizada</h1>
-        <p className="text-gray-400 text-sm mb-6">Ya puedes iniciar sesión con tu nueva contraseña.</p>
+        <p className="text-[var(--text-secondary)] text-sm mb-6">Ya puedes iniciar sesión con tu nueva contraseña.</p>
         <Link
           href="/auth/login"
           className="btn-primary-glow px-6 py-3 rounded-xl font-semibold inline-block"
@@ -73,7 +73,7 @@ function ResetPasswordForm() {
   return (
     <>
       <h1 className="text-2xl font-bold mb-2">Nueva contraseña</h1>
-      <p className="text-gray-400 mb-8 text-sm">Elige una contraseña de al menos 8 caracteres.</p>
+      <p className="text-[var(--text-secondary)] mb-8 text-sm">Elige una contraseña de al menos 8 caracteres.</p>
 
       {error && (
         <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl p-3 mb-6 text-sm">
@@ -84,24 +84,24 @@ function ResetPasswordForm() {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label className="block text-sm text-gray-400 mb-2">Nueva contraseña</label>
+          <label className="block text-sm text-[var(--text-secondary)] mb-2">Nueva contraseña</label>
           <input
             type="password"
             required
             value={form.newPassword}
             onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
-            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-[var(--text-muted)]"
             placeholder="Mínimo 8 caracteres"
           />
         </div>
         <div>
-          <label className="block text-sm text-gray-400 mb-2">Repetir contraseña</label>
+          <label className="block text-sm text-[var(--text-secondary)] mb-2">Repetir contraseña</label>
           <input
             type="password"
             required
             value={form.confirm}
             onChange={(e) => setForm({ ...form, confirm: e.target.value })}
-            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+            className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-[var(--text-muted)]"
             placeholder="••••••••"
           />
         </div>
@@ -127,7 +127,7 @@ export default function ResetPasswordPage() {
           </div>
         </div>
         <GlassCard className="p-8 glass-blur">
-          <Suspense fallback={<div className="text-gray-400 text-center">Cargando...</div>}>
+          <Suspense fallback={<div className="text-[var(--text-secondary)] text-center">Cargando...</div>}>
             <ResetPasswordForm />
           </Suspense>
         </GlassCard>

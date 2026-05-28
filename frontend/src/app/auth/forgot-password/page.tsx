@@ -43,7 +43,7 @@ export default function ForgotPasswordPage() {
                 <Mail size={24} className="text-[var(--accent)]" />
               </div>
               <h1 className="text-2xl font-bold mb-2">Revisa tu email</h1>
-              <p className="text-gray-400 text-sm mb-6">
+              <p className="text-[var(--text-secondary)] text-sm mb-6">
                 Si <span className="text-white font-medium">{email}</span> está registrado, recibirás un enlace para restablecer tu contraseña. Caduca en 1 hora.
               </p>
               <Link href="/auth/login" className="text-[var(--accent)] hover:underline text-sm flex items-center gap-1 justify-center">
@@ -54,7 +54,7 @@ export default function ForgotPasswordPage() {
           ) : (
             <>
               <h1 className="text-2xl font-bold mb-2">¿Olvidaste tu contraseña?</h1>
-              <p className="text-gray-400 mb-8 text-sm">
+              <p className="text-[var(--text-secondary)] mb-8 text-sm">
                 Escribe tu email y te enviaremos un enlace para restablecerla.
               </p>
 
@@ -67,13 +67,13 @@ export default function ForgotPasswordPage() {
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-2">Email</label>
+                  <label className="block text-sm text-[var(--text-secondary)] mb-2">Email</label>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+                    className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-[var(--text-muted)]"
                     placeholder="tu@email.com"
                   />
                 </div>
@@ -86,7 +86,7 @@ export default function ForgotPasswordPage() {
                 </button>
               </form>
 
-              <p className="text-center text-sm text-gray-400 mt-6">
+              <p className="text-center text-sm text-[var(--text-secondary)] mt-6">
                 <Link href="/auth/login" className="text-[var(--accent)] hover:underline flex items-center gap-1 justify-center">
                   <ArrowLeft size={14} />
                   Volver al inicio de sesión

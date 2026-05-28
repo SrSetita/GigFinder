@@ -114,7 +114,7 @@ export default function MessagesPage() {
   if (authLoading || loading) {
     return (
       <div className="flex h-[calc(100vh-65px)] items-center justify-center">
-        <div className="text-gray-400 text-sm">Cargando...</div>
+        <div className="text-[var(--text-secondary)] text-sm">Cargando...</div>
       </div>
     )
   }
@@ -131,18 +131,18 @@ export default function MessagesPage() {
           <span title={connected ? 'Conectado' : 'Desconectado'}>
             {connected
               ? <Wifi size={14} className="text-green-400" />
-              : <WifiOff size={14} className="text-gray-600" />
+              : <WifiOff size={14} className="text-[var(--text-muted)]" />
             }
           </span>
         </div>
 
         {conversations.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-gray-500 p-6 text-center">
+          <div className="flex-1 flex flex-col items-center justify-center text-[var(--text-muted)] p-6 text-center">
             <div className="w-12 h-12 rounded-xl glass flex items-center justify-center mb-3">
-              <MessageCircle size={20} className="text-gray-600" />
+              <MessageCircle size={20} className="text-[var(--text-muted)]" />
             </div>
             <p className="text-sm font-medium">Sin conversaciones</p>
-            <p className="text-xs mt-1 text-gray-600">Contacta desde el perfil de alguien</p>
+            <p className="text-xs mt-1 text-[var(--text-muted)]">Contacta desde el perfil de alguien</p>
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto">
@@ -168,13 +168,13 @@ export default function MessagesPage() {
                         {other?.user?.profile?.displayName || 'Usuario'}
                       </span>
                       {lastMsg && (
-                        <span className="text-xs text-gray-500 shrink-0 ml-2" suppressHydrationWarning>
+                        <span className="text-xs text-[var(--text-muted)] shrink-0 ml-2" suppressHydrationWarning>
                           {formatTime(lastMsg.createdAt)}
                         </span>
                       )}
                     </div>
                     {lastMsg && (
-                      <p className="text-xs text-gray-500 truncate mt-0.5">{lastMsg.content}</p>
+                      <p className="text-xs text-[var(--text-muted)] truncate mt-0.5">{lastMsg.content}</p>
                     )}
                   </div>
                 </button>
@@ -187,9 +187,9 @@ export default function MessagesPage() {
       {/* Chat area */}
       <div className="flex-1 flex flex-col">
         {!activeConv ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-gray-500">
+          <div className="flex-1 flex flex-col items-center justify-center text-[var(--text-muted)]">
             <div className="w-16 h-16 rounded-2xl glass flex items-center justify-center mb-4">
-              <MessageCircle size={26} className="text-gray-600" />
+              <MessageCircle size={26} className="text-[var(--text-muted)]" />
             </div>
             <p className="font-medium">Selecciona una conversación</p>
           </div>
@@ -221,7 +221,7 @@ export default function MessagesPage() {
                         : 'glass rounded-bl-sm'
                     }`}>
                       <p className="leading-relaxed">{msg.content}</p>
-                      <p className={`text-xs mt-1 ${isMe ? 'text-purple-200' : 'text-gray-500'}`} suppressHydrationWarning>
+                      <p className={`text-xs mt-1 ${isMe ? 'text-purple-200' : 'text-[var(--text-muted)]'}`} suppressHydrationWarning>
                         {formatTime(msg.createdAt)}
                         {msg.readAt && isMe && ' · Leído'}
                       </p>
@@ -238,7 +238,7 @@ export default function MessagesPage() {
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Escribe un mensaje..."
-                className="flex-1 bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[var(--accent)]/50 transition-colors placeholder:text-gray-600"
+                className="flex-1 bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[var(--accent)]/50 transition-colors placeholder:text-[var(--text-muted)]"
               />
               <button
                 type="submit"

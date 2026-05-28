@@ -76,7 +76,7 @@ export default function CreateGigPage() {
   return (
     <MeshBackground className="min-h-screen py-12 px-4">
       <div className="max-w-lg mx-auto relative z-10">
-        <Link href="/gigs" className="flex items-center gap-2 text-gray-400 hover:text-white text-sm mb-6 transition-colors">
+        <Link href="/gigs" className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-white text-sm mb-6 transition-colors">
           <ArrowLeft size={16} />
           Volver al tablón
         </Link>
@@ -93,7 +93,7 @@ export default function CreateGigPage() {
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Tipo de oferta</label>
+              <label className="block text-sm text-[var(--text-secondary)] mb-2">Tipo de oferta</label>
               <div className="grid grid-cols-2 gap-2">
                 {OFFER_TYPES.map(t => (
                   <button
@@ -103,7 +103,7 @@ export default function CreateGigPage() {
                     className={`text-sm py-2.5 px-3 rounded-xl border transition-all font-medium ${
                       form.offerType === t.value
                         ? 'border-[var(--accent)]/60 bg-[var(--accent)]/10 text-white'
-                        : 'border-white/[0.07] text-gray-400 hover:border-white/20'
+                        : 'border-white/[0.07] text-[var(--text-secondary)] hover:border-white/20'
                     }`}
                   >
                     {t.label}
@@ -113,55 +113,55 @@ export default function CreateGigPage() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Título *</label>
+              <label className="block text-sm text-[var(--text-secondary)] mb-2">Título *</label>
               <input
                 type="text"
                 required
                 value={form.title}
                 onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
                 placeholder="Ej: Banda busca sala en Madrid para ensayo sabatino"
-                className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+                className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-[var(--text-muted)]"
               />
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Descripción</label>
+              <label className="block text-sm text-[var(--text-secondary)] mb-2">Descripción</label>
               <textarea
                 value={form.description}
                 onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                 placeholder="Más detalles sobre lo que buscas..."
                 rows={3}
-                className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600 resize-none"
+                className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-[var(--text-muted)] resize-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-2">Ciudad *</label>
+                <label className="block text-sm text-[var(--text-secondary)] mb-2">Ciudad *</label>
                 <input
                   type="text"
                   required
                   value={form.city}
                   onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
                   placeholder="Madrid"
-                  className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+                  className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-[var(--text-muted)]"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-2">Presupuesto (€)</label>
+                <label className="block text-sm text-[var(--text-secondary)] mb-2">Presupuesto (€)</label>
                 <input
                   type="number"
                   min="0"
                   value={form.budget}
                   onChange={e => setForm(f => ({ ...f, budget: e.target.value }))}
                   placeholder="200"
-                  className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+                  className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-[var(--text-muted)]"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Fecha (opcional)</label>
+              <label className="block text-sm text-[var(--text-secondary)] mb-2">Fecha (opcional)</label>
               <input
                 type="date"
                 value={form.date}
@@ -171,7 +171,7 @@ export default function CreateGigPage() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Géneros</label>
+              <label className="block text-sm text-[var(--text-secondary)] mb-2">Géneros</label>
               <div className="flex gap-2 flex-wrap mb-2">
                 {form.genres.map(g => (
                   <span key={g} className="flex items-center gap-1 bg-[var(--accent)]/15 text-[var(--accent)] px-3 py-1 rounded-full text-xs">
@@ -186,7 +186,7 @@ export default function CreateGigPage() {
                 onChange={e => setForm(f => ({ ...f, genreInput: e.target.value }))}
                 onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addGenre(form.genreInput) } }}
                 placeholder="Escribe un género y pulsa Enter"
-                className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600 mb-2"
+                className="w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-[var(--text-muted)] mb-2"
               />
               <div className="flex flex-wrap gap-1.5">
                 {GENRES_SUGGESTIONS.filter(g => !form.genres.includes(g)).map(g => (
@@ -194,7 +194,7 @@ export default function CreateGigPage() {
                     key={g}
                     type="button"
                     onClick={() => addGenre(g)}
-                    className="text-xs text-gray-400 hover:text-white border border-white/[0.07] hover:border-white/20 px-2.5 py-1 rounded-full transition-colors"
+                    className="text-xs text-[var(--text-secondary)] hover:text-white border border-white/[0.07] hover:border-white/20 px-2.5 py-1 rounded-full transition-colors"
                   >
                     + {g}
                   </button>

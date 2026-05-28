@@ -1,6 +1,8 @@
 'use client'
 
+import { Suspense } from 'react'
 import Link from 'next/link'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/lib/AuthContext'
 import { LogOut, User } from 'lucide-react'
 import NotificationBell from '@/components/ui/NotificationBell'
@@ -12,6 +14,41 @@ const NAV_LINKS = [
   { href: '/search?type=promoter', label: 'Promotores' },
   { href: '/gigs',                 label: 'Tablón' },
 ] as const
+
+function NavLinks() {
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  function isActive(href: string) {
+    const [path, query] = href.split('?')
+    if (pathname !== path) return false
+    if (query) {
+      const params = new URLSearchParams(query)
+      for (const [k, v] of params.entries()) {
+        if (searchParams.get(k) !== v) return false
+      }
+    }
+    return true
+  }
+
+  return (
+    <>
+      {NAV_LINKS.map(({ href, label }) => (
+        <Link
+          key={href}
+          href={href}
+          className={`px-3 py-1.5 rounded-lg transition-colors duration-150 text-[13px] ${
+            isActive(href)
+              ? 'text-[var(--text-primary)] font-medium'
+              : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+          }`}
+        >
+          {label}
+        </Link>
+      ))}
+    </>
+  )
+}
 
 export default function Navbar() {
   const { user, loading, logout } = useAuth()
@@ -32,15 +69,15 @@ export default function Navbar() {
 
         {/* Nav links — solo desktop */}
         <div className="hidden md:flex items-center gap-0.5 text-[13px]">
-          {NAV_LINKS.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className="text-[var(--text-muted)] hover:text-[var(--text-primary)] px-3 py-1.5 rounded-lg transition-colors duration-150"
-            >
-              {label}
-            </Link>
-          ))}
+          <Suspense fallback={
+            <>
+              {NAV_LINKS.map(({ href, label }) => (
+                <span key={href} className="px-3 py-1.5 text-[13px] text-[var(--text-muted)]">{label}</span>
+              ))}
+            </>
+          }>
+            <NavLinks />
+          </Suspense>
         </div>
 
         {/* Acciones — solo desktop */}

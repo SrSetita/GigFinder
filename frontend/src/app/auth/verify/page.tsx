@@ -39,7 +39,7 @@ function VerifyContent() {
       {status === 'loading' && (
         <>
           <div className="w-12 h-12 border-4 border-[var(--accent)] border-t-transparent rounded-full animate-spin mx-auto mb-6" />
-          <p className="text-gray-400">Verificando tu email...</p>
+          <p className="text-[var(--text-secondary)]">Verificando tu email...</p>
         </>
       )}
       {status === 'ok' && (
@@ -48,7 +48,7 @@ function VerifyContent() {
             <CheckCircle2 size={28} className="text-green-400" />
           </div>
           <h1 className="text-2xl font-bold mb-2">¡Email verificado!</h1>
-          <p className="text-gray-400 mb-8">Tu cuenta está activa. Ya puedes reservar salas y enviar mensajes.</p>
+          <p className="text-[var(--text-secondary)] mb-8">Tu cuenta está activa. Ya puedes reservar salas y enviar mensajes.</p>
           <button
             onClick={() => router.push('/')}
             className="btn-primary-glow px-6 py-2.5 rounded-lg font-medium"
@@ -63,7 +63,7 @@ function VerifyContent() {
             <XCircle size={28} className="text-red-400" />
           </div>
           <h1 className="text-2xl font-bold mb-2">Enlace inválido</h1>
-          <p className="text-gray-400 mb-8">Este enlace de verificación no es válido o ya ha caducado.</p>
+          <p className="text-[var(--text-secondary)] mb-8">Este enlace de verificación no es válido o ya ha caducado.</p>
           <button
             onClick={() => router.push('/')}
             className="glass hover:border-[var(--accent)]/30 text-sm px-5 py-2.5 rounded-lg transition-colors"

@@ -38,7 +38,7 @@ function ChipSelector({ options, selected, onChange }: { options: string[]; sele
     <div className="flex flex-wrap gap-2">
       {options.map(o => (
         <button key={o} type="button" onClick={() => toggle(o)}
-          className={`px-3 py-1 rounded-full text-sm border transition-colors ${selected.includes(o) ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'border-white/[0.07] text-gray-400 hover:border-[var(--accent)]/40 hover:text-white'}`}>
+          className={`px-3 py-1 rounded-full text-sm border transition-colors ${selected.includes(o) ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'border-white/[0.07] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-white'}`}>
           {o}
         </button>
       ))}
@@ -246,14 +246,14 @@ export default function BandManagePage() {
   const updateSocialLink = (p: string, v: string) =>
     setSocialLinks(prev => v ? { ...prev, [p]: v } : Object.fromEntries(Object.entries(prev).filter(([k]) => k !== p)))
 
-  if (loading) return <div className="flex justify-center py-20 text-gray-500 text-sm">Cargando...</div>
+  if (loading) return <div className="flex justify-center py-20 text-[var(--text-muted)] text-sm">Cargando...</div>
 
   const activeMembers = band?.members?.filter((m: any) => m.status === 'ACTIVE') ?? []
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
       <div className="flex items-center gap-4 mb-8">
-        <Link href={`/bands/${id}`} className="flex items-center gap-1.5 text-gray-400 hover:text-white text-sm transition-colors">
+        <Link href={`/bands/${id}`} className="flex items-center gap-1.5 text-[var(--text-secondary)] hover:text-white text-sm transition-colors">
           <ArrowLeft size={16} />
           Volver a la banda
         </Link>
@@ -290,49 +290,49 @@ export default function BandManagePage() {
                   <input ref={avatarRef} type="file" accept="image/*" className="hidden" onChange={handleAvatar} />
                 </div>
               </DropZone>
-              <p className="text-xs text-gray-500 pb-1">Clic para cambiar avatar o banner</p>
+              <p className="text-xs text-[var(--text-muted)] pb-1">Clic para cambiar avatar o banner</p>
             </div>
           </div>
         </GlassCard>
 
         {/* Visibilidad */}
         <GlassCard className="p-6 flex flex-col gap-3">
-          <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Visibilidad</h2>
+          <h2 className="font-semibold text-xs text-[var(--text-secondary)] uppercase tracking-wider">Visibilidad</h2>
           <Toggle on={isPublic} onToggle={() => setIsPublic(v => !v)}
             label={isPublic ? 'Perfil público — visible para todos' : 'Perfil privado — solo miembros'} />
           {!isPublic && (
-            <p className="text-xs text-gray-500">El perfil no aparecerá en búsquedas ni será accesible sin invitación.</p>
+            <p className="text-xs text-[var(--text-muted)]">El perfil no aparecerá en búsquedas ni será accesible sin invitación.</p>
           )}
         </GlassCard>
 
         {/* Info básica */}
         <GlassCard className="p-6 flex flex-col gap-4">
-          <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Información básica</h2>
+          <h2 className="font-semibold text-xs text-[var(--text-secondary)] uppercase tracking-wider">Información básica</h2>
           <div>
-            <label className="block text-sm text-gray-400 mb-1.5">Nombre *</label>
+            <label className="block text-sm text-[var(--text-secondary)] mb-1.5">Nombre *</label>
             <input value={name} onChange={e => setName(e.target.value)} required maxLength={80}
               className="w-full bg-white/[0.05] border border-white/[0.07] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--accent)]/50 transition-colors" />
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1.5">Ciudad</label>
+            <label className="block text-sm text-[var(--text-secondary)] mb-1.5">Ciudad</label>
             <input value={city} onChange={e => setCity(e.target.value)}
               className="w-full bg-white/[0.05] border border-white/[0.07] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--accent)]/50 transition-colors" />
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1.5">Descripción</label>
+            <label className="block text-sm text-[var(--text-secondary)] mb-1.5">Descripción</label>
             <textarea value={description} onChange={e => setDescription(e.target.value)} rows={4} maxLength={1000}
               placeholder="Historia, estilo, lo que os define..."
               className="w-full bg-white/[0.05] border border-white/[0.07] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--accent)]/50 transition-colors resize-none" />
-            <p className="text-xs text-gray-600 mt-1 text-right">{description.length}/1000</p>
+            <p className="text-xs text-[var(--text-muted)] mt-1 text-right">{description.length}/1000</p>
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-2">Géneros</label>
+            <label className="block text-sm text-[var(--text-secondary)] mb-2">Géneros</label>
             <ChipSelector options={GENRE_OPTIONS} selected={genres} onChange={setGenres} />
           </div>
           <Toggle on={lookingForMembers} onToggle={() => setLookingForMembers(v => !v)} label="Buscamos miembros" />
           {lookingForMembers && (
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Roles que buscamos</label>
+              <label className="block text-sm text-[var(--text-secondary)] mb-2">Roles que buscamos</label>
               <ChipSelector options={WANTED_ROLES} selected={wantedRoles} onChange={setWantedRoles} />
             </div>
           )}
@@ -340,13 +340,13 @@ export default function BandManagePage() {
 
         {/* Redes */}
         <GlassCard className="p-6 flex flex-col gap-4">
-          <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Redes y plataformas</h2>
+          <h2 className="font-semibold text-xs text-[var(--text-secondary)] uppercase tracking-wider">Redes y plataformas</h2>
           {SOCIAL_PLATFORMS.map(p => {
             const Icon = SOCIAL_ICONS[p] ?? Globe
             return (
               <div key={p} className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-white/[0.05] flex items-center justify-center shrink-0">
-                  <Icon size={14} className="text-gray-400" />
+                  <Icon size={14} className="text-[var(--text-secondary)]" />
                 </div>
                 <input type="text" value={socialLinks[p] ?? ''} onChange={e => updateSocialLink(p, e.target.value)}
                   placeholder={p === 'web' ? 'https://mibanda.com' : p === 'spotify' ? 'URL de artista' : '@usuario o URL'}
@@ -360,7 +360,7 @@ export default function BandManagePage() {
         <DropZone onFile={handleMediaFile} accept="image/*,video/*,audio/*" disabled={uploadingMedia}>
           <GlassCard className="p-6 flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Fotos, vídeos y demos</h2>
+              <h2 className="font-semibold text-xs text-[var(--text-secondary)] uppercase tracking-wider">Fotos, vídeos y demos</h2>
               <label className={`flex items-center gap-1.5 text-xs font-medium text-[var(--accent)] hover:text-white cursor-pointer transition-colors ${uploadingMedia ? 'opacity-50 pointer-events-none' : ''}`}>
                 <Upload size={12} />
                 {uploadingMedia ? 'Subiendo...' : 'Subir archivo'}
@@ -368,14 +368,14 @@ export default function BandManagePage() {
               </label>
             </div>
             {(!band?.media || band.media.length === 0) ? (
-              <p className="text-sm text-gray-500 text-center py-4">Sin archivos todavía. Sube fotos, vídeos o demos.</p>
+              <p className="text-sm text-[var(--text-muted)] text-center py-4">Sin archivos todavía. Sube fotos, vídeos o demos.</p>
             ) : (
               <div className="grid grid-cols-3 gap-2">
                 {band.media.map((m: any) => (
                   <div key={m.id} className="relative group aspect-square rounded-xl overflow-hidden bg-white/[0.05]">
                     {m.type === 'IMAGE'
                       ? <img src={m.url} className="w-full h-full object-cover" />
-                      : <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      : <div className="w-full h-full flex items-center justify-center text-[var(--text-secondary)]">
                           <Play size={24} />
                           <span className="text-xs absolute bottom-1 left-1 right-1 text-center truncate">{m.title ?? 'Video'}</span>
                         </div>
@@ -393,7 +393,7 @@ export default function BandManagePage() {
 
         {/* Guardar */}
         <div className="flex items-center justify-end gap-3">
-          <Link href={`/bands/${id}`} className="text-gray-400 hover:text-white text-sm transition-colors">Cancelar</Link>
+          <Link href={`/bands/${id}`} className="text-[var(--text-secondary)] hover:text-white text-sm transition-colors">Cancelar</Link>
           <button type="submit" disabled={saving || uploadingAvatar || uploadingBanner}
             className="btn-primary-glow px-6 py-2.5 rounded-xl font-medium text-sm disabled:opacity-50 disabled:transform-none">
             {saving ? 'Guardando...' : 'Guardar cambios'}
@@ -404,7 +404,7 @@ export default function BandManagePage() {
       {/* Miembros */}
       <div className="mt-8 flex flex-col gap-6">
         <GlassCard className="p-6 flex flex-col gap-4">
-          <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Miembros activos</h2>
+          <h2 className="font-semibold text-xs text-[var(--text-secondary)] uppercase tracking-wider">Miembros activos</h2>
           {activeMembers.map((m: any) => {
             const memberName = m.user?.profile?.displayName ?? '—'
             const isMe = m.userId === user?.id
@@ -414,8 +414,8 @@ export default function BandManagePage() {
                   {memberName[0]?.toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium">{memberName} {isMe && <span className="text-xs text-gray-500">(tú)</span>}</p>
-                  <p className="text-xs text-gray-500">{m.role === 'ADMIN' ? 'Admin' : 'Miembro'}</p>
+                  <p className="text-sm font-medium">{memberName} {isMe && <span className="text-xs text-[var(--text-muted)]">(tú)</span>}</p>
+                  <p className="text-xs text-[var(--text-muted)]">{m.role === 'ADMIN' ? 'Admin' : 'Miembro'}</p>
                 </div>
                 {m.role === 'ADMIN' && <Crown size={14} className="text-yellow-400 flex-shrink-0" />}
                 {!isMe && (
@@ -423,12 +423,12 @@ export default function BandManagePage() {
                     {m.role !== 'ADMIN' && (
                       <button type="button" onClick={() => promoteAdmin(m.userId)}
                         title="Hacer admin"
-                        className="w-7 h-7 rounded-lg bg-white/[0.05] hover:bg-yellow-500/20 flex items-center justify-center text-gray-500 hover:text-yellow-400 transition-colors">
+                        className="w-7 h-7 rounded-lg bg-white/[0.05] hover:bg-yellow-500/20 flex items-center justify-center text-[var(--text-muted)] hover:text-yellow-400 transition-colors">
                         <Crown size={12} />
                       </button>
                     )}
                     <button type="button" onClick={() => kick(m.userId, memberName)}
-                      className="w-7 h-7 rounded-lg bg-white/[0.05] hover:bg-red-500/20 flex items-center justify-center text-gray-500 hover:text-red-400 transition-colors">
+                      className="w-7 h-7 rounded-lg bg-white/[0.05] hover:bg-red-500/20 flex items-center justify-center text-[var(--text-muted)] hover:text-red-400 transition-colors">
                       <UserMinus size={12} />
                     </button>
                   </div>
@@ -439,7 +439,7 @@ export default function BandManagePage() {
         </GlassCard>
 
         <GlassCard className="p-6">
-          <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <h2 className="font-semibold text-xs text-[var(--text-secondary)] uppercase tracking-wider mb-4 flex items-center gap-2">
             <UserPlus size={12} />
             Invitar músico por email
           </h2>

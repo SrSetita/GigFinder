@@ -34,6 +34,10 @@
   --text-secondary: #8c8c8c;
   --text-muted: #525252;
 
+  /* Rating stars */
+  --rating: #f59e0b;
+  --rating-empty: #404040;
+
   /* Easing único para toda la UI */
   --ease-ui: cubic-bezier(0.25, 0, 0, 1);
 }
@@ -49,6 +53,14 @@ body {
 
 * {
   border-color: var(--border);
+}
+
+/* ─── Input / textarea focus glow ─── */
+input:focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+  transition: box-shadow 150ms var(--ease-ui), border-color 150ms var(--ease-ui);
 }
 
 /* ─── Tipografía responsive ─── */
@@ -110,6 +122,7 @@ body {
   .btn-ghost:hover {
     border-color: var(--border-hover);
     background: var(--surface);
+    color: var(--text-primary);
   }
 }
 .btn-ghost:focus-visible {
@@ -196,6 +209,9 @@ body {
 .stagger-8 { animation-delay: 240ms; }
 
 /* ─── Hover gates: solo en dispositivos con hover real ─── */
+.hover-lift {
+  transition: border-color 150ms var(--ease-ui), box-shadow 150ms var(--ease-ui), background-color 150ms var(--ease-ui);
+}
 @media (hover: hover) and (pointer: fine) {
   .hover-lift:hover {
     border-color: rgba(124, 58, 237, 0.5) !important;
@@ -259,4 +275,18 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .orb { animation: none; }
+}
+
+/* ─── Skeleton shimmer ─── */
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-raised) 0%, var(--border-hover) 50%, var(--surface-raised) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; background: var(--surface-raised); }
 }

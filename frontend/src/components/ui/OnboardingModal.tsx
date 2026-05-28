@@ -74,14 +74,14 @@ export default function OnboardingModal() {
       <div className="relative w-full max-w-lg border border-white/[0.15] rounded-2xl p-8 shadow-2xl" style={{ backgroundColor: 'rgba(12,12,20,0.97)', backdropFilter: 'blur(20px)' }}>
         <button
           onClick={dismiss}
-          className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-white transition-colors"
         >
           <X size={18} />
         </button>
 
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold mb-2">¿Quién eres?</h2>
-          <p className="text-gray-400 text-sm">Crea tu cuenta según tu perfil y conecta con quien necesitas.</p>
+          <p className="text-[var(--text-secondary)] text-sm">Crea tu cuenta según tu perfil y conecta con quien necesitas.</p>
         </div>
 
         <div className="grid grid-cols-2 gap-3 mb-6">
@@ -96,14 +96,14 @@ export default function OnboardingModal() {
               >
                 <Icon size={20} />
                 <span className="font-semibold text-sm text-white">{r.label}</span>
-                <span className="text-xs text-gray-400 leading-snug">{r.desc}</span>
+                <span className="text-xs text-[var(--text-secondary)] leading-snug">{r.desc}</span>
                 <ArrowRight size={12} className="mt-1 opacity-60" />
               </Link>
             )
           })}
         </div>
 
-        <p className="text-center text-xs text-gray-500">
+        <p className="text-center text-xs text-[var(--text-muted)]">
           ¿Ya tienes cuenta?{' '}
           <Link href="/auth/login" onClick={dismiss} className="text-[var(--accent)] hover:underline">
             Inicia sesión

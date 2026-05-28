@@ -55,7 +55,7 @@ function ChipSelector({ options, selected, onChange }: {
           className={`px-3 py-1 rounded-full text-sm border transition-colors ${
             selected.includes(o)
               ? 'bg-[var(--accent)] border-[var(--accent)] text-white'
-              : 'border-white/[0.07] text-gray-400 hover:border-[var(--accent)]/40 hover:text-white'
+              : 'border-white/[0.07] text-[var(--text-secondary)] hover:border-[var(--accent)]/40 hover:text-white'
           }`}
         >
           {o}
@@ -284,14 +284,14 @@ function EditProfilePage() {
           <Sparkles size={18} className="text-[var(--accent)] shrink-0" />
           <div>
             <p className="font-semibold text-sm">¡Bienvenido a GigFinder!</p>
-            <p className="text-xs text-gray-400 mt-0.5">Completa tu perfil para que otros puedan encontrarte. Cuanto más completo, mejor visibilidad.</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-0.5">Completa tu perfil para que otros puedan encontrarte. Cuanto más completo, mejor visibilidad.</p>
           </div>
         </div>
       )}
 
       <div className="flex items-center gap-4 mb-8">
         {!isWelcome && (
-          <button onClick={() => router.back()} className="flex items-center gap-1.5 text-gray-400 hover:text-white text-sm transition-colors">
+          <button onClick={() => router.back()} className="flex items-center gap-1.5 text-[var(--text-secondary)] hover:text-white text-sm transition-colors">
             <ArrowLeft size={16} />
             Volver
           </button>
@@ -338,14 +338,14 @@ function EditProfilePage() {
                   <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
                 </div>
               </DropZone>
-              <p className="text-xs text-gray-500 pb-1">Clic en avatar o banner para cambiarlos</p>
+              <p className="text-xs text-[var(--text-muted)] pb-1">Clic en avatar o banner para cambiarlos</p>
             </div>
           </div>
         </GlassCard>
 
         {/* Visibilidad */}
         <GlassCard className="p-6 flex flex-col gap-3">
-          <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Visibilidad</h2>
+          <h2 className="font-semibold text-xs text-[var(--text-secondary)] uppercase tracking-wider">Visibilidad</h2>
           <label className="flex items-center justify-between cursor-pointer">
             <span className="text-sm">{isPublic ? 'Perfil público — visible para todos' : 'Perfil privado — no aparece en búsquedas'}</span>
             <button type="button" onClick={() => setIsPublic(v => !v)}
@@ -357,10 +357,10 @@ function EditProfilePage() {
 
         {/* Basic info */}
         <GlassCard className="p-6 flex flex-col gap-4">
-          <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Información básica</h2>
+          <h2 className="font-semibold text-xs text-[var(--text-secondary)] uppercase tracking-wider">Información básica</h2>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1.5">Nombre / Nombre artístico</label>
+            <label className="block text-sm text-[var(--text-secondary)] mb-1.5">Nombre / Nombre artístico</label>
             <input
               type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)}
               required minLength={2} maxLength={60}
@@ -369,7 +369,7 @@ function EditProfilePage() {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1.5">Ciudad</label>
+            <label className="block text-sm text-[var(--text-secondary)] mb-1.5">Ciudad</label>
             <input
               type="text" value={city} onChange={(e) => setCity(e.target.value)} required
               className="w-full bg-white/[0.05] border border-white/[0.07] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--accent)]/50 transition-colors"
@@ -377,31 +377,31 @@ function EditProfilePage() {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-1.5">Bio</label>
+            <label className="block text-sm text-[var(--text-secondary)] mb-1.5">Bio</label>
             <textarea
               value={bio} onChange={(e) => setBio(e.target.value)}
               maxLength={1000} rows={4}
               placeholder="Cuéntanos sobre ti o tu proyecto..."
               className="w-full bg-white/[0.05] border border-white/[0.07] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--accent)]/50 transition-colors resize-none"
             />
-            <p className="text-xs text-gray-600 mt-1 text-right">{bio.length}/1000</p>
+            <p className="text-xs text-[var(--text-muted)] mt-1 text-right">{bio.length}/1000</p>
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-2">Géneros</label>
+            <label className="block text-sm text-[var(--text-secondary)] mb-2">Géneros</label>
             <ChipSelector options={GENRE_OPTIONS} selected={genres} onChange={setGenres} />
           </div>
         </GlassCard>
 
         {/* Social links */}
         <GlassCard className="p-6 flex flex-col gap-4">
-          <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Redes y plataformas</h2>
+          <h2 className="font-semibold text-xs text-[var(--text-secondary)] uppercase tracking-wider">Redes y plataformas</h2>
           {SOCIAL_PLATFORMS.map((platform) => {
             const Icon = SOCIAL_ICONS[platform] || Link2
             return (
               <div key={platform} className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-white/[0.05] flex items-center justify-center shrink-0">
-                  <Icon size={14} className="text-gray-400" />
+                  <Icon size={14} className="text-[var(--text-secondary)]" />
                 </div>
                 <input
                   type="text"
@@ -422,15 +422,15 @@ function EditProfilePage() {
         {/* Role-specific */}
         {role === 'MUSICIAN' && (
           <GlassCard className="p-6 flex flex-col gap-4">
-            <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Información de músico</h2>
+            <h2 className="font-semibold text-xs text-[var(--text-secondary)] uppercase tracking-wider">Información de músico</h2>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Instrumentos</label>
+              <label className="block text-sm text-[var(--text-secondary)] mb-2">Instrumentos</label>
               <ChipSelector options={INSTRUMENT_OPTIONS} selected={instruments} onChange={setInstruments} />
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-1.5">Años de experiencia</label>
+              <label className="block text-sm text-[var(--text-secondary)] mb-1.5">Años de experiencia</label>
               <input
                 type="number" min={0} max={60} value={yearsExperience}
                 onChange={(e) => setYearsExperience(e.target.value)}
@@ -460,7 +460,7 @@ function EditProfilePage() {
 
         {role === 'BAND' && (
           <GlassCard className="p-6 flex flex-col gap-4">
-            <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Información de banda</h2>
+            <h2 className="font-semibold text-xs text-[var(--text-secondary)] uppercase tracking-wider">Información de banda</h2>
 
             <label className="flex items-center justify-between cursor-pointer">
               <span className="text-sm">Buscamos miembros</span>
@@ -475,7 +475,7 @@ function EditProfilePage() {
 
             {lookingForMembers && (
               <div>
-                <label className="block text-sm text-gray-400 mb-2">Roles que buscamos</label>
+                <label className="block text-sm text-[var(--text-secondary)] mb-2">Roles que buscamos</label>
                 <ChipSelector options={WANTED_ROLES} selected={wantedRoles} onChange={setWantedRoles} />
               </div>
             )}
@@ -484,15 +484,15 @@ function EditProfilePage() {
 
         {role === 'PROMOTER' && (
           <GlassCard className="p-6 flex flex-col gap-4">
-            <h2 className="font-semibold text-xs text-gray-400 uppercase tracking-wider">Información de promotor</h2>
+            <h2 className="font-semibold text-xs text-[var(--text-secondary)] uppercase tracking-wider">Información de promotor</h2>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-2">Tipos de eventos</label>
+              <label className="block text-sm text-[var(--text-secondary)] mb-2">Tipos de eventos</label>
               <ChipSelector options={EVENT_TYPES} selected={eventTypes} onChange={setEventTypes} />
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-1.5">Web</label>
+              <label className="block text-sm text-[var(--text-secondary)] mb-1.5">Web</label>
               <input
                 type="url" value={website} onChange={(e) => setWebsite(e.target.value)}
                 placeholder="https://mipromotora.com"
@@ -512,7 +512,7 @@ function EditProfilePage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="text-gray-400 hover:text-white text-sm transition-colors"
+            className="text-[var(--text-secondary)] hover:text-white text-sm transition-colors"
           >
             Cancelar
           </button>

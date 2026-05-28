@@ -103,15 +103,15 @@ export default function BookVenuePage() {
           <CheckCircle2 size={28} className="text-green-400" />
         </div>
         <h1 className="text-2xl font-bold mb-2">¡Solicitud enviada!</h1>
-        <p className="text-gray-400 mb-2">
+        <p className="text-[var(--text-secondary)] mb-2">
           {venue?.profile?.displayName} recibirá tu solicitud y la aceptará o rechazará.
           {selectedBandId && myBands.find(b => b.id === selectedBandId) && (
-            <span className="block text-sm text-gray-500 mt-1">
+            <span className="block text-sm text-[var(--text-muted)] mt-1">
               Reservado como banda: {myBands.find(b => b.id === selectedBandId)?.name}
             </span>
           )}
         </p>
-        <p className="text-gray-500 text-sm mb-8">
+        <p className="text-[var(--text-muted)] text-sm mb-8">
           {selectedDate} · {pad(selectedStart!)}:00 – {pad(selectedStart! + duration)}:00
         </p>
         <div className="flex gap-3 justify-center">
@@ -143,16 +143,16 @@ export default function BookVenuePage() {
       <div className="mb-8">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-1.5 text-gray-400 hover:text-white text-sm mb-4 transition-colors"
+          className="flex items-center gap-1.5 text-[var(--text-secondary)] hover:text-white text-sm mb-4 transition-colors"
         >
           <ArrowLeft size={16} />
           Volver
         </button>
         <h1 className="text-2xl font-bold">Reservar {venue?.profile?.displayName}</h1>
-        <p className="flex items-center gap-1.5 text-gray-400 text-sm mt-1">
+        <p className="flex items-center gap-1.5 text-[var(--text-secondary)] text-sm mt-1">
           <MapPin size={13} />
           {venue?.address}
-          <span className="mx-1 text-gray-600">·</span>
+          <span className="mx-1 text-[var(--text-muted)]">·</span>
           <Euro size={11} />
           {hourlyRate}/hora
         </p>
@@ -190,11 +190,11 @@ export default function BookVenuePage() {
             <div>
               <h2 className="font-semibold mb-3">3. Hora de inicio</h2>
               {!availability.schedule?.isOpen ? (
-                <GlassCard className="p-4 text-center text-gray-400 text-sm">
+                <GlassCard className="p-4 text-center text-[var(--text-secondary)] text-sm">
                   La sala está cerrada este día
                 </GlassCard>
               ) : slots.length === 0 ? (
-                <GlassCard className="p-4 text-center text-gray-400 text-sm">
+                <GlassCard className="p-4 text-center text-[var(--text-secondary)] text-sm">
                   No hay huecos disponibles para {duration}h este día
                 </GlassCard>
               ) : (
@@ -230,7 +230,7 @@ export default function BookVenuePage() {
               </div>
               <div>
                 <p className="font-semibold">{venue?.profile?.displayName}</p>
-                <p className="text-xs text-gray-400">{venue?.address}</p>
+                <p className="text-xs text-[var(--text-secondary)]">{venue?.address}</p>
               </div>
             </div>
 
@@ -241,7 +241,7 @@ export default function BookVenuePage() {
                 { label: 'Duración', value: `${duration}h × ${hourlyRate}€`, icon: Clock },
               ].map(({ label, value, icon: Icon }) => (
                 <div key={label} className="flex justify-between items-center">
-                  <span className="flex items-center gap-1.5 text-gray-400">
+                  <span className="flex items-center gap-1.5 text-[var(--text-secondary)]">
                     <Icon size={13} />
                     {label}
                   </span>
@@ -249,11 +249,11 @@ export default function BookVenuePage() {
                 </div>
               ))}
               <div className="flex justify-between border-t border-white/[0.06] pt-3">
-                <span className="text-gray-400">Subtotal</span>
+                <span className="text-[var(--text-secondary)]">Subtotal</span>
                 <span>{basePrice.toFixed(2)}€</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Gestión (10%)</span>
+                <span className="text-[var(--text-secondary)]">Gestión (10%)</span>
                 <span>{fee.toFixed(2)}€</span>
               </div>
               <div className="flex justify-between font-bold text-base border-t border-white/[0.06] pt-3">
@@ -264,7 +264,7 @@ export default function BookVenuePage() {
 
             {myBands.length > 0 && (
               <div className="mb-4">
-                <label className="text-xs text-gray-400 block mb-1.5 flex items-center gap-1.5">
+                <label className="text-xs text-[var(--text-secondary)] block mb-1.5 flex items-center gap-1.5">
                   <Users size={11} />
                   Reservar como
                 </label>
@@ -276,7 +276,7 @@ export default function BookVenuePage() {
                       className={`text-left px-3 py-2 rounded-lg text-sm border transition-colors ${
                         selectedBandId === ''
                           ? 'border-[var(--accent)]/60 bg-[var(--accent)]/10 text-white'
-                          : 'border-white/[0.07] bg-white/[0.03] text-gray-400 hover:border-white/[0.15]'
+                          : 'border-white/[0.07] bg-white/[0.03] text-[var(--text-secondary)] hover:border-white/[0.15]'
                       }`}
                     >
                       Yo mismo
@@ -290,7 +290,7 @@ export default function BookVenuePage() {
                       className={`text-left px-3 py-2 rounded-lg text-sm border transition-colors flex items-center gap-2 ${
                         selectedBandId === band.id
                           ? 'border-[var(--accent)]/60 bg-[var(--accent)]/10 text-white'
-                          : 'border-white/[0.07] bg-white/[0.03] text-gray-400 hover:border-white/[0.15]'
+                          : 'border-white/[0.07] bg-white/[0.03] text-[var(--text-secondary)] hover:border-white/[0.15]'
                       }`}
                     >
                       <div className="w-5 h-5 rounded-full bg-[var(--accent)]/30 flex items-center justify-center text-[10px] font-bold shrink-0">
@@ -304,7 +304,7 @@ export default function BookVenuePage() {
             )}
 
             <div className="mb-4">
-              <label className="text-xs text-gray-400 block mb-1.5">Notas (opcional)</label>
+              <label className="text-xs text-[var(--text-secondary)] block mb-1.5">Notas (opcional)</label>
               <textarea
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
@@ -334,7 +334,7 @@ export default function BookVenuePage() {
               }
             </button>
 
-            <p className="text-xs text-gray-600 text-center mt-3">La sala revisará tu solicitud antes de confirmar</p>
+            <p className="text-xs text-[var(--text-muted)] text-center mt-3">La sala revisará tu solicitud antes de confirmar</p>
           </GlassCard>
         </div>
       </div>

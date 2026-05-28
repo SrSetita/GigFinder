@@ -67,7 +67,7 @@ export default function NotificationBell() {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(o => !o)}
-        className="relative flex items-center justify-center w-8 h-8 rounded-lg text-gray-400 hover:text-white hover:bg-white/[0.06] transition-all"
+        className="relative flex items-center justify-center w-8 h-8 rounded-lg text-[var(--text-secondary)] hover:text-white hover:bg-white/[0.06] transition-all"
       >
         <Bell size={16} />
         {unread > 0 && (
@@ -91,7 +91,7 @@ export default function NotificationBell() {
 
           <div className="max-h-80 overflow-y-auto">
             {notifs.length === 0 ? (
-              <div className="py-10 text-center text-gray-500 text-sm">Sin notificaciones</div>
+              <div className="py-10 text-center text-[var(--text-muted)] text-sm">Sin notificaciones</div>
             ) : (
               notifs.map(n => (
                 <div
@@ -102,8 +102,8 @@ export default function NotificationBell() {
                   <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!n.readAt ? 'bg-[var(--accent)]' : 'bg-transparent'}`} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{n.title}</p>
-                    <p className="text-xs text-gray-400 mt-0.5 line-clamp-2">{n.body}</p>
-                    <p className="text-xs text-gray-600 mt-1" suppressHydrationWarning>{timeAgo(n.createdAt)}</p>
+                    <p className="text-xs text-[var(--text-secondary)] mt-0.5 line-clamp-2">{n.body}</p>
+                    <p className="text-xs text-[var(--text-muted)] mt-1" suppressHydrationWarning>{timeAgo(n.createdAt)}</p>
                   </div>
                 </div>
               ))

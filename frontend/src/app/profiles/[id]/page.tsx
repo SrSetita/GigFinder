@@ -222,74 +222,79 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
-      {/* ── Header ── */}
-      <div className="mb-8">
-        {/* Banner */}
-        <div className="w-full h-48 rounded-xl bg-[var(--surface)] border border-[var(--border)] overflow-hidden relative">
+      {/* ── Header card ── */}
+      <div className="mb-8 rounded-2xl bg-[var(--surface)] border border-[var(--border)]">
+        {/* Banner — top of card */}
+        <div className="h-44 overflow-hidden rounded-t-2xl">
           {profile.bannerUrl
             ? <img src={profile.bannerUrl} alt="" className="w-full h-full object-cover" />
             : <div className="w-full h-full" style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(232,121,249,0.1) 100%)' }} />
           }
         </div>
 
-        {/* Avatar + acción */}
-        <div className="flex items-end justify-between gap-4 -mt-10 px-1">
-          <div className="w-20 h-20 rounded-xl bg-[var(--surface)] border-2 border-[var(--background)] overflow-hidden flex-shrink-0">
-            {profile.avatarUrl
-              ? <img src={profile.avatarUrl} alt={profile.displayName} className="w-full h-full object-cover" />
-              : <div className="w-full h-full flex items-center justify-center text-2xl font-black text-[var(--text-muted)]">
-                  {profile.displayName?.[0]?.toUpperCase()}
-                </div>
-            }
+        {/* Card body */}
+        <div className="px-5 pb-5 pt-2">
+          {/* Avatar + action button */}
+          <div className="flex items-end justify-between -mt-10 mb-3">
+            <div className="w-20 h-20 rounded-full bg-[var(--surface)] border-[3px] border-[var(--background)] overflow-hidden flex-shrink-0 relative z-10">
+              {profile.avatarUrl
+                ? <img src={profile.avatarUrl} alt={profile.displayName} className="w-full h-full object-cover" />
+                : <div className="w-full h-full flex items-center justify-center text-2xl font-black text-[var(--text-muted)]">
+                    {profile.displayName?.[0]?.toUpperCase()}
+                  </div>
+              }
+            </div>
+            <div className="pb-1">
+              {isOwnProfile ? (
+                <Link href="/settings/profile" className="btn-ghost px-4 py-2 text-[13px]">
+                  Editar perfil
+                </Link>
+              ) : (
+                <button onClick={handleContact} disabled={messaging} className="btn-primary px-4 py-2 text-[13px]">
+                  {messaging ? 'Enviando...' : 'Contactar'}
+                </button>
+              )}
+            </div>
           </div>
-          <div className="pb-1">
-            {isOwnProfile ? (
-              <Link href="/settings/profile" className="btn-ghost px-4 py-2 text-[13px]">
-                Editar perfil
-              </Link>
-            ) : (
-              <button onClick={handleContact} disabled={messaging} className="btn-primary px-4 py-2 text-[13px]">
-                {messaging ? 'Enviando...' : 'Contactar'}
-              </button>
-            )}
-          </div>
-        </div>
 
-        {/* Nombre + rol + ciudad */}
-        <div className="mt-3 px-1">
-          <div className="flex items-center gap-2 mb-1">
-            <h1 className="text-[1.5rem] font-bold">
-              <span className="gradient-text">{profile.displayName}</span>
-            </h1>
-            {profile.verified && <CheckCircle2 size={16} className="text-[var(--accent)]" />}
-          </div>
-          <div className="flex items-center gap-3 text-[13px] text-[var(--text-muted)]">
-            <span>{ROLE_LABELS[profile.role]}</span>
-            {profile.city && (
-              <>
-                <span>·</span>
-                <span className="flex items-center gap-1">
-                  <MapPin size={12} />
-                  {profile.city}
-                </span>
-              </>
-            )}
+          {/* Nombre + rol + ciudad */}
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <h1 className="text-[1.5rem] font-bold">
+                <span className="gradient-text">{profile.displayName}</span>
+              </h1>
+              {profile.verified && <CheckCircle2 size={16} className="text-[var(--accent)]" />}
+            </div>
+            <div className="flex items-center gap-3 text-[13px] text-[var(--text-muted)]">
+              {role && <span>{ROLE_LABELS[role]}</span>}
+              {profile.city && (
+                <>
+                  {role && <span>·</span>}
+                  <span className="flex items-center gap-1">
+                    <MapPin size={12} />
+                    {profile.city}
+                  </span>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* ── Bio / géneros / redes ── */}
-      {(profile.bio || profile.genres?.length > 0 || (profile.socialLinks && Object.keys(profile.socialLinks).length > 0)) && (
+      {/* ── Géneros (floating pills) ── */}
+      {profile.genres?.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-6">
+          {profile.genres.map((g: string) => (
+            <span key={g} className="genre-pill px-3 py-1 rounded-full text-[12px]">{g}</span>
+          ))}
+        </div>
+      )}
+
+      {/* ── Bio / redes ── */}
+      {(profile.bio || (profile.socialLinks && Object.keys(profile.socialLinks).length > 0)) && (
         <Card className="p-5 mb-6">
           {profile.bio && (
             <p className="text-[14px] text-[var(--text-secondary)] leading-relaxed mb-4">{profile.bio}</p>
-          )}
-          {profile.genres?.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {profile.genres.map((g: string) => (
-                <span key={g} className="genre-pill px-3 py-1 rounded-full text-[12px]">{g}</span>
-              ))}
-            </div>
           )}
           {profile.socialLinks && Object.keys(profile.socialLinks).length > 0 && (
             <div className="flex flex-wrap gap-2">
@@ -319,9 +324,9 @@ export default function ProfilePage() {
                     <span key={i} className="bg-[var(--surface-raised)] px-3 py-1 rounded-full text-sm">{i}</span>
                   ))}
                 </div>
-              ) : <p className="text-gray-400 text-sm">Sin especificar</p>}
+              ) : <p className="text-[var(--text-secondary)] text-sm">Sin especificar</p>}
               {profile.musician.yearsExperience && (
-                <p className="flex items-center gap-1.5 text-gray-400 text-sm mt-3">
+                <p className="flex items-center gap-1.5 text-[var(--text-secondary)] text-sm mt-3">
                   <GraduationCap size={13} />
                   {profile.musician.yearsExperience} años de experiencia
                 </p>
@@ -361,7 +366,7 @@ export default function ProfilePage() {
               )}
               {profile.band.members?.length > 0 && (
                 <>
-                  <p className="flex items-center gap-1.5 text-sm text-gray-400 mb-2">
+                  <p className="flex items-center gap-1.5 text-sm text-[var(--text-secondary)] mb-2">
                     <Users size={13} />
                     Miembros ({profile.band.members.length})
                   </p>
@@ -374,7 +379,7 @@ export default function ProfilePage() {
                             : m.user?.profile?.displayName?.[0]?.toUpperCase() || '?'}
                         </div>
                         <span className="flex-1">{m.user?.profile?.displayName}</span>
-                        <span className="text-gray-500">{m.role === 'ADMIN' ? 'Admin' : 'Miembro'}</span>
+                        <span className="text-[var(--text-muted)]">{m.role === 'ADMIN' ? 'Admin' : 'Miembro'}</span>
                         {isOwnProfile && m.role !== 'ADMIN' && (
                           <button
                             onClick={() => handleKick(m.userId)}
@@ -396,7 +401,7 @@ export default function ProfilePage() {
                     value={inviteEmail}
                     onChange={e => setInviteEmail(e.target.value)}
                     placeholder="Email del músico..."
-                    className="flex-1 bg-[var(--surface-raised)] border border-[var(--border)] rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600"
+                    className="flex-1 bg-[var(--surface-raised)] border border-[var(--border)] rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-[var(--text-muted)]"
                   />
                   <button
                     type="submit"
@@ -418,25 +423,25 @@ export default function ProfilePage() {
               </div>
               <div className="flex flex-col gap-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Precio/hora</span>
+                  <span className="text-[var(--text-secondary)]">Precio/hora</span>
                   <span className="font-semibold text-green-400">{parseFloat(profile.venue.hourlyRate).toFixed(0)}€</span>
                 </div>
                 {profile.venue.capacity && (
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Capacidad</span>
+                    <span className="text-[var(--text-secondary)]">Capacidad</span>
                     <span>{profile.venue.capacity} personas</span>
                   </div>
                 )}
                 {profile.venue.address && (
                   <div className="flex justify-between gap-2">
-                    <span className="text-gray-400">Dirección</span>
+                    <span className="text-[var(--text-secondary)]">Dirección</span>
                     <span className="text-right text-xs">{profile.venue.address}</span>
                   </div>
                 )}
               </div>
               {profile.venue.amenities?.length > 0 && (
                 <div className="mt-3">
-                  <p className="text-gray-400 text-xs mb-2">Equipamiento</p>
+                  <p className="text-[var(--text-secondary)] text-xs mb-2">Equipamiento</p>
                   <div className="flex flex-wrap gap-1">
                     {profile.venue.amenities.map((a: string) => (
                       <span key={a} className="bg-[var(--surface-raised)] text-xs px-2 py-1 rounded-full">{a}</span>
@@ -533,9 +538,9 @@ export default function ProfilePage() {
                 </div>
               </Card>
             ) : (
-              <Card className="p-10 text-center text-gray-500">
+              <Card className="p-10 text-center text-[var(--text-muted)]">
                 <div className="w-14 h-14 rounded-2xl bg-[var(--surface)] flex items-center justify-center mx-auto mb-4">
-                  <Film size={22} className="text-gray-600" />
+                  <Film size={22} className="text-[var(--text-muted)]" />
                 </div>
                 <p className="text-sm font-medium">Sin fotos ni vídeos todavía</p>
                 {isOwnProfile && (
@@ -558,10 +563,10 @@ export default function ProfilePage() {
       <Card className="p-6 mt-6">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
-            <Star size={16} className="text-yellow-400" />
+            <Star size={16} className="text-[var(--rating)]" />
             <h2 className="font-semibold">Reseñas</h2>
             {avgRating > 0 && (
-              <span className="text-sm text-yellow-400 font-medium">
+              <span className="text-sm text-[var(--rating)] font-medium">
                 {avgRating.toFixed(1)} · {reviews.length} reseña{reviews.length !== 1 ? 's' : ''}
               </span>
             )}
@@ -570,16 +575,16 @@ export default function ProfilePage() {
 
         {user && !isOwnProfile && (
           <form onSubmit={submitReview} className="mb-6 p-4 bg-[var(--surface)] rounded-xl border border-[var(--border)]">
-            <p className="text-sm text-gray-400 mb-3">Tu valoración</p>
+            <p className="text-sm text-[var(--text-secondary)] mb-3">Tu valoración</p>
             <div className="flex gap-1 mb-3">
               {[1, 2, 3, 4, 5].map(star => (
                 <button
                   key={star}
                   type="button"
                   onClick={() => setMyRating(star)}
-                  className={`transition-colors ${star <= myRating ? 'text-yellow-400' : 'text-gray-600 hover:text-yellow-300'}`}
+                  className={`transition-colors ${star <= myRating ? 'text-[var(--rating)]' : 'text-[var(--rating-empty)] hover:text-[var(--rating)]'}`}
                 >
-                  <Star size={22} className={star <= myRating ? 'fill-yellow-400' : ''} />
+                  <Star size={22} className={star <= myRating ? 'fill-[var(--rating)]' : ''} />
                 </button>
               ))}
             </div>
@@ -588,7 +593,7 @@ export default function ProfilePage() {
               onChange={e => setMyReviewBody(e.target.value)}
               placeholder="Comparte tu experiencia (opcional)..."
               rows={2}
-              className="w-full bg-[var(--surface-raised)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-gray-600 resize-none mb-3"
+              className="w-full bg-[var(--surface-raised)] border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[var(--accent)]/60 transition-colors placeholder:text-[var(--text-muted)] resize-none mb-3"
             />
             <button
               type="submit"
@@ -601,8 +606,14 @@ export default function ProfilePage() {
         )}
 
         {reviews.length === 0 ? (
-          <div className="text-center py-8 text-gray-500 text-sm">
-            Sin reseñas todavía
+          <div className="text-center py-10">
+            <div className="w-12 h-12 rounded-2xl bg-[var(--surface-raised)] border border-[var(--border)] flex items-center justify-center mx-auto mb-3">
+              <Star size={18} className="text-[var(--text-muted)]" />
+            </div>
+            <p className="text-sm font-medium text-[var(--text-secondary)]">Sin reseñas todavía</p>
+            {!isOwnProfile && user && (
+              <p className="text-xs text-[var(--text-muted)] mt-1">Sé el primero en valorar este perfil</p>
+            )}
           </div>
         ) : (
           <div className="flex flex-col gap-4">
@@ -616,14 +627,14 @@ export default function ProfilePage() {
                     <span className="text-sm font-medium">{r.reviewer?.profile?.displayName || 'Usuario'}</span>
                     <div className="flex gap-0.5">
                       {[1,2,3,4,5].map(s => (
-                        <Star key={s} size={11} className={s <= r.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-700'} />
+                        <Star key={s} size={11} className={s <= r.rating ? 'text-[var(--rating)] fill-[var(--rating)]' : 'text-[var(--rating-empty)]'} />
                       ))}
                     </div>
-                    <span className="text-xs text-gray-600">
+                    <span className="text-xs text-[var(--text-muted)]">
                       {new Date(r.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </span>
                   </div>
-                  {r.body && <p className="text-sm text-gray-400">{r.body}</p>}
+                  {r.body && <p className="text-sm text-[var(--text-secondary)]">{r.body}</p>}
                 </div>
               </div>
             ))}

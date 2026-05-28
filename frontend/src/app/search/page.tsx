@@ -215,10 +215,10 @@ function SearchResults() {
             {activeType
               ? <span className="gradient-text">{TYPE_LABELS[activeType]}</span>
               : 'Todos'}
-            {activeCity  && <span className="text-gray-400 font-normal"> en {activeCity}</span>}
-            {activeGenre && <span className="text-gray-400 font-normal"> · {activeGenre}</span>}
+            {activeCity  && <span className="text-[var(--text-secondary)] font-normal"> en {activeCity}</span>}
+            {activeGenre && <span className="text-[var(--text-secondary)] font-normal"> · {activeGenre}</span>}
           </h1>
-          {!loading && <span className="text-sm text-gray-500">{profiles.length + musicianBands.length} resultados</span>}
+          {!loading && <span className="text-sm text-[var(--text-muted)]">{profiles.length + musicianBands.length} resultados</span>}
         </div>
 
         {loading ? (
@@ -228,12 +228,12 @@ function SearchResults() {
             ))}
           </div>
         ) : profiles.length === 0 && musicianBands.length === 0 ? (
-          <div className="text-center py-20 text-gray-400">
+          <div className="text-center py-20 text-[var(--text-secondary)]">
             <div className="w-16 h-16 rounded-2xl bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center mx-auto mb-4">
-              <Search size={24} className="text-gray-500" />
+              <Search size={24} className="text-[var(--text-muted)]" />
             </div>
             <p className="font-medium">No se encontraron resultados</p>
-            <p className="text-sm text-gray-600 mt-1">Prueba con otros filtros</p>
+            <p className="text-sm text-[var(--text-muted)] mt-1">Prueba con otros filtros</p>
           </div>
         ) : (
           <>
@@ -257,12 +257,12 @@ function SearchResults() {
                         <h3 className="font-semibold group-hover:text-[var(--accent)] transition-colors truncate">
                           {profile.displayName}
                         </h3>
-                        <span className={`text-xs px-2 py-0.5 rounded-full border shrink-0 ml-2 ${ROLE_COLORS[profile.user?.role] || 'bg-[var(--surface-raised)] text-gray-400 border-[var(--border)]'}`}>
+                        <span className={`text-xs px-2 py-0.5 rounded-full border shrink-0 ml-2 ${ROLE_COLORS[profile.user?.role] || 'bg-[var(--surface-raised)] text-[var(--text-secondary)] border-[var(--border)]'}`}>
                           {ROLE_BADGES[profile.user?.role]}
                         </span>
                       </div>
                       {profile.city && (
-                        <p className="flex items-center gap-1 text-xs text-gray-500 mb-2">
+                        <p className="flex items-center gap-1 text-xs text-[var(--text-muted)] mb-2">
                           <MapPin size={11} />
                           {profile.city}
                         </p>
@@ -304,7 +304,7 @@ function SearchResults() {
             {musicianBands.length > 0 && (
               <>
                 {(!activeType || activeType === 'band') && profiles.length > 0 && (
-                  <h2 className="text-sm font-semibold text-gray-400 mt-6 mb-3">Bandas independientes</h2>
+                  <h2 className="text-sm font-semibold text-[var(--text-secondary)] mt-6 mb-3">Bandas independientes</h2>
                 )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {musicianBands.map((band) => (
@@ -325,7 +325,7 @@ function SearchResults() {
                             </span>
                           </div>
                           {band.city && (
-                            <p className="flex items-center gap-1 text-xs text-gray-500 mb-2">
+                            <p className="flex items-center gap-1 text-xs text-[var(--text-muted)] mb-2">
                               <MapPin size={11} />
                               {band.city}
                             </p>
@@ -340,7 +340,7 @@ function SearchResults() {
                             </div>
                           )}
                           {band.memberCount > 0 && (
-                            <p className="text-xs text-gray-500 mt-2">{band.memberCount} miembro{band.memberCount !== 1 ? 's' : ''}</p>
+                            <p className="text-xs text-[var(--text-muted)] mt-2">{band.memberCount} miembro{band.memberCount !== 1 ? 's' : ''}</p>
                           )}
                         </div>
                       </Card>

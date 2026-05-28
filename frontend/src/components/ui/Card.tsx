@@ -15,8 +15,8 @@ export default function Card({
   return (
     <Tag
       className={`
-        bg-[var(--surface)] border border-[var(--border)] rounded-xl
-        ${hover ? 'transition-colors duration-150 hover-lift cursor-pointer' : ''}
+        bg-[var(--surface)] border border-[var(--border)] rounded-xl hover-lift
+        ${hover ? 'cursor-pointer' : ''}
         ${className}
       `}
       {...props}

@@ -42,11 +42,11 @@ export default function Calendar({ selectedDate, onSelectDate, bookedDates = [] 
     <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 select-none">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <button onClick={prevMonth} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--muted)] transition-colors text-gray-400 hover:text-white">
+        <button onClick={prevMonth} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--muted)] transition-colors text-[var(--text-secondary)] hover:text-white">
           ‹
         </button>
         <span className="font-semibold">{MONTHS[view.month]} {view.year}</span>
-        <button onClick={nextMonth} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--muted)] transition-colors text-gray-400 hover:text-white">
+        <button onClick={nextMonth} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[var(--muted)] transition-colors text-[var(--text-secondary)] hover:text-white">
           ›
         </button>
       </div>
@@ -54,7 +54,7 @@ export default function Calendar({ selectedDate, onSelectDate, bookedDates = [] 
       {/* Day headers */}
       <div className="grid grid-cols-7 mb-2">
         {DAYS.map(d => (
-          <div key={d} className="text-center text-xs text-gray-500 py-1">{d}</div>
+          <div key={d} className="text-center text-xs text-[var(--text-muted)] py-1">{d}</div>
         ))}
       </div>
 
@@ -78,10 +78,10 @@ export default function Calendar({ selectedDate, onSelectDate, bookedDates = [] 
               onClick={() => onSelectDate(dateStr)}
               className={`
                 aspect-square rounded-lg text-sm font-medium transition-all flex items-center justify-center relative
-                ${isPast ? 'text-gray-700 cursor-not-allowed' : 'hover:bg-[var(--accent)]/20 cursor-pointer'}
+                ${isPast ? 'text-[var(--text-muted)] cursor-not-allowed' : 'hover:bg-[var(--accent)]/20 cursor-pointer'}
                 ${isSelected ? 'bg-[var(--accent)] text-white hover:bg-[var(--accent)]' : ''}
                 ${isToday && !isSelected ? 'border border-[var(--accent)] text-[var(--accent)]' : ''}
-                ${!isSelected && !isToday && !isPast ? 'text-gray-200' : ''}
+                ${!isSelected && !isToday && !isPast ? 'text-[var(--text-primary)]' : ''}
               `}
             >
               {day}
@@ -93,7 +93,7 @@ export default function Calendar({ selectedDate, onSelectDate, bookedDates = [] 
         })}
       </div>
 
-      <p className="text-xs text-gray-600 mt-3 text-center">• Días con reservas existentes</p>
+      <p className="text-xs text-[var(--text-muted)] mt-3 text-center">• Días con reservas existentes</p>
     </div>
   )
 }

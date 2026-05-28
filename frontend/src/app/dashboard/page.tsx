@@ -70,7 +70,7 @@ export default function DashboardPage() {
   }
 
   if (loading || fetching) {
-    return <div className="flex justify-center py-20 text-gray-500 text-sm">Cargando...</div>
+    return <div className="flex justify-center py-20 text-[var(--text-muted)] text-sm">Cargando...</div>
   }
 
   return (
@@ -110,8 +110,8 @@ export default function DashboardPage() {
       {/* ── Mis bandas ── */}
       {bands.length === 0 ? (
         <div className="text-center py-16 border border-dashed border-white/[0.1] rounded-2xl">
-          <Music2 size={32} className="text-gray-600 mx-auto mb-3" />
-          <p className="text-gray-500 text-sm mb-4">No perteneces a ninguna banda todavía</p>
+          <Music2 size={32} className="text-[var(--text-muted)] mx-auto mb-3" />
+          <p className="text-[var(--text-muted)] text-sm mb-4">No perteneces a ninguna banda todavía</p>
           <Link href="/bands/create" className="text-[var(--accent)] hover:underline text-sm">
             Crear mi primera banda
           </Link>

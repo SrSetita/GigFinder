@@ -13,7 +13,7 @@ const STATUS_STYLES: Record<string, string> = {
   PENDING:   'bg-yellow-500/10 text-yellow-400',
   CONFIRMED: 'bg-green-500/10 text-green-400',
   CANCELLED: 'bg-red-500/10 text-red-400',
-  COMPLETED: 'bg-gray-500/10 text-gray-400',
+  COMPLETED: 'bg-[var(--surface-raised)] text-[var(--text-secondary)]',
 }
 const STATUS_LABELS: Record<string, string> = {
   PENDING: 'Pendiente', CONFIRMED: 'Confirmada', CANCELLED: 'Cancelada', COMPLETED: 'Completada',
@@ -119,7 +119,7 @@ export default function VenueManagePage() {
   }
 
   if (authLoading || loading) {
-    return <div className="max-w-3xl mx-auto px-6 py-10 text-gray-400 text-sm">Cargando...</div>
+    return <div className="max-w-3xl mx-auto px-6 py-10 text-[var(--text-secondary)] text-sm">Cargando...</div>
   }
 
   const upcomingBookings = venue?.bookings ?? []
@@ -132,7 +132,7 @@ export default function VenueManagePage() {
     <div className="max-w-4xl mx-auto px-6 py-10">
       <div className="mb-8">
         <h1 className="text-2xl font-bold">Panel de gestión</h1>
-        <p className="text-gray-400 text-sm mt-1">{venue?.profile?.displayName}</p>
+        <p className="text-[var(--text-secondary)] text-sm mt-1">{venue?.profile?.displayName}</p>
       </div>
 
       {/* Stats */}
@@ -140,17 +140,17 @@ export default function VenueManagePage() {
         <GlassCard className="p-5 text-center">
           <CalendarDays size={20} className="text-[var(--accent)] mx-auto mb-2" />
           <p className="text-3xl font-bold text-[var(--accent)]">{upcomingBookings.length}</p>
-          <p className="text-xs text-gray-400 mt-1">Próximas reservas</p>
+          <p className="text-xs text-[var(--text-secondary)] mt-1">Próximas reservas</p>
         </GlassCard>
         <GlassCard className="p-5 text-center">
           <TrendingUp size={20} className="text-green-400 mx-auto mb-2" />
           <p className="text-3xl font-bold text-green-400">{totalRevenue.toFixed(0)}€</p>
-          <p className="text-xs text-gray-400 mt-1">Ingresos confirmados</p>
+          <p className="text-xs text-[var(--text-secondary)] mt-1">Ingresos confirmados</p>
         </GlassCard>
         <GlassCard className="p-5 text-center">
           <AlertCircle size={20} className="text-yellow-400 mx-auto mb-2" />
           <p className="text-3xl font-bold text-yellow-400">{pending}</p>
-          <p className="text-xs text-gray-400 mt-1">Pendientes</p>
+          <p className="text-xs text-[var(--text-secondary)] mt-1">Pendientes</p>
         </GlassCard>
       </div>
 
@@ -163,7 +163,7 @@ export default function VenueManagePage() {
             className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
               tab === t
                 ? 'border-[var(--accent)] text-white'
-                : 'border-transparent text-gray-400 hover:text-white'
+                : 'border-transparent text-[var(--text-secondary)] hover:text-white'
             }`}
           >
             {t === 'schedule' ? (
@@ -179,7 +179,7 @@ export default function VenueManagePage() {
         <GlassCard className="overflow-hidden">
           <div className="px-6 py-4 border-b border-white/[0.06]">
             <h2 className="font-semibold">Horario semanal</h2>
-            <p className="text-xs text-gray-400 mt-0.5">Define en qué días y horas está disponible tu sala</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-0.5">Define en qué días y horas está disponible tu sala</p>
           </div>
 
           <div className="divide-y divide-white/[0.05]">
@@ -187,7 +187,7 @@ export default function VenueManagePage() {
               <div key={day.dayOfWeek} className={`flex items-center gap-4 px-6 py-4 ${!day.isOpen ? 'opacity-50' : ''}`}>
                 <button
                   onClick={() => updateDay(day.dayOfWeek, { isOpen: !day.isOpen })}
-                  className={`relative w-10 h-5 rounded-full transition-colors shrink-0 ${day.isOpen ? 'bg-[var(--accent)]' : 'bg-gray-700'}`}
+                  className={`relative w-10 h-5 rounded-full transition-colors shrink-0 ${day.isOpen ? 'bg-[var(--accent)]' : 'bg-[var(--border-hover)]'}`}
                 >
                   <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${day.isOpen ? 'translate-x-5' : 'translate-x-0.5'}`} />
                 </button>
@@ -197,7 +197,7 @@ export default function VenueManagePage() {
                 {day.isOpen ? (
                   <div className="flex items-center gap-3 text-sm flex-1">
                     <div className="flex items-center gap-2">
-                      <label className="text-gray-400 text-xs">Abre</label>
+                      <label className="text-[var(--text-secondary)] text-xs">Abre</label>
                       <select
                         value={day.openHour}
                         onChange={e => updateDay(day.dayOfWeek, { openHour: parseInt(e.target.value) })}
@@ -208,9 +208,9 @@ export default function VenueManagePage() {
                         ))}
                       </select>
                     </div>
-                    <span className="text-gray-600">—</span>
+                    <span className="text-[var(--text-muted)]">—</span>
                     <div className="flex items-center gap-2">
-                      <label className="text-gray-400 text-xs">Cierra</label>
+                      <label className="text-[var(--text-secondary)] text-xs">Cierra</label>
                       <select
                         value={day.closeHour}
                         onChange={e => updateDay(day.dayOfWeek, { closeHour: parseInt(e.target.value) })}
@@ -221,13 +221,13 @@ export default function VenueManagePage() {
                         ))}
                       </select>
                     </div>
-                    <span className="text-gray-500 text-xs ml-2 flex items-center gap-1">
+                    <span className="text-[var(--text-muted)] text-xs ml-2 flex items-center gap-1">
                       <Clock size={11} />
                       {day.closeHour - day.openHour}h disponibles
                     </span>
                   </div>
                 ) : (
-                  <span className="text-gray-600 text-sm">Cerrado</span>
+                  <span className="text-[var(--text-muted)] text-sm">Cerrado</span>
                 )}
               </div>
             ))}
@@ -254,9 +254,9 @@ export default function VenueManagePage() {
       {tab === 'bookings' && (
         <div className="flex flex-col gap-3">
           {upcomingBookings.length === 0 ? (
-            <div className="text-center py-20 text-gray-400">
+            <div className="text-center py-20 text-[var(--text-secondary)]">
               <div className="w-14 h-14 rounded-2xl glass flex items-center justify-center mx-auto mb-4">
-                <CalendarDays size={22} className="text-gray-500" />
+                <CalendarDays size={22} className="text-[var(--text-muted)]" />
               </div>
               <p>No hay solicitudes pendientes</p>
             </div>
@@ -281,17 +281,17 @@ export default function VenueManagePage() {
                           {STATUS_LABELS[b.status]}
                         </span>
                       </div>
-                      <p className="flex items-center gap-1.5 text-sm text-gray-300">
-                        <CalendarDays size={12} className="text-gray-500" />
+                      <p className="flex items-center gap-1.5 text-sm text-[var(--text-primary)]">
+                        <CalendarDays size={12} className="text-[var(--text-muted)]" />
                         {fmtDate(b.startTime)} · {fmtTime(b.startTime)} – {fmtTime(b.endTime)} ({hours}h)
                       </p>
                       <p className="flex items-center gap-1 text-sm font-medium text-green-400 mt-1">
                         <Euro size={12} />
                         {(parseFloat(b.totalPrice) - parseFloat(b.platformFee)).toFixed(2)} netos
-                        <span className="text-gray-500 font-normal text-xs ml-1">(cobran {parseFloat(b.totalPrice).toFixed(2)}€)</span>
+                        <span className="text-[var(--text-muted)] font-normal text-xs ml-1">(cobran {parseFloat(b.totalPrice).toFixed(2)}€)</span>
                       </p>
                       {b.notes && (
-                        <p className="text-xs text-gray-400 mt-1.5 glass rounded-lg px-3 py-1.5 italic">
+                        <p className="text-xs text-[var(--text-secondary)] mt-1.5 glass rounded-lg px-3 py-1.5 italic">
                           "{b.notes}"
                         </p>
                       )}

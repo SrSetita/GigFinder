@@ -77,7 +77,7 @@ function GigsContent() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold mb-1">Tablón de Gigs</h1>
-          <p className="text-gray-400 text-sm">Ofertas publicadas por la comunidad</p>
+          <p className="text-[var(--text-secondary)] text-sm">Ofertas publicadas por la comunidad</p>
         </div>
         {user && (
           <Link
@@ -99,7 +99,7 @@ function GigsContent() {
             className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
               activeType === t.value
                 ? 'bg-[var(--accent)]/20 border-[var(--accent)]/50 text-white'
-                : 'border-white/[0.1] text-gray-400 hover:border-white/20 hover:text-white'
+                : 'border-white/[0.1] text-[var(--text-secondary)] hover:border-white/20 hover:text-white'
             }`}
           >
             {t.label}
@@ -107,20 +107,20 @@ function GigsContent() {
         ))}
         <div className="flex gap-2 ml-auto">
           <div className="relative">
-            <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+            <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
             <input
               type="text"
               value={city}
               onChange={e => setCity(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && applyCity()}
               placeholder="Ciudad..."
-              className="bg-white/[0.05] border border-white/[0.07] rounded-full pl-8 pr-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--accent)]/50 transition-colors placeholder:text-gray-600 w-36"
+              className="bg-white/[0.05] border border-white/[0.07] rounded-full pl-8 pr-3 py-2 text-sm text-white focus:outline-none focus:border-[var(--accent)]/50 transition-colors placeholder:text-[var(--text-muted)] w-36"
             />
           </div>
           {(activeType || activeCity) && (
             <button
               onClick={() => { setCity(''); router.push('/gigs') }}
-              className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-300 transition-colors px-2"
+              className="flex items-center gap-1 text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors px-2"
             >
               <X size={12} /> Limpiar
             </button>
@@ -133,9 +133,9 @@ function GigsContent() {
           {[...Array(6)].map((_, i) => <SkeletonGigCard key={i} />)}
         </div>
       ) : gigs.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
+        <div className="text-center py-20 text-[var(--text-secondary)]">
           <div className="w-16 h-16 rounded-2xl glass flex items-center justify-center mx-auto mb-4">
-            <Guitar size={24} className="text-gray-500" />
+            <Guitar size={24} className="text-[var(--text-muted)]" />
           </div>
           <p className="font-medium">Sin ofertas publicadas</p>
           {user && (
@@ -159,10 +159,10 @@ function GigsContent() {
                 </div>
 
                 {gig.description && (
-                  <p className="text-sm text-gray-400 line-clamp-2">{gig.description}</p>
+                  <p className="text-sm text-[var(--text-secondary)] line-clamp-2">{gig.description}</p>
                 )}
 
-                <div className="flex flex-wrap gap-3 text-xs text-gray-500 mt-auto">
+                <div className="flex flex-wrap gap-3 text-xs text-[var(--text-muted)] mt-auto">
                   <span className="flex items-center gap-1">
                     <MapPin size={11} /> {gig.city}
                   </span>
@@ -192,8 +192,8 @@ function GigsContent() {
                   <div className="w-6 h-6 rounded-full bg-[var(--accent)]/30 flex items-center justify-center text-xs font-bold">
                     {gig.author?.profile?.displayName?.[0]?.toUpperCase() || '?'}
                   </div>
-                  <span className="text-xs text-gray-400">{gig.author?.profile?.displayName}</span>
-                  <span className="text-xs text-gray-600 ml-auto">
+                  <span className="text-xs text-[var(--text-secondary)]">{gig.author?.profile?.displayName}</span>
+                  <span className="text-xs text-[var(--text-muted)] ml-auto">
                     {new Date(gig.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
                   </span>
                 </div>
